@@ -155,24 +155,17 @@ final class PerformanceTimer: @unchecked Sendable {
             metadata: metadata
         )
 
+        // Capture logger weakly to avoid retain cycle
+        guard let logger = logger else { return }
+
         Task { @MainActor in
-            logger?.log(event: event)
+            logger.log(event: event)
         }
     }
 
     deinit {
-        // Auto-stop if not manually stopped
-        let duration = CFAbsoluteTimeGetCurrent() - startTime
-        let event = PerformanceEvent(
-            category: category,
-            name: name,
-            duration: duration,
-            metadata: metadata
-        )
-
-        Task { @MainActor in
-            logger?.log(event: event)
-        }
+        // NO Task in deinit - it creates retain cycle!
+        // Timer will be stopped manually via stop()
     }
 }
 
@@ -357,19 +350,33 @@ private struct PerformanceMeasurementModifier: ViewModifier {
     let metadata: [String: String]
 
     @State private var timer: PerformanceTimer?
+    @State private var hasAppeared = false
 
     func body(content: Content) -> some View {
         content
             .onAppear {
-                timer = PerformanceLogger.shared.startTimer(
-                    category: category,
-                    name: name,
-                    metadata: metadata
-                )
+                // Start timing on first appear
+                if !hasAppeared {
+                    hasAppeared = true
+                    timer = PerformanceLogger.shared.startTimer(
+                        category: category,
+                        name: name,
+                        metadata: metadata
+                    )
+
+                    // Stop immediately after the view appears (next frame)
+                    // This measures view load time, not screen time
+                    DispatchQueue.main.async {
+                        timer?.stop()
+                        timer = nil
+                    }
+                }
             }
             .onDisappear {
+                // Cleanup if needed
                 timer?.stop()
                 timer = nil
+                hasAppeared = false
             }
     }
 }
