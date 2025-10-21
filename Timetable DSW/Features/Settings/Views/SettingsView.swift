@@ -10,7 +10,6 @@ import Foundation
 struct SettingsView: View {
     struct Configuration: ComponentConfiguration {
         struct Constants {
-            let bottomInset: CGFloat = 78
             let spacing: AppSpacing = .medium
             let iconSize: CGFloat = AppDimensions.avatarSmall.value
             let iconCornerRadius: AppCornerRadius = .small
@@ -27,6 +26,7 @@ struct SettingsView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @Environment(\.featureFlagService) private var featureFlagService
     @Environment(\.adCoordinator) private var coordinator
+    @Environment(\.bottomInsetService) private var bottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService
 
     @State private var showingContactDialog = false
@@ -51,7 +51,7 @@ struct SettingsView: View {
             .onAppear { viewModel.appViewModel = appViewModel }
             .safeAreaInset(edge: .bottom) {
                 AppColor.clear.color(for: colorScheme)
-                    .frame(height: Configuration.constants.bottomInset)
+                    .frame(height: bottomInsetService?.bottomInset ?? 78)
             }
         }
         .sheet(isPresented: $viewModel.showingGroupSelection) { groupSelectionSheet }
