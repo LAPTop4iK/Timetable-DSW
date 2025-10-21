@@ -48,6 +48,9 @@ struct TeachersView: View {
                         viewModel.updateTeachers(newData.teachers)
                     }
                 }
+                #if DEBUG
+                .measurePerformance(name: "TeachersView", category: .viewAppear)
+                #endif
         }
         .sheet(item: $selectedTeacher) { teacher in
             TeacherDetailView(viewModel: TeacherDetailViewModel(teacher: teacher))

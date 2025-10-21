@@ -82,6 +82,9 @@ struct TeacherDetailView: View {
             .sheet(isPresented: $viewModel.navigation.showingDatePicker) {
                 datePickerSheet
             }
+            #if DEBUG
+            .measurePerformance(name: "TeacherDetailView", category: .viewAppear)
+            #endif
         }
     }
     
