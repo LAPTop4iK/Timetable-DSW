@@ -11,7 +11,6 @@ struct SubjectsView: View {
     // MARK: - Configuration
     struct Configuration: ComponentConfiguration {
         struct Constants {
-            let bottomInset: CGFloat = 78
             let progressScale: CGFloat = 1.2
             let spacing: AppSpacing = .large
         }
@@ -25,6 +24,7 @@ struct SubjectsView: View {
 
     // MARK: - Environment
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.bottomInsetService) private var bottomInsetService
 
     // MARK: - Body
     var body: some View {
@@ -103,7 +103,7 @@ struct SubjectsView: View {
         .listStyle(.plain)
         .safeAreaInset(edge: .bottom) {
             AppColor.clear.color(for: colorScheme)
-                .frame(height: Configuration.constants.bottomInset)
+                .frame(height: bottomInsetService?.bottomInset ?? 78)
         }
     }
 }
