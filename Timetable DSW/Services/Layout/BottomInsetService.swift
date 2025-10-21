@@ -65,6 +65,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
     private var configuration: BottomInsetConfiguration
     private let appStateService: AppStateService
     private let featureFlagService: FeatureFlagService
+    private let parametersService: FeatureFlagParametersService?
     private var cancellables = Set<AnyCancellable>()
 
     private var currentBannerHeight: CGFloat = 0
@@ -76,12 +77,19 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         configuration: BottomInsetConfiguration = .default,
         appStateService: AppStateService,
         featureFlagService: FeatureFlagService,
+        parametersService: FeatureFlagParametersService? = nil,
         initialBannerPosition: BannerPosition = .bottom
     ) {
         self.configuration = configuration
         self.appStateService = appStateService
         self.featureFlagService = featureFlagService
-        self.bannerPosition = initialBannerPosition
+        self.parametersService = parametersService
+
+        // Get initial position from parameters or fallback
+        let positionFromParams = parametersService?.getString(.bannerPosition)
+            .flatMap { BannerPosition(rawValue: $0) } ?? initialBannerPosition
+
+        self.bannerPosition = positionFromParams
         self.currentTabBarHeight = configuration.tabBarHeight
         self.currentBannerHeight = configuration.bannerHeight
 
@@ -132,6 +140,22 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
             .map { $0[.showAds] ?? true }
             .removeDuplicates()
             .sink { [weak self] _ in
+                self?.recalculateInset()
+            }
+            .store(in: &cancellables)
+
+        // Observe banner position parameter changes
+        parametersService?.parametersPublisher
+            .compactMap { $0[.bannerPosition] }
+            .compactMap { value -> String? in
+                if case .string(let str) = value {
+                    return str
+                }
+                return nil
+            }
+            .compactMap { BannerPosition(rawValue: $0) }
+            .sink { [weak self] newPosition in
+                self?.bannerPosition = newPosition
                 self?.recalculateInset()
             }
             .store(in: &cancellables)
