@@ -89,19 +89,21 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         let positionFromParams = parametersService?.getString(.bannerPosition)
             .flatMap { BannerPosition(rawValue: $0) } ?? initialBannerPosition
 
+        // Initialize all stored properties
         self.bannerPosition = positionFromParams
         self.currentTabBarHeight = configuration.tabBarHeight
         self.currentBannerHeight = configuration.bannerHeight
 
-        // Calculate initial value
-        self.bottomInset = Self.calculateBottomInset(
-            tabBarHeight: currentTabBarHeight,
-            bannerHeight: currentBannerHeight,
-            bannerPosition: bannerPosition,
+        // Calculate initial bottomInset using local variable to avoid 'self' before init
+        let initialBottomInset = Self.calculateBottomInset(
+            tabBarHeight: configuration.tabBarHeight,
+            bannerHeight: configuration.bannerHeight,
+            bannerPosition: positionFromParams,
             isPremium: appStateService.isPremium,
             showAds: featureFlagService.isEnabled(.showAds),
             spacing: configuration.spacing
         )
+        self.bottomInset = initialBottomInset
 
         setupObservers()
     }
