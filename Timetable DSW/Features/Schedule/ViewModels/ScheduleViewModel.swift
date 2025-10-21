@@ -27,10 +27,11 @@ final class ScheduleViewModel: ObservableObject {
     @Published var selectedTeacherId: Int?
     
     // MARK: - Properties
-    
+
     private var cancellables = Set<AnyCancellable>()
     weak var appViewModel: AppViewModel?
-    
+    let interstitialCooldown = InterstitialCooldownManager(configuration: .weekSwitch)
+
     // MARK: - Computed Properties
     
     var selectedTeacher: Teacher? {
@@ -56,8 +57,24 @@ final class ScheduleViewModel: ObservableObject {
     }
     
     // MARK: - Teacher Selection
-    
+
     func showTeacherDetail(teacherId: Int) {
         selectedTeacherId = teacherId
+    }
+
+    // MARK: - Week Navigation with Ads
+
+    func handleWeekChange(coordinator: AdCoordinator?) async {
+        interstitialCooldown.recordAction()
+
+        guard interstitialCooldown.shouldShowAd() else { return }
+
+        do {
+            try await coordinator?.loadAd(type: .interstitial)
+            try await coordinator?.showAd(type: .interstitial)
+            interstitialCooldown.recordAdShown()
+        } catch {
+            print("[ScheduleViewModel] Failed to show interstitial: \(error)")
+        }
     }
 }
