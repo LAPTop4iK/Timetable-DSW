@@ -25,6 +25,7 @@ final class AdMobCoordinator: AdCoordinator {
     private var rewardedProvider: RewardedAdProvider?
     private var rewardedInterstitialProvider: RewardedInterstitialAdProvider?
     private var appOpenProvider: AppOpenAdProvider?
+    private var nativeAdProviders: [String: NativeAdProvider] = [:] // Key: identifier
 
     // State
     private var isPresenting = false
@@ -142,6 +143,45 @@ final class AdMobCoordinator: AdCoordinator {
         case .banner:
             return true
         }
+    }
+
+    // MARK: - Native Ad Methods
+
+    /// Create or get existing native ad provider
+    func getNativeAdProvider(identifier: String = "default") -> NativeAdProvider {
+        if let existing = nativeAdProviders[identifier] {
+            return existing
+        }
+
+        let config = NativeAdProvider.Configuration(
+            adUnitID: configuration.native,
+            cacheSize: 3,
+            refreshInterval: 60.0
+        )
+
+        let provider = NativeAdProvider(configuration: config)
+        nativeAdProviders[identifier] = provider
+
+        return provider
+    }
+
+    /// Load native ad for specific identifier
+    func loadNativeAd(identifier: String = "default") async throws {
+        try eligibilityService.checkEligibility()
+
+        let provider = getNativeAdProvider(identifier: identifier)
+        try await provider.load()
+    }
+
+    /// Refresh native ad (force reload)
+    func refreshNativeAd(identifier: String = "default") async throws {
+        try eligibilityService.checkEligibility()
+
+        guard let provider = nativeAdProviders[identifier] else {
+            throw AdError.notLoaded
+        }
+
+        try await provider.refresh()
     }
 
     // MARK: - View Factories
