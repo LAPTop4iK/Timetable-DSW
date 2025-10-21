@@ -133,6 +133,7 @@ struct TeacherDetailView: View {
                 
                 TeacherHeaderView(
                     teacher: viewModel.teacher,
+                    selectedDate: viewModel.navigation.selectedDate,
                     onCalendarTap: { viewModel.navigation.showingDatePicker = true }
                 )
                 
