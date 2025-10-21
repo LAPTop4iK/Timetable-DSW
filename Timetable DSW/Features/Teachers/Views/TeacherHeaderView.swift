@@ -24,12 +24,13 @@ struct TeacherHeaderView: View {
     }
     
     // MARK: - Properties
-    
+
     let teacher: Teacher
+    let selectedDate: Date
     let onCalendarTap: () -> Void
-    
+
     // MARK: - Environment
-    
+
     @Environment(\.colorScheme) var colorScheme
     
     // MARK: - Dependencies
@@ -40,10 +41,12 @@ struct TeacherHeaderView: View {
     
     init(
         teacher: Teacher,
+        selectedDate: Date,
         onCalendarTap: @escaping () -> Void,
         hapticService: HapticFeedbackService = DefaultHapticFeedbackService()
     ) {
         self.teacher = teacher
+        self.selectedDate = selectedDate
         self.onCalendarTap = onCalendarTap
         self.hapticService = hapticService
     }
@@ -68,11 +71,29 @@ struct TeacherHeaderView: View {
                 .font(AppTypography.title3.font)
                 .fontWeight(.semibold)
                 .lineLimit(1)
-            
-            if let email = teacher.email {
-                emailButton(email: email)
+
+            HStack(spacing: Configuration.constants.emailSpacing.value) {
+                Text(formattedSelectedDate)
+                    .font(AppTypography.subheadline.font)
+                    .fontWeight(.medium)
+                    .themedForeground(.header, colorScheme: colorScheme)
+
+                if let email = teacher.email {
+                    Text("•")
+                        .font(AppTypography.caption.font)
+                        .themedForeground(.header, colorScheme: colorScheme)
+
+                    emailButton(email: email)
+                }
             }
         }
+    }
+
+    private var formattedSelectedDate: String {
+        let formatter = DateFormatter()
+        formatter.locale = .current
+        formatter.dateFormat = "dd.MM.yyyy, EEE"
+        return formatter.string(from: selectedDate)
     }
     
     private func emailButton(email: String) -> some View {
