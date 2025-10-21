@@ -91,6 +91,9 @@ struct SubjectDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) { doneButton }
             }
             .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 96) }
+            #if DEBUG
+            .measurePerformance(name: "SubjectDetailView", category: .viewAppear)
+            #endif
         }
     }
 
