@@ -96,10 +96,6 @@ struct DayScheduleTabView: View {
     }
 
     var body: some View {
-#if DEBUG
-        let _ = Self._printChanges()
-        let _ = print("🔍 [\(type(of: self))] body re-evaluated at \(Date().timeIntervalSince1970)")
-#endif
         ZStack {
             tabView
             arrowOverlays
