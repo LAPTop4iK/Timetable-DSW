@@ -73,9 +73,33 @@ struct ErrorView: View {
     
     private var iconView: some View {
         ZStack {
+            // Glow background for liquid glass effect
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: iconGradientColors.map { $0.opacity(0.15) },
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: Configuration.constants.iconSize * 1.2, height: Configuration.constants.iconSize * 1.2)
+                .blur(radius: 20)
+
             AppIcon.exclamationTriangleFill.image()
                 .font(.system(size: Configuration.constants.iconSize))
-                .themedForeground(.error, colorScheme: colorScheme)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: iconGradientColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .shadow(
+                    color: iconGradientColors.first?.opacity(0.3) ?? .clear,
+                    radius: 10,
+                    x: 0,
+                    y: 4
+                )
         }
     }
     
@@ -137,9 +161,16 @@ struct ErrorView: View {
     }
     
     // MARK: - Computed Properties
-    
+
     private var gradientColors: [Color] {
-        GradientStyle.error.colors(for: colorScheme)
+        // Use warning gradient (orange-red) to indicate error while maintaining app aesthetic
+        // This is less harsh than pure error red but still clearly communicates issue
+        GradientStyle.warning.colors(for: colorScheme)
+    }
+
+    private var iconGradientColors: [Color] {
+        // Icon uses primary gradient for softer, app-consistent look
+        GradientStyle.primary.colors(for: colorScheme)
     }
     
     // MARK: - Actions
