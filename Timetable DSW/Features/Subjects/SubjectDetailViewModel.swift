@@ -25,6 +25,10 @@ final class SubjectDetailViewModel: ObservableObject {
     let dateService: DateService
     private let eventTypeDetector: EventTypeDetector
 
+    // Cached computed properties for performance
+    @Published private(set) var stats: SubjectStats
+    @Published private(set) var sections: [(date: Date, items: [ScheduleEvent])]
+
     init(
         subject: Subject,
         dateService: DateService = DefaultDateService(),
@@ -33,9 +37,15 @@ final class SubjectDetailViewModel: ObservableObject {
         self.subject = subject
         self.dateService = dateService
         self.eventTypeDetector = eventTypeDetector
+
+        // Initialize cached properties once
+        self.stats = Self.computeStats(for: subject, using: eventTypeDetector)
+        self.sections = Self.computeSections(for: subject)
     }
 
-    var stats: SubjectStats {
+    // MARK: - Private Static Helpers
+
+    private static func computeStats(for subject: Subject, using detector: EventTypeDetector) -> SubjectStats {
         let total = subject.schedule.count
         let now = Date()
         let past = subject.schedule.filter { ($0.endDate ?? .distantPast) < now }.count
@@ -43,7 +53,7 @@ final class SubjectDetailViewModel: ObservableObject {
 
         var lectures = 0, exercises = 0, laboratories = 0, other = 0
         for ev in subject.schedule {
-            switch eventTypeDetector.detectEventType(from: ev.type) {
+            switch detector.detectEventType(from: ev.type) {
             case .lecture: lectures += 1
             case .exercise: exercises += 1
             case .laboratory: laboratories += 1
@@ -51,14 +61,13 @@ final class SubjectDetailViewModel: ObservableObject {
             }
         }
 
-        return .init(
+        return SubjectStats(
             total: total, past: past, upcoming: upcoming,
             lectures: lectures, exercises: exercises, laboratories: laboratories, other: other
         )
     }
 
-    // Группировка по датам (день)
-    var sections: [(date: Date, items: [ScheduleEvent])] {
+    private static func computeSections(for subject: Subject) -> [(date: Date, items: [ScheduleEvent])] {
         let grouped = Dictionary(grouping: subject.schedule) { (ev: ScheduleEvent) -> Date in
             (ev.startDate ?? .distantPast).onlyYMD()
         }
