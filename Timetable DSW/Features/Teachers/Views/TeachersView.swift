@@ -13,23 +13,23 @@ struct TeachersView: View {
     
     struct Configuration: ComponentConfiguration {
         struct Constants {
-            let bottomInset: CGFloat = 78
             let progressScale: CGFloat = 1.2
             let spacing: AppSpacing = .large
         }
-        
+
         static let constants = Constants()
     }
-    
+
     // MARK: - Properties
-    
+
     @StateObject var viewModel: TeachersViewModel
     @EnvironmentObject var appViewModel: AppViewModel
     @State private var selectedTeacher: Teacher?
-    
+
     // MARK: - Environment
-    
+
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.bottomInsetService) private var bottomInsetService
     
     // MARK: - Body
     
@@ -110,7 +110,7 @@ struct TeachersView: View {
         .listStyle(.plain)
         .safeAreaInset(edge: .bottom) {
             AppColor.clear.color(for: colorScheme)
-                .frame(height: Configuration.constants.bottomInset)
+                .frame(height: bottomInsetService?.bottomInset ?? 78)
         }
     }
 }
