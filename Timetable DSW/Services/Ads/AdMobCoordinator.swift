@@ -21,7 +21,6 @@ final class AdMobCoordinator: AdCoordinator {
     private let configuration: AdUnitIDsConfiguration
 
     // Providers cache
-//    private var nativeProviders: [String: NativeAdProvider] = [:]
     private var interstitialProvider: InterstitialAdProvider?
     private var rewardedProvider: RewardedAdProvider?
     private var rewardedInterstitialProvider: RewardedInterstitialAdProvider?
@@ -155,25 +154,6 @@ final class AdMobCoordinator: AdCoordinator {
         )
         return provider.createView()
     }
-
-//    func makeNativeAdView(style: NativeAdStyle = .card) -> UIView {
-//        let cacheKey = "\(configuration.native)-\(style)"
-//
-//        if let existingProvider = nativeProviders[cacheKey],
-//           existingProvider.isReady {
-//            return existingProvider.createView()
-//        }
-//
-//        let provider = NativeAdProvider.create(
-//            style: style,
-//            adUnitID: configuration.native,
-//            requestInterval: 60,
-//            viewControllerProvider: viewControllerProvider
-//        )
-//
-//        nativeProviders[cacheKey] = provider
-//        return provider.createView()
-//    }
 
     // MARK: - Utilities
 

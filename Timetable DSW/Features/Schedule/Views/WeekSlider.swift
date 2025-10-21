@@ -75,7 +75,6 @@ struct WeekSlider: View {
     // MARK: - Body
     
     var body: some View {
-//        let _ = db()
         GeometryReader { proxy in
             let containerWidth = proxy.size.width
             let availableWidth = max(0, containerWidth - Configuration.constants.horizontalPadding.value * 2)
@@ -83,8 +82,6 @@ struct WeekSlider: View {
             let (chipW, spacing) = adaptiveMetrics(availableWidth: availableWidth, count: days.count)
             let chipH = clampHeight(chipW * Configuration.constants.chipAspect)
             let sliderHeight = chipH
-            let _ = print("🔧 [WeekSlider] containerW=\(containerWidth.rounded()), availW=\(availableWidth.rounded()), " +
-                  "chipW=\(chipW.rounded()), chipH=\(chipH.rounded()), spacing=\(spacing.rounded())")
 
             ScrollView(.horizontal) {
                 HStack(spacing: spacing) {
@@ -185,8 +182,6 @@ struct WeekSlider: View {
     // MARK: - Gesture Handlers
     
     private func handleSwipeProgress(translation: CGSize) {
-        print("🫳 [WeekSlider] progress dx=\(translation.width) dy=\(translation.height)")
-
         guard isHorizontalSwipe(translation) else { return }
         
         if translation.width < -Configuration.constants.weekChangeThreshold && !hasTriggeredNextWeekHaptic {
@@ -206,14 +201,10 @@ struct WeekSlider: View {
     
     private func handleSwipeEnd(translation: CGSize) {
         guard isHorizontalSwipe(translation) else { return }
-        let dir = translation.width < 0 ? "→ next" : "← prev"
-        print("✅ [WeekSlider] end \(dir) dx=\(translation.width)")
 
         if translation.width < -Configuration.constants.weekChangeThreshold {
-            print("👆 [WeekSlider] Triggering NEXT week (translation: \(translation.width))")
             onNextWeekFromSlider()
         } else if translation.width > Configuration.constants.weekChangeThreshold {
-            print("👆 [WeekSlider] Triggering PREVIOUS week (translation: \(translation.width))")
             onPreviousWeekFromSlider()
         }
         

@@ -40,18 +40,15 @@ struct ScheduleView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @State private var headerHeight: CGFloat = 0
     @State private var headerHeightMax: CGFloat = 0
-    
+    @State private var safeAreaTop: CGFloat = Configuration.constants.defaultSafeAreaTop
+    @State private var bannerHeight: CGFloat = 0
+
     // MARK: - Environment
-    
+
     @Environment(\.colorScheme) var colorScheme
-    
+    @Environment(\.adCoordinator) private var adCoordinator
+
     // MARK: - Computed Properties
-    
-    private var safeAreaTop: CGFloat {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first?.windows.first?.safeAreaInsets.top ?? Configuration.constants.defaultSafeAreaTop
-    }
     
     private var headerGradientFill: Color {
         let opacity = colorScheme == .dark ? Configuration.constants.darkFillOpacity : Configuration.constants.lightFillOpacity
@@ -71,17 +68,22 @@ struct ScheduleView: View {
     // MARK: - Body
     
     var body: some View {
-#if DEBUG
-        let _ = Self._printChanges()
-        let _ = print("🔍 [\(type(of: self))] body re-evaluated at \(Date().timeIntervalSince1970)")
-        #endif
         NavigationView {
-            ZStack(alignment: .top) {
+            ZStack {
                 contentView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                floatingHeader
-                    .zIndex(1)
+
+                VStack(spacing: 0) {
+                    floatingHeader
+                    Spacer()
+                }
+                .zIndex(1)
+
+                VStack {
+                    Spacer()
+                    bannerAd
+                }
+                .zIndex(2)
             }
             .ignoresSafeArea()
             .sheet(isPresented: $viewModel.navigation.showingDatePicker) {
@@ -95,6 +97,10 @@ struct ScheduleView: View {
                 if appViewModel.scheduleData == nil {
                     Task { await appViewModel.loadSchedule() }
                 }
+
+                safeAreaTop = UIApplication.shared.connectedScenes
+                    .compactMap { $0 as? UIWindowScene }
+                    .first?.windows.first?.safeAreaInsets.top ?? Configuration.constants.defaultSafeAreaTop
             }
         }
     }
@@ -144,11 +150,13 @@ struct ScheduleView: View {
                         withAnimation(.spring(response: Configuration.constants.springResponse, dampingFraction: Configuration.constants.springDamping)) {
                             viewModel.navigation.nextWeekFromSlider()
                         }
+                        Task { await viewModel.handleWeekChange(coordinator: adCoordinator) }
                     },
                     onPreviousWeekFromSlider: {
                         withAnimation(.spring(response: Configuration.constants.springResponse, dampingFraction: Configuration.constants.springDamping)) {
                             viewModel.navigation.previousWeekFromSlider()
                         }
+                        Task { await viewModel.handleWeekChange(coordinator: adCoordinator) }
                     }
                 )
             }
@@ -183,14 +191,20 @@ struct ScheduleView: View {
             DayScheduleTabView(
                 events: scheduleData.groupSchedule,
                 daysInWeek: viewModel.navigation.daysInWeek,
-                selectedDate: viewModel.navigation.selectedDate,                 // read-only
-                onSelectDate: { viewModel.navigation.selectDate($0) },           // пишем только тут
+                selectedDate: viewModel.navigation.selectedDate,
+                onSelectDate: { viewModel.navigation.selectDate($0) },
                 showTeacherName: true,
                 topInset: topInset,
                 bottomInset: Configuration.constants.bottomInset,
                 onTeacherTap: { viewModel.showTeacherDetail(teacherId: $0) },
-                onNextWeekFromTabView: { viewModel.navigation.nextWeekFromTabView() },
-                onPreviousWeekFromTabView: { viewModel.navigation.previousWeekFromTabView() }
+                onNextWeekFromTabView: {
+                    viewModel.navigation.nextWeekFromTabView()
+                    Task { await viewModel.handleWeekChange(coordinator: adCoordinator) }
+                },
+                onPreviousWeekFromTabView: {
+                    viewModel.navigation.previousWeekFromTabView()
+                    Task { await viewModel.handleWeekChange(coordinator: adCoordinator) }
+                }
             )
         }
     }
@@ -209,18 +223,27 @@ struct ScheduleView: View {
         DatePickerSheet(
             selectedDate: $viewModel.navigation.selectedDate,
             onDateSelected: { viewModel.navigation.selectDate($0) },
-            eventTypeForDate: { appViewModel.eventType(on: $0) },
+            eventTypeForDate: { appViewModel.eventType(on: $0) }
         )
-//        .presentationDetents([.height(detentHeight)])
     }
     
+    private var bannerAd: some View {
+        VStack(spacing: 0) {
+            if adCoordinator?.isAdDisabled() == false {
+                AdaptiveBannerView()
+                    .background(AppColor.background.color(for: colorScheme))
+                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: -2)
+            }
+        }
+    }
+
     private var selectedTeacherBinding: Binding<Teacher?> {
         Binding(
             get: { viewModel.selectedTeacher },
             set: { _ in viewModel.selectedTeacherId = nil }
         )
     }
-    
+
     // MARK: - Preference Key
     
     struct HeaderHeightKey: PreferenceKey {
