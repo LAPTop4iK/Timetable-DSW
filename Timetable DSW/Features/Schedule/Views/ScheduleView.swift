@@ -38,10 +38,12 @@ struct ScheduleView: View {
     
     @StateObject private var viewModel = ScheduleViewModel()
     @EnvironmentObject var appViewModel: AppViewModel
+    @EnvironmentObject var appStateService: DefaultAppStateService
     @State private var headerHeight: CGFloat = 0
     @State private var headerHeightMax: CGFloat = 0
     @State private var safeAreaTop: CGFloat = Configuration.constants.defaultSafeAreaTop
     @State private var bannerHeight: CGFloat = 0
+    @State private var showPremiumStatus = false
 
     // MARK: - Environment
 
@@ -92,6 +94,12 @@ struct ScheduleView: View {
             .sheet(item: selectedTeacherBinding) { teacher in
                 TeacherDetailView(viewModel: TeacherDetailViewModel(teacher: teacher))
             }
+            .sheet(isPresented: $showPremiumStatus) {
+                PremiumStatusScreen(
+                    premiumAccess: PremiumAccess.from(appState: appStateService.state),
+                    onDismiss: { showPremiumStatus = false }
+                )
+            }
             .onAppear {
                 viewModel.appViewModel = appViewModel
                 if appViewModel.scheduleData == nil {
@@ -141,7 +149,9 @@ struct ScheduleView: View {
                     isRefreshing: appViewModel.isRefreshing,
                     isOffline: appViewModel.isOffline,
                     lastUpdated: appViewModel.lastUpdated,
-                    onCalendarTap: { viewModel.navigation.showingDatePicker = true }
+                    onCalendarTap: { viewModel.navigation.showingDatePicker = true },
+                    onPremiumTap: { showPremiumStatus = true },
+                    onTodayTap: { viewModel.navigation.selectDate(Date()) }
                 )
                 
                 WeekSlider(
