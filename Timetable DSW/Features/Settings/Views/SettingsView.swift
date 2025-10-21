@@ -25,7 +25,6 @@ struct SettingsView: View {
 
     @StateObject private var viewModel = SettingsViewModel()
     @EnvironmentObject var appViewModel: AppViewModel
-//    @State private var showingDebugMenu = false
     @Environment(\.featureFlagService) private var featureFlagService
     @Environment(\.adCoordinator) private var coordinator
     @EnvironmentObject var appStateService: DefaultAppStateService
@@ -151,7 +150,7 @@ struct SettingsView: View {
                         .font(AppTypography.title3.font)
                         .themedForeground(.header, colorScheme: colorScheme)
 
-                    Text(LocalizedString.settingsContactTitle.localized)
+                    Text(LocalizedString.settingsDeveloperAction.localized)
                         .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
                     Spacer()
@@ -167,9 +166,9 @@ struct SettingsView: View {
             .buttonStyle(.plain)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
         } header: {
-            Text(LocalizedString.settingsSupportSectionTitle.localized)
+            Text(LocalizedString.settingsDeveloperSectionTitle.localized)
         } footer: {
-            Text(LocalizedString.settingsSupportFooter.localized)
+            Text(LocalizedString.settingsDeveloperFooter.localized)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
         }
         .preloadAds(.rewardedInterstitial, coordinator: coordinator)

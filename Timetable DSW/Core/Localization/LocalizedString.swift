@@ -104,6 +104,11 @@ enum LocalizedString {
     case settingsSupportSectionTitle
     case settingsSupportFooter
 
+    // MARK: - NEW: Developer Support
+    case settingsDeveloperSectionTitle
+    case settingsDeveloperAction
+    case settingsDeveloperFooter
+
     // MARK: - NEW: Contact actions
     case contactActionReportProblem
     case contactActionRequestFeature
@@ -237,6 +242,11 @@ enum LocalizedString {
         case .settingsContactTitle:         return String(localized: "settings.contact.title")
         case .settingsSupportSectionTitle:  return String(localized: "settings.support.sectionTitle")
         case .settingsSupportFooter:        return String(localized: "settings.support.footer")
+
+            // MARK: NEW: Developer Support
+        case .settingsDeveloperSectionTitle: return String(localized: "settings.developer.sectionTitle")
+        case .settingsDeveloperAction:       return String(localized: "settings.developer.action")
+        case .settingsDeveloperFooter:       return String(localized: "settings.developer.footer")
 
             // MARK: NEW: Contact actions
         case .contactActionReportProblem:   return String(localized: "contact.action.reportProblem")
