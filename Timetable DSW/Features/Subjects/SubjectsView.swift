@@ -42,6 +42,9 @@ struct SubjectsView: View {
                         viewModel.rebuild(from: data)
                     }
                 }
+                #if DEBUG
+                .measurePerformance(name: "SubjectsView", category: .viewAppear)
+                #endif
         }
         .sheet(item: $selectedSubject) { subject in
             SubjectDetailView(subject: subject)

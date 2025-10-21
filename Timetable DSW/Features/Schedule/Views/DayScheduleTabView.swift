@@ -100,6 +100,9 @@ struct DayScheduleTabView: View {
             tabView
             arrowOverlays
         }
+        #if DEBUG
+        .measurePerformance(name: "DayScheduleTabView", category: .viewAppear)
+        #endif
     }
 
     private var tabView: some View {
@@ -212,11 +215,34 @@ struct DayScheduleTabView: View {
         Binding(
             get: { selectedDayIndex },
             set: { newIndex in
-                guard !applyingSelection else { return }
-                guard daysInWeek.indices.contains(newIndex) else { return }
+                #if DEBUG
+                let startTime = CFAbsoluteTimeGetCurrent()
+                #endif
+
+                guard !applyingSelection else {
+                    #if DEBUG
+                    print("[TabView] ⚠️ Selection change blocked - already applying")
+                    #endif
+                    return
+                }
+                guard daysInWeek.indices.contains(newIndex) else {
+                    #if DEBUG
+                    print("[TabView] ⚠️ Index out of range: \(newIndex)")
+                    #endif
+                    return
+                }
 
                 let newDate = daysInWeek[newIndex]
-                guard !calendar.isDate(selectedDate, inSameDayAs: newDate) else { return }
+                guard !calendar.isDate(selectedDate, inSameDayAs: newDate) else {
+                    #if DEBUG
+                    print("[TabView] ℹ️ Same date selected, skipping")
+                    #endif
+                    return
+                }
+
+                #if DEBUG
+                print("[TabView] 📍 Tab change: \(selectedDayIndex) → \(newIndex)")
+                #endif
 
                 applyingSelection = true
                 DispatchQueue.main.async { applyingSelection = false }
@@ -225,6 +251,11 @@ struct DayScheduleTabView: View {
                 withTransaction(txn) {
                     onSelectDate(newDate)
                 }
+
+                #if DEBUG
+                let elapsed = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
+                print("[TabView] ⏱ Tab selection took: \(String(format: "%.2f", elapsed))ms")
+                #endif
             }
         )
     }
@@ -237,16 +268,40 @@ struct DayScheduleTabView: View {
     }
 
     private func handleDragChanged(translation: CGSize, index: Int) {
-        guard isHorizontalSwipe(translation) else { hideArrowsIfNeeded(); return }
+        #if DEBUG
+        let startTime = CFAbsoluteTimeGetCurrent()
+        #endif
+
+        guard isHorizontalSwipe(translation) else {
+            #if DEBUG
+            print("[TabView] 🔄 Vertical swipe detected, hiding arrows")
+            #endif
+            hideArrowsIfNeeded()
+            return
+        }
+
         dragTranslation = translation.width
+
+        #if DEBUG
+        print("[TabView] 👆 Drag changed - Index: \(index), Translation: \(String(format: "%.1f", translation.width))px")
+        #endif
 
         let isFirst = index == 0
         let isLast  = index == daysInWeek.count - 1
 
         if isLast && dragTranslation < 0 {
             let p = min(abs(dragTranslation) / Configuration.constants.weekChangeThreshold, 1.0)
+            #if DEBUG
+            print("[TabView] ➡️ Next week progress: \(String(format: "%.2f", p)) (\(String(format: "%.1f", abs(dragTranslation)))px / \(Configuration.constants.weekChangeThreshold)px)")
+            #endif
             updateArrowProgress(&nextWeekArrowProgress, to: p)
-            if p >= 0.5 && !hasTriggeredLightHapticNext { triggerLightHaptic(); hasTriggeredLightHapticNext = true }
+            if p >= 0.5 && !hasTriggeredLightHapticNext {
+                #if DEBUG
+                print("[TabView] 📳 Next week haptic triggered")
+                #endif
+                triggerLightHaptic()
+                hasTriggeredLightHapticNext = true
+            }
         } else {
             updateArrowProgress(&nextWeekArrowProgress, to: 0)
             hasTriggeredLightHapticNext = false
@@ -254,31 +309,84 @@ struct DayScheduleTabView: View {
 
         if isFirst && dragTranslation > 0 {
             let p = min(dragTranslation / Configuration.constants.weekChangeThreshold, 1.0)
+            #if DEBUG
+            print("[TabView] ⬅️ Prev week progress: \(String(format: "%.2f", p)) (\(String(format: "%.1f", dragTranslation))px / \(Configuration.constants.weekChangeThreshold)px)")
+            #endif
             updateArrowProgress(&prevWeekArrowProgress, to: p)
-            if p >= 0.5 && !hasTriggeredLightHapticPrev { triggerLightHaptic(); hasTriggeredLightHapticPrev = true }
+            if p >= 0.5 && !hasTriggeredLightHapticPrev {
+                #if DEBUG
+                print("[TabView] 📳 Prev week haptic triggered")
+                #endif
+                triggerLightHaptic()
+                hasTriggeredLightHapticPrev = true
+            }
         } else {
             updateArrowProgress(&prevWeekArrowProgress, to: 0)
             hasTriggeredLightHapticPrev = false
         }
+
+        #if DEBUG
+        let elapsed = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
+        print("[TabView] ⏱ handleDragChanged took: \(String(format: "%.2f", elapsed))ms")
+        #endif
     }
 
     private func handleDragEnded(translation: CGSize, index: Int) {
-        guard isHorizontalSwipe(translation) else { resetDragState(); return }
+        #if DEBUG
+        let startTime = CFAbsoluteTimeGetCurrent()
+        print("[TabView] 🏁 Drag ended - Index: \(index), Translation: \(String(format: "%.1f", translation.width))px, Threshold: \(Configuration.constants.weekChangeThreshold)px")
+        #endif
+
+        guard isHorizontalSwipe(translation) else {
+            #if DEBUG
+            print("[TabView] ℹ️ Not horizontal swipe, resetting")
+            #endif
+            resetDragState()
+            return
+        }
+
         let isFirst = index == 0
         let isLast  = index == daysInWeek.count - 1
 
         if isLast && translation.width < -Configuration.constants.weekChangeThreshold {
-            triggerHaptic(); onNextWeekFromTabView()
+            #if DEBUG
+            print("[TabView] ✅ Week change triggered: NEXT")
+            #endif
+            triggerHaptic()
+            onNextWeekFromTabView()
         } else if isFirst && translation.width > Configuration.constants.weekChangeThreshold {
-            triggerHaptic(); onPreviousWeekFromTabView()
+            #if DEBUG
+            print("[TabView] ✅ Week change triggered: PREVIOUS")
+            #endif
+            triggerHaptic()
+            onPreviousWeekFromTabView()
+        } else {
+            #if DEBUG
+            print("[TabView] ℹ️ No week change - threshold not met")
+            #endif
         }
+
         resetDragState()
+
+        #if DEBUG
+        let elapsed = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
+        print("[TabView] ⏱ handleDragEnded took: \(String(format: "%.2f", elapsed))ms")
+        #endif
     }
 
     private let progressEpsilon: CGFloat = 0.02
     private func updateArrowProgress(_ p: inout CGFloat, to v: CGFloat) {
         let clamped = min(max(v, 0), 1)
-        guard abs(p - clamped) > progressEpsilon else { return }
+        guard abs(p - clamped) > progressEpsilon else {
+            #if DEBUG
+            // Suppressed - too noisy
+            // print("[TabView] Arrow progress unchanged: \(String(format: "%.3f", p))")
+            #endif
+            return
+        }
+        #if DEBUG
+        print("[TabView] 🎯 Arrow progress updated: \(String(format: "%.3f", p)) → \(String(format: "%.3f", clamped))")
+        #endif
         p = clamped
     }
     private func hideArrowsIfNeeded() {
