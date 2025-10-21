@@ -102,6 +102,9 @@ struct ScheduleView: View {
                     .compactMap { $0 as? UIWindowScene }
                     .first?.windows.first?.safeAreaInsets.top ?? Configuration.constants.defaultSafeAreaTop
             }
+            #if DEBUG
+            .measurePerformance(name: "ScheduleView", category: .viewAppear)
+            #endif
         }
     }
     

@@ -53,6 +53,9 @@ struct SettingsView: View {
                 AppColor.clear.color(for: colorScheme)
                     .frame(height: bottomInsetService?.bottomInset ?? 78)
             }
+            #if DEBUG
+            .measurePerformance(name: "SettingsView", category: .viewAppear)
+            #endif
         }
         .sheet(isPresented: $viewModel.showingGroupSelection) { groupSelectionSheet }
         .sheet(isPresented: $showingMailComposer) {
@@ -220,16 +223,26 @@ struct SettingsView: View {
     private var debugSection: some View {
         if featureFlagService.isEnabled(.showDebugMenu) == true {
             Section {
-                NavigationLink("🐛 Debug Menu") {
-                        DebugMenuScreen(
-                            featureFlagService: featureFlagService,
-                            appStateService: appStateService,
-                        )
-                    // новый не-модальный контейнер
+                NavigationLink("🔧 Feature Flags") {
+                    DebugFeatureFlagsView()
                 }
+
+                NavigationLink("⚡️ Performance Monitor") {
+                    PerformanceMonitorView()
+                }
+
+                NavigationLink("🐛 Debug Menu") {
+                    DebugMenuScreen(
+                        featureFlagService: featureFlagService,
+                        appStateService: appStateService
+                    )
+                }
+
                 NavigationLink("🧪 Ads Debug") {
                     AdsDebugScreen()
                 }
+            } header: {
+                Text("Debug Tools")
             }
         }
     }
