@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ScheduleHeaderView: View {
     // MARK: - Configuration
-    
+
     struct Configuration: ComponentConfiguration {
         struct Constants {
             let spacing: AppSpacing = .medium
@@ -20,34 +20,39 @@ struct ScheduleHeaderView: View {
             let verticalPadding: AppSpacing = .small
             let progressScale: CGFloat = 0.7
         }
-        
+
         static let constants = Constants()
     }
-    
+
     // MARK: - Properties
-    
+
     let selectedDate: Date
     let isRefreshing: Bool
     let isOffline: Bool
     let lastUpdated: Date?
     let onCalendarTap: () -> Void
-    
+    let onPremiumTap: (() -> Void)?
+    let onTodayTap: (() -> Void)?
+
     // MARK: - Environment
-    
+
     @Environment(\.colorScheme) var colorScheme
-    
+    @EnvironmentObject var appStateService: DefaultAppStateService
+
     // MARK: - Dependencies
-    
+
     private let dateService: DateService
-    
+
     // MARK: - Initialization
-    
+
     init(
         selectedDate: Date,
         isRefreshing: Bool,
         isOffline: Bool,
         lastUpdated: Date?,
         onCalendarTap: @escaping () -> Void,
+        onPremiumTap: (() -> Void)? = nil,
+        onTodayTap: (() -> Void)? = nil,
         dateService: DateService = DefaultDateService()
     ) {
         self.selectedDate = selectedDate
@@ -55,6 +60,8 @@ struct ScheduleHeaderView: View {
         self.isOffline = isOffline
         self.lastUpdated = lastUpdated
         self.onCalendarTap = onCalendarTap
+        self.onPremiumTap = onPremiumTap
+        self.onTodayTap = onTodayTap
         self.dateService = dateService
     }
     
@@ -98,13 +105,30 @@ struct ScheduleHeaderView: View {
                 ProgressView()
                     .scaleEffect(Configuration.constants.progressScale)
             }
-            
+
             if isOffline {
                 AppIcon.wifiSlash.image()
                     .font(AppTypography.caption.font)
                     .foregroundAppColor(.warning, colorScheme: colorScheme)
             }
-            
+
+            // Return to today button (only show if not on today)
+            if let onTodayTap = onTodayTap, !Calendar.current.isDateInToday(selectedDate) {
+                Button(action: onTodayTap) {
+                    AppIcon.arrowClockwise.image()
+                        .font(AppTypography.title3.font)
+                        .themedForeground(.header, colorScheme: colorScheme)
+                }
+            }
+
+            // Premium status button
+            if let onPremiumTap = onPremiumTap {
+                PremiumStatusButton(
+                    premiumAccess: PremiumAccess.from(appState: appStateService.state),
+                    onTap: onPremiumTap
+                )
+            }
+
             Button(action: onCalendarTap) {
                 AppIcon.calendar.image()
                     .font(AppTypography.title3.font)

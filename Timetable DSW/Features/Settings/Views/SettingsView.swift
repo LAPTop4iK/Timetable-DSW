@@ -34,6 +34,9 @@ struct SettingsView: View {
     @State private var showingMailUnavailableAlert = false
     @State private var pendingMailSubject = ""
     @State private var pendingMailBody = ""
+    @State private var showConfetti = false
+    @State private var timeRemaining = ""
+    @State private var timer: Timer?
 
     @Environment(\.colorScheme) var colorScheme
 
@@ -91,6 +94,14 @@ struct SettingsView: View {
         } message: {
             Text(LocalizedString.settingsClearCacheMessage.localized)
         }
+        .confetti(isShowing: $showConfetti, configuration: .rainbow)
+        .onAppear {
+            updateTimeRemaining()
+            startTimer()
+        }
+        .onDisappear {
+            stopTimer()
+        }
     }
 
     private var groupSection: some View {
@@ -137,12 +148,23 @@ struct SettingsView: View {
     }
 
     private var awardSection: some View {
+        let premiumAccess = PremiumAccess.from(appState: appStateService.state)
+        let isPremium = premiumAccess.isPremium
+
         Section {
             Button {
                 Task {
                     do {
                         try await coordinator?.showAd(type: .rewardedInterstitial)
                         appStateService.grantTemporaryPremium(duration: 3600)
+
+                        // Show confetti after successful ad view
+                        withAnimation {
+                            showConfetti = true
+                        }
+
+                        // Update timer
+                        updateTimeRemaining()
                     } catch {
                         print("Failed to show ad: \(error)")
                     }
@@ -153,20 +175,37 @@ struct SettingsView: View {
                         .font(AppTypography.title3.font)
                         .themedForeground(.header, colorScheme: colorScheme)
 
-                    Text(LocalizedString.settingsDeveloperAction.localized)
-                        .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(LocalizedString.settingsDeveloperAction.localized)
+                            .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                        // Show countdown if premium is active
+                        if case .temporaryPremium(let endDate) = premiumAccess.status {
+                            Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
+                                .font(AppTypography.caption.font)
+                                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                        } else if case .premium = premiumAccess.status {
+                            Text("Premium Active")
+                                .font(AppTypography.caption.font)
+                                .foregroundAppColor(.success, colorScheme: colorScheme)
+                        }
+                    }
 
                     Spacer()
 
-                    AppIcon.chevronRight.image()
-                        .font(AppTypography.caption.font)
-                        .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    if !isPremium {
+                        AppIcon.chevronRight.image()
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
                 .padding(.vertical, 6)
             }
             .buttonStyle(.plain)
+            .disabled(isPremium)
+            .opacity(isPremium ? 0.6 : 1.0)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
         } header: {
             Text(LocalizedString.settingsDeveloperSectionTitle.localized)
@@ -305,5 +344,44 @@ struct SettingsView: View {
         pendingMailSubject = contactComposer.subject(for: kind)
         pendingMailBody = contactComposer.body(for: kind)
         if MailComposerView.canSendMail { showingMailComposer = true } else { showingMailUnavailableAlert = true }
+    }
+
+    // MARK: - Premium Timer
+
+    private func updateTimeRemaining() {
+        let premiumAccess = PremiumAccess.from(appState: appStateService.state)
+
+        guard case .temporaryPremium(let endDate) = premiumAccess.status else {
+            timeRemaining = ""
+            return
+        }
+
+        let now = Date()
+        guard endDate > now else {
+            timeRemaining = "Expired"
+            return
+        }
+
+        let interval = endDate.timeIntervalSince(now)
+        let hours = Int(interval) / 3600
+        let minutes = (Int(interval) % 3600) / 60
+        let seconds = Int(interval) % 60
+
+        if hours > 0 {
+            timeRemaining = String(format: "%02d:%02d:%02d remaining", hours, minutes, seconds)
+        } else {
+            timeRemaining = String(format: "%02d:%02d remaining", minutes, seconds)
+        }
+    }
+
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            updateTimeRemaining()
+        }
+    }
+
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
     }
 }
