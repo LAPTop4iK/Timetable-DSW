@@ -40,16 +40,16 @@ struct DebugFeatureFlagsView: View {
             .searchable(text: $searchText, prompt: "Search flags...")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(LocalizedString.debugDone.localized) { dismiss() }
                 }
             }
             .alert("Reset All Flags?", isPresented: $showingResetAlert) {
-                Button("Cancel", role: .cancel) {}
-                Button("Reset", role: .destructive) {
+                Button(LocalizedString.debugCancel.localized, role: .cancel) {}
+                Button(LocalizedString.generalDone.localized, role: .destructive) {
                     featureFlagService.resetAll()
                 }
             } message: {
-                Text("This will reset all local overrides to default values.")
+                Text(LocalizedString.debugResetConfirm.localized)
             }
         }
     }
@@ -60,28 +60,28 @@ struct DebugFeatureFlagsView: View {
         Section {
             // Current Premium Status
             HStack {
-                Text("Premium Status")
+                Text(LocalizedString.debugPremiumStatus.localized)
                 Spacer()
                 Text(premiumStatusText)
                     .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
             }
 
             // Premium Controls
-            Button("Grant Permanent Premium") {
+            Button(LocalizedString.debugGrantPermanentPremium.localized) {
                 appStateService.grantPremium()
             }
 
-            Button("Grant 1 Hour Premium") {
+            Button(LocalizedString.debugGrant1HourPremium.localized) {
                 appStateService.grantTemporaryPremium()
             }
 
-            Button("Revoke Premium") {
+            Button(LocalizedString.debugRevokePremium.localized) {
                 appStateService.revokePremium()
             }
             .foregroundColor(.red)
 
         } header: {
-            Text("Premium Controls")
+            Text(LocalizedString.debugPremiumControls.localized)
         }
     }
 
@@ -103,24 +103,24 @@ struct DebugFeatureFlagsView: View {
         } header: {
             Text("Feature Flags (\(filteredFlags.count))")
         } footer: {
-            Text("Flags with ⚙️ have local overrides. Tap to toggle, swipe to reset.")
+            Text(LocalizedString.debugFlagsFooter.localized)
         }
     }
 
     private var actionsSection: some View {
         Section {
-            Button("Reset All Flags") {
+            Button(LocalizedString.debugResetAllFlags.localized) {
                 showingResetAlert = true
             }
             .foregroundColor(.red)
 
-            Button("Sync from Remote") {
+            Button(LocalizedString.debugSyncFromRemote.localized) {
                 Task {
                     try? await featureFlagService.syncFromRemote()
                 }
             }
         } header: {
-            Text("Actions")
+            Text(LocalizedString.debugActions.localized)
         }
     }
 
@@ -211,14 +211,14 @@ private struct FeatureFlagRow: View {
 
             HStack {
                 Button(action: { showingDetails.toggle() }) {
-                    Text(showingDetails ? "Hide Details" : "Show Details")
+                    Text(showingDetails ? LocalizedString.debugHideDetails.localized : LocalizedString.debugShowDetails.localized)
                         .font(.caption)
                 }
 
                 if hasOverride {
                     Spacer()
                     Button(action: onReset) {
-                        Text("Reset to Default")
+                        Text(LocalizedString.debugResetToDefault.localized)
                             .font(.caption)
                     }
                     .foregroundColor(.orange)

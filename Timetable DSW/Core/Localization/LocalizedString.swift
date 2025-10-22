@@ -138,6 +138,45 @@ enum LocalizedString {
     case contactEmailBodyAdditionalInfo
     case contactEmailBodyDetailsTitle
 
+    // MARK: - Premium
+    case premiumFeatureTitle
+    case premiumTapToUnlock
+    case premiumActive
+    case premiumThankYou
+    case premiumEnjoyFeatures
+    case premiumTimeRemaining
+    case premiumWatchOrPurchase
+    case premiumUnlockTitle
+    case premiumGetAccess
+    case premiumWatchAdButton
+    case premiumPurchaseButton
+    case premiumUnlocked
+    case premiumMaybeLater
+    case premiumCalculating
+    case premiumRemaining
+
+    // MARK: - Settings Premium
+    case settingsPremiumActive
+
+    // MARK: - Debug
+    case debugTools
+    case debugDone
+    case debugResetAllFlags
+    case debugResetConfirm
+    case debugCancel
+    case debugPremiumStatus
+    case debugPremiumControls
+    case debugGrantPermanentPremium
+    case debugGrant1HourPremium
+    case debugRevokePremium
+    case debugFeatureFlags
+    case debugFlagsFooter
+    case debugActions
+    case debugResetToDefault
+    case debugSyncFromRemote
+    case debugShowDetails
+    case debugHideDetails
+
     var localized: String {
         switch self {
         // General
@@ -275,6 +314,45 @@ enum LocalizedString {
 
         case .contactEmailBodyAdditionalInfo: return String(localized: "contact.email.body.additionalInfo")
         case .contactEmailBodyDetailsTitle:   return String(localized: "contact.email.body.detailsTitle")
+
+            // MARK: Premium
+        case .premiumFeatureTitle:      return String(localized: "premium.feature.title")
+        case .premiumTapToUnlock:       return String(localized: "premium.tapToUnlock")
+        case .premiumActive:            return String(localized: "premium.active")
+        case .premiumThankYou:          return String(localized: "premium.thankYou")
+        case .premiumEnjoyFeatures:     return String(localized: "premium.enjoyFeatures")
+        case .premiumTimeRemaining:     return String(localized: "premium.timeRemaining")
+        case .premiumWatchOrPurchase:   return String(localized: "premium.watchOrPurchase")
+        case .premiumUnlockTitle:       return String(localized: "premium.unlock.title")
+        case .premiumGetAccess:         return String(localized: "premium.getAccess")
+        case .premiumWatchAdButton:     return String(localized: "premium.watchAd.button")
+        case .premiumPurchaseButton:    return String(localized: "premium.purchase.button")
+        case .premiumUnlocked:          return String(localized: "premium.unlocked")
+        case .premiumMaybeLater:        return String(localized: "premium.maybeLater")
+        case .premiumCalculating:       return String(localized: "premium.calculating")
+        case .premiumRemaining:         return String(localized: "premium.remaining")
+
+            // MARK: Settings Premium
+        case .settingsPremiumActive:    return String(localized: "settings.premium.active")
+
+            // MARK: Debug
+        case .debugTools:                       return String(localized: "debug.tools")
+        case .debugDone:                        return String(localized: "debug.done")
+        case .debugResetAllFlags:               return String(localized: "debug.resetAllFlags")
+        case .debugResetConfirm:                return String(localized: "debug.resetConfirm")
+        case .debugCancel:                      return String(localized: "debug.cancel")
+        case .debugPremiumStatus:               return String(localized: "debug.premiumStatus")
+        case .debugPremiumControls:             return String(localized: "debug.premiumControls")
+        case .debugGrantPermanentPremium:       return String(localized: "debug.grantPermanentPremium")
+        case .debugGrant1HourPremium:           return String(localized: "debug.grant1HourPremium")
+        case .debugRevokePremium:               return String(localized: "debug.revokePremium")
+        case .debugFeatureFlags:                return String(localized: "debug.featureFlags")
+        case .debugFlagsFooter:                 return String(localized: "debug.flagsFooter")
+        case .debugActions:                     return String(localized: "debug.actions")
+        case .debugResetToDefault:              return String(localized: "debug.resetToDefault")
+        case .debugSyncFromRemote:              return String(localized: "debug.syncFromRemote")
+        case .debugShowDetails:                 return String(localized: "debug.showDetails")
+        case .debugHideDetails:                 return String(localized: "debug.hideDetails")
         }
     }
 }

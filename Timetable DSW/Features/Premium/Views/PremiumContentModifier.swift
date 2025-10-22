@@ -73,12 +73,12 @@ struct PremiumContentModifier: ViewModifier {
                         )
                 }
 
-                Text("Premium Feature")
+                Text(LocalizedString.premiumFeatureTitle.localized)
                     .font(AppTypography.title3.font)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
 
-                Text("Tap to unlock")
+                Text(LocalizedString.premiumTapToUnlock.localized)
                     .font(AppTypography.body.font)
                     .foregroundColor(.white.opacity(0.8))
             }

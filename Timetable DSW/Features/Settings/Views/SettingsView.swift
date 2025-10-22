@@ -187,7 +187,7 @@ struct SettingsView: View {
                                 .font(AppTypography.caption.font)
                                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                         } else if case .premium = premiumAccess.status {
-                            Text("Premium Active")
+                            Text(LocalizedString.settingsPremiumActive.localized)
                                 .font(AppTypography.caption.font)
                                 .foregroundAppColor(.success, colorScheme: colorScheme)
                         }
@@ -283,7 +283,7 @@ struct SettingsView: View {
                     AdsDebugScreen()
                 }
             } header: {
-                Text("Debug Tools")
+                Text(LocalizedString.debugTools.localized)
             }
         }
     }
