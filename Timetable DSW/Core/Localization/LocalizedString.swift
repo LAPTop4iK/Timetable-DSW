@@ -177,6 +177,101 @@ enum LocalizedString {
     case debugShowDetails
     case debugHideDetails
 
+    // MARK: - Debug Menu (Extended)
+    case debugMenuTitle
+    case debugActionResult
+    case debugOK
+    case debugConfirm
+    case debugFree
+    case debugPremiumLabel
+    case debugTrial
+    case debugStatus
+    case debugExpires
+    case debugGrantPremium
+    case debugGrantTrial1h
+    case debugRevokePremiumLabel
+    case debugPremiumManagement
+    case debugFeatureFlagsTitle
+    case debugLocalOverrides
+    case debugLastSynced
+    case debugActionsTitle
+    case debugSyncFromServer
+    case debugClearAllData
+    case debugStatistics
+    case debugAdsWatched
+    case debugLastAd
+    case debugPremiumSince
+    case debugAbout
+    case debugEnvironment
+    case debugDebug
+    case debugRelease
+    case debugBuild
+    case debugOnlyInDebugBuilds
+    case debugResetToDefaultLabel
+    case debugResetAllFlagsLabel
+    case debugRevokePremiumQuestion
+    case debugResetAllFlagsQuestion
+    case debugClearAllDataQuestion
+    case debugConfirmActionQuestion
+    case debugWillRemovePremium
+    case debugWillResetAllFlags
+    case debugWillResetEverything
+    case debugAreYouSure
+    case debugPremiumGranted
+    case debugTemporaryPremiumGranted
+    case debugPremiumRevoked
+    case debugAllFlagsReset
+    case debugAllDataCleared
+    case debugFlagResetTemplate
+    case debugSyncFailedTemplate
+
+    // MARK: - Performance Monitor
+    case perfMonitorTitle
+    case perfMonitorClear
+    case perfMonitorExport
+    case perfMonitorExportedEvents
+    case perfMonitorMetrics
+    case perfMonitorTotalEvents
+    case perfMonitorAverageDuration
+    case perfMonitorSlowestEvent
+    case perfMonitorFastestEvent
+    case perfMonitorFilterByCategory
+    case perfMonitorCategory
+    case perfMonitorAll
+    case perfMonitorEvents
+    case perfMonitorNoEventsRecorded
+
+    // MARK: - Ads Debug
+    case adsDebugTitle
+    case adsDebugAdaptiveBanner
+    case adsDebugBannerAd
+    case adsDebugBannerDescription
+    case adsDebugNativeAd
+    case adsDebugNativeDescription
+    case adsDebugLoad
+    case adsDebugShow
+    case adsDebugReadyToShow
+    case adsDebugInterstitialAd
+    case adsDebugInterstitialDescription
+    case adsDebugRewardedAd
+    case adsDebugRewardedDescription
+    case adsDebugRewardedInterstitial
+    case adsDebugRewardedInterstitialDescription
+    case adsDebugPreload
+    case adsDebugAppOpenAd
+    case adsDebugAppOpenDescription
+    case adsDebugDeveloperTools
+    case adsDebugLaunchAdInspector
+    case adsDebugAdInspectorDescription
+    case adsDebugEventLog
+    case adsDebugNoEventsYet
+    case adsDebugClearLog
+
+    // MARK: - Ad Loading
+    case adLoadingText
+    case adLoadingFailed
+    case adLoadingRetry
+
     var localized: String {
         switch self {
         // General
@@ -353,6 +448,101 @@ enum LocalizedString {
         case .debugSyncFromRemote:              return String(localized: "debug.syncFromRemote")
         case .debugShowDetails:                 return String(localized: "debug.showDetails")
         case .debugHideDetails:                 return String(localized: "debug.hideDetails")
+
+            // MARK: Debug Menu (Extended)
+        case .debugMenuTitle:                   return String(localized: "debug.menu.title")
+        case .debugActionResult:                return String(localized: "debug.actionResult")
+        case .debugOK:                          return String(localized: "debug.ok")
+        case .debugConfirm:                     return String(localized: "debug.confirm")
+        case .debugFree:                        return String(localized: "debug.free")
+        case .debugPremiumLabel:                return String(localized: "debug.premiumLabel")
+        case .debugTrial:                       return String(localized: "debug.trial")
+        case .debugStatus:                      return String(localized: "debug.status")
+        case .debugExpires:                     return String(localized: "debug.expires")
+        case .debugGrantPremium:                return String(localized: "debug.grantPremium")
+        case .debugGrantTrial1h:                return String(localized: "debug.grantTrial1h")
+        case .debugRevokePremiumLabel:          return String(localized: "debug.revokePremiumLabel")
+        case .debugPremiumManagement:           return String(localized: "debug.premiumManagement")
+        case .debugFeatureFlagsTitle:           return String(localized: "debug.featureFlagsTitle")
+        case .debugLocalOverrides:              return String(localized: "debug.localOverrides")
+        case .debugLastSynced:                  return String(localized: "debug.lastSynced")
+        case .debugActionsTitle:                return String(localized: "debug.actionsTitle")
+        case .debugSyncFromServer:              return String(localized: "debug.syncFromServer")
+        case .debugClearAllData:                return String(localized: "debug.clearAllData")
+        case .debugStatistics:                  return String(localized: "debug.statistics")
+        case .debugAdsWatched:                  return String(localized: "debug.adsWatched")
+        case .debugLastAd:                      return String(localized: "debug.lastAd")
+        case .debugPremiumSince:                return String(localized: "debug.premiumSince")
+        case .debugAbout:                       return String(localized: "debug.about")
+        case .debugEnvironment:                 return String(localized: "debug.environment")
+        case .debugDebug:                       return String(localized: "debug.debug")
+        case .debugRelease:                     return String(localized: "debug.release")
+        case .debugBuild:                       return String(localized: "debug.build")
+        case .debugOnlyInDebugBuilds:           return String(localized: "debug.onlyInDebugBuilds")
+        case .debugResetToDefaultLabel:         return String(localized: "debug.resetToDefaultLabel")
+        case .debugResetAllFlagsLabel:          return String(localized: "debug.resetAllFlagsLabel")
+        case .debugRevokePremiumQuestion:       return String(localized: "debug.revokePremiumQuestion")
+        case .debugResetAllFlagsQuestion:       return String(localized: "debug.resetAllFlagsQuestion")
+        case .debugClearAllDataQuestion:        return String(localized: "debug.clearAllDataQuestion")
+        case .debugConfirmActionQuestion:       return String(localized: "debug.confirmActionQuestion")
+        case .debugWillRemovePremium:           return String(localized: "debug.willRemovePremium")
+        case .debugWillResetAllFlags:           return String(localized: "debug.willResetAllFlags")
+        case .debugWillResetEverything:         return String(localized: "debug.willResetEverything")
+        case .debugAreYouSure:                  return String(localized: "debug.areYouSure")
+        case .debugPremiumGranted:              return String(localized: "debug.premiumGranted")
+        case .debugTemporaryPremiumGranted:     return String(localized: "debug.temporaryPremiumGranted")
+        case .debugPremiumRevoked:              return String(localized: "debug.premiumRevoked")
+        case .debugAllFlagsReset:               return String(localized: "debug.allFlagsReset")
+        case .debugAllDataCleared:              return String(localized: "debug.allDataCleared")
+        case .debugFlagResetTemplate:           return String(localized: "debug.flagResetTemplate")
+        case .debugSyncFailedTemplate:          return String(localized: "debug.syncFailedTemplate")
+
+            // MARK: Performance Monitor
+        case .perfMonitorTitle:                 return String(localized: "perfMonitor.title")
+        case .perfMonitorClear:                 return String(localized: "perfMonitor.clear")
+        case .perfMonitorExport:                return String(localized: "perfMonitor.export")
+        case .perfMonitorExportedEvents:        return String(localized: "perfMonitor.exportedEvents")
+        case .perfMonitorMetrics:               return String(localized: "perfMonitor.metrics")
+        case .perfMonitorTotalEvents:           return String(localized: "perfMonitor.totalEvents")
+        case .perfMonitorAverageDuration:       return String(localized: "perfMonitor.averageDuration")
+        case .perfMonitorSlowestEvent:          return String(localized: "perfMonitor.slowestEvent")
+        case .perfMonitorFastestEvent:          return String(localized: "perfMonitor.fastestEvent")
+        case .perfMonitorFilterByCategory:      return String(localized: "perfMonitor.filterByCategory")
+        case .perfMonitorCategory:              return String(localized: "perfMonitor.category")
+        case .perfMonitorAll:                   return String(localized: "perfMonitor.all")
+        case .perfMonitorEvents:                return String(localized: "perfMonitor.events")
+        case .perfMonitorNoEventsRecorded:      return String(localized: "perfMonitor.noEventsRecorded")
+
+            // MARK: Ads Debug
+        case .adsDebugTitle:                    return String(localized: "adsDebug.title")
+        case .adsDebugAdaptiveBanner:           return String(localized: "adsDebug.adaptiveBanner")
+        case .adsDebugBannerAd:                 return String(localized: "adsDebug.bannerAd")
+        case .adsDebugBannerDescription:        return String(localized: "adsDebug.bannerDescription")
+        case .adsDebugNativeAd:                 return String(localized: "adsDebug.nativeAd")
+        case .adsDebugNativeDescription:        return String(localized: "adsDebug.nativeDescription")
+        case .adsDebugLoad:                     return String(localized: "adsDebug.load")
+        case .adsDebugShow:                     return String(localized: "adsDebug.show")
+        case .adsDebugReadyToShow:              return String(localized: "adsDebug.readyToShow")
+        case .adsDebugInterstitialAd:           return String(localized: "adsDebug.interstitialAd")
+        case .adsDebugInterstitialDescription:  return String(localized: "adsDebug.interstitialDescription")
+        case .adsDebugRewardedAd:               return String(localized: "adsDebug.rewardedAd")
+        case .adsDebugRewardedDescription:      return String(localized: "adsDebug.rewardedDescription")
+        case .adsDebugRewardedInterstitial:     return String(localized: "adsDebug.rewardedInterstitial")
+        case .adsDebugRewardedInterstitialDescription: return String(localized: "adsDebug.rewardedInterstitialDescription")
+        case .adsDebugPreload:                  return String(localized: "adsDebug.preload")
+        case .adsDebugAppOpenAd:                return String(localized: "adsDebug.appOpenAd")
+        case .adsDebugAppOpenDescription:       return String(localized: "adsDebug.appOpenDescription")
+        case .adsDebugDeveloperTools:           return String(localized: "adsDebug.developerTools")
+        case .adsDebugLaunchAdInspector:        return String(localized: "adsDebug.launchAdInspector")
+        case .adsDebugAdInspectorDescription:   return String(localized: "adsDebug.adInspectorDescription")
+        case .adsDebugEventLog:                 return String(localized: "adsDebug.eventLog")
+        case .adsDebugNoEventsYet:              return String(localized: "adsDebug.noEventsYet")
+        case .adsDebugClearLog:                 return String(localized: "adsDebug.clearLog")
+
+            // MARK: Ad Loading
+        case .adLoadingText:                    return String(localized: "adLoading.text")
+        case .adLoadingFailed:                  return String(localized: "adLoading.failed")
+        case .adLoadingRetry:                   return String(localized: "adLoading.retry")
         }
     }
 }
