@@ -39,6 +39,7 @@ struct ScheduleView: View {
     @StateObject private var viewModel = ScheduleViewModel()
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var appStateService: DefaultAppStateService
+    @Environment(\.bottomInsetService) private var bottomInsetService
     @State private var headerHeight: CGFloat = 0
     @State private var headerHeightMax: CGFloat = 0
     @State private var safeAreaTop: CGFloat = Configuration.constants.defaultSafeAreaTop
@@ -205,6 +206,7 @@ struct ScheduleView: View {
             }
         } else if let scheduleData = appViewModel.scheduleData {
             let topInset: CGFloat = headerHeightMax > 0 ? headerHeightMax : AppDimensions.headerMinHeight.value
+            let bottomInset = bottomInsetService?.bottomInset ?? Configuration.constants.bottomInset
 
             DayScheduleTabView(
                 events: scheduleData.groupSchedule,
@@ -213,7 +215,7 @@ struct ScheduleView: View {
                 onSelectDate: { viewModel.navigation.selectDate($0) },
                 showTeacherName: true,
                 topInset: topInset,
-                bottomInset: Configuration.constants.bottomInset,
+                bottomInset: bottomInset,
                 onTeacherTap: { viewModel.showTeacherDetail(teacherId: $0) },
                 onNextWeekFromTabView: {
                     viewModel.navigation.nextWeekFromTabView()

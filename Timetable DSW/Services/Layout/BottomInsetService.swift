@@ -238,10 +238,12 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         // Scroll inset should account for:
         // 1. TabBar height
         // 2. TabBar bottom padding (which already includes banner if needed)
-
+        let safeAreaBottom = UIApplication.shared.connectedScenes
+                            .compactMap { $0 as? UIWindowScene }
+                            .first?.windows.first?.safeAreaInsets.bottom ?? 0
         // If premium or ads disabled, only tab bar + its padding
         guard !isPremium && showAds else {
-            return tabBarHeight + tabBarBottomPadding
+            return tabBarHeight + tabBarBottomPadding + safeAreaBottom
         }
 
         // Calculate based on banner position
