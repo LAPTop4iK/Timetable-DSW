@@ -363,8 +363,8 @@ struct PremiumStatusScreen: View {
             return
         }
 
-        let hours = Int(remaining) / 3600
-        let minutes = (Int(remaining) % 3600) / 60
+        let hours = Int(remaining) / AppStateConfiguration.secondsInHour
+        let minutes = (Int(remaining) % AppStateConfiguration.secondsInHour) / 60
         let seconds = Int(remaining) % 60
 
         timeRemaining = String(format: "%02d:%02d:%02d", hours, minutes, seconds)

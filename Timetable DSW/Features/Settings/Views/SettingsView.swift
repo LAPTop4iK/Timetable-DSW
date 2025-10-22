@@ -158,7 +158,7 @@ struct SettingsView: View {
                 Task {
                     do {
                         try await coordinator?.showAd(type: .rewardedInterstitial)
-                        appStateService.grantTemporaryPremium(duration: 3600)
+                        appStateService.grantTemporaryPremium()
 
                         // Show confetti after successful ad view
                         withAnimation {
@@ -365,8 +365,8 @@ struct SettingsView: View {
         }
 
         let interval = endDate.timeIntervalSince(now)
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
+        let hours = Int(interval) / AppStateConfiguration.secondsInHour
+        let minutes = (Int(interval) % AppStateConfiguration.secondsInHour) / 60
         let seconds = Int(interval) % 60
 
         if hours > 0 {

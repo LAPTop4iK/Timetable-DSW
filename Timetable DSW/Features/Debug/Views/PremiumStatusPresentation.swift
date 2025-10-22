@@ -139,8 +139,8 @@ final class DebugMenuViewModel: ObservableObject {
             showSuccessAlert("Premium granted")
 
         case .grantTemporaryPremium:
-            appStateService.grantTemporaryPremium(duration: 3600)
-            showSuccessAlert("Temporary premium granted (1 hour)")
+            appStateService.grantTemporaryPremium()
+            showSuccessAlert("Temporary premium granted")
 
         case .revokePremium:
             confirmationAction = action
@@ -592,7 +592,7 @@ struct DebugMenuScreen_Previews: PreviewProvider {
                 appStateService: MockAppStateService(
                     initialState: AppState(
                         premiumStatus: .temporaryPremium(
-                            expiresAt: Date().addingTimeInterval(3600)
+                            expiresAt: Date().addingTimeInterval(AppStateConfiguration.temporaryPremiumDuration)
                         ),
                         premiumPurchaseDate: nil,
                         lastAdWatchedDate: Date().addingTimeInterval(-300),
