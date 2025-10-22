@@ -16,13 +16,13 @@ struct AdLoadingView: View {
     var body: some View {
         Group {
             if isLoading {
-                ProgressView("Loading ad...")
+                ProgressView(LocalizedString.adLoadingText.localized)
             } else if let error = error {
                 VStack(spacing: 8) {
-                    Text("Failed to load ad")
+                    Text(LocalizedString.adLoadingFailed.localized)
                         .font(.caption)
                         .foregroundColor(.red)
-                    Button("Retry") {
+                    Button(LocalizedString.adLoadingRetry.localized) {
                         Task { await loadAd() }
                     }
                     .font(.caption)

@@ -28,18 +28,18 @@ struct PerformanceMonitorView: View {
                 categoryFilterSection
                 eventsSection
             }
-            .navigationTitle("Performance Monitor")
+            .navigationTitle(LocalizedString.perfMonitorTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Clear") {
+                    Button(LocalizedString.perfMonitorClear.localized) {
                         logger.clear()
                     }
                     .foregroundAppColor(.error, colorScheme: colorScheme)
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Export") {
+                    Button(LocalizedString.perfMonitorExport.localized) {
                         if let json = logger.exportJSON() {
                             exportedJSON = json
                             showingExportSheet = true
@@ -48,7 +48,7 @@ struct PerformanceMonitorView: View {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(LocalizedString.debugDone.localized) {
                         dismiss()
                     }
                 }
@@ -60,11 +60,11 @@ struct PerformanceMonitorView: View {
                             .font(.system(.caption, design: .monospaced))
                             .padding()
                     }
-                    .navigationTitle("Exported Events")
+                    .navigationTitle(LocalizedString.perfMonitorExportedEvents.localized)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Done") {
+                            Button(LocalizedString.debugDone.localized) {
                                 showingExportSheet = false
                             }
                         }
@@ -77,16 +77,16 @@ struct PerformanceMonitorView: View {
     // MARK: - Sections
 
     private var metricsSection: some View {
-        Section("Metrics") {
+        Section(LocalizedString.perfMonitorMetrics.localized) {
             HStack {
-                Text("Total Events")
+                Text(LocalizedString.perfMonitorTotalEvents.localized)
                 Spacer()
                 Text("\(logger.metrics.totalEvents)")
                     .fontWeight(.bold)
             }
 
             HStack {
-                Text("Average Duration")
+                Text(LocalizedString.perfMonitorAverageDuration.localized)
                 Spacer()
                 Text(formatDuration(logger.metrics.averageDuration))
                     .fontWeight(.bold)
@@ -94,7 +94,7 @@ struct PerformanceMonitorView: View {
 
             if let slowest = logger.metrics.slowestEvent {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Slowest Event")
+                    Text(LocalizedString.perfMonitorSlowestEvent.localized)
                         .font(.caption)
                         .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     HStack {
@@ -109,7 +109,7 @@ struct PerformanceMonitorView: View {
 
             if let fastest = logger.metrics.fastestEvent {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Fastest Event")
+                    Text(LocalizedString.perfMonitorFastestEvent.localized)
                         .font(.caption)
                         .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     HStack {
@@ -125,9 +125,9 @@ struct PerformanceMonitorView: View {
     }
 
     private var categoryFilterSection: some View {
-        Section("Filter by Category") {
-            Picker("Category", selection: $selectedCategory) {
-                Text("All").tag(nil as PerformanceCategory?)
+        Section(LocalizedString.perfMonitorFilterByCategory.localized) {
+            Picker(LocalizedString.perfMonitorCategory.localized, selection: $selectedCategory) {
+                Text(LocalizedString.perfMonitorAll.localized).tag(nil as PerformanceCategory?)
                 ForEach(PerformanceCategory.allCases, id: \.self) { category in
                     HStack {
                         Text(category.rawValue)
@@ -144,9 +144,9 @@ struct PerformanceMonitorView: View {
     }
 
     private var eventsSection: some View {
-        Section("Events (\(filteredEvents.count))") {
+        Section("\(LocalizedString.perfMonitorEvents.localized) (\(filteredEvents.count))") {
             if filteredEvents.isEmpty {
-                Text("No events recorded")
+                Text(LocalizedString.perfMonitorNoEventsRecorded.localized)
                     .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     .italic()
             } else {
