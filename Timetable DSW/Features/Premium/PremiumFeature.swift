@@ -71,8 +71,8 @@ struct PremiumAccess: Sendable {
     var formattedTimeRemaining: String? {
         guard let remaining = timeRemaining else { return nil }
 
-        let hours = Int(remaining) / 3600
-        let minutes = (Int(remaining) % 3600) / 60
+        let hours = Int(remaining) / AppStateConfiguration.secondsInHour
+        let minutes = (Int(remaining) % AppStateConfiguration.secondsInHour) / 60
         let seconds = Int(remaining) % 60
 
         if hours > 0 {

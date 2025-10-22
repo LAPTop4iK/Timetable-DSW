@@ -126,7 +126,7 @@ final class MockAppStateService: AppStateService {
         state.premiumPurchaseDate = Date()
     }
     
-    func grantTemporaryPremium(duration: TimeInterval = 3600) {
+    func grantTemporaryPremium(duration: TimeInterval = AppStateConfiguration.temporaryPremiumDuration) {
         let expiresAt = Date().addingTimeInterval(duration)
         state.premiumStatus = .temporaryPremium(expiresAt: expiresAt)
     }
