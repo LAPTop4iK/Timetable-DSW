@@ -72,7 +72,7 @@ struct DebugFeatureFlagsView: View {
             }
 
             Button("Grant 1 Hour Premium") {
-                appStateService.grantTemporaryPremium(duration: 3600)
+                appStateService.grantTemporaryPremium()
             }
 
             Button("Revoke Premium") {
@@ -149,8 +149,8 @@ struct DebugFeatureFlagsView: View {
         case .temporaryPremium(let expiresAt):
             let remaining = expiresAt.timeIntervalSince(Date())
             if remaining > 0 {
-                let hours = Int(remaining) / 3600
-                let minutes = (Int(remaining) % 3600) / 60
+                let hours = Int(remaining) / AppStateConfiguration.secondsInHour
+                let minutes = (Int(remaining) % AppStateConfiguration.secondsInHour) / 60
                 return "Premium (\(hours)h \(minutes)m)"
             } else {
                 return "Expired"

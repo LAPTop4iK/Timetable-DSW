@@ -49,6 +49,7 @@ struct AppState: Codable, Sendable, Equatable {
 
 struct AppStateConfiguration {
     static let temporaryPremiumDuration: TimeInterval = 3600 // 1 hour
+    static let secondsInHour: Int = 3600 // For time formatting
     static let stateStorageKey = "app_state"
 }
 

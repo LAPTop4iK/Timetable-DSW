@@ -117,7 +117,7 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
         case .premiumTrialDuration:
             return FeatureFlagParameterDefinition(
                 key: rawValue,
-                defaultValue: .int(3600) // 1 hour
+                defaultValue: .int(Int(AppStateConfiguration.temporaryPremiumDuration))
             )
         }
     }

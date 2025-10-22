@@ -101,8 +101,8 @@ struct ContentView: View {
                 try await adCoordinator?.loadAd(type: .rewarded)
                 try await adCoordinator?.showAd(type: .rewarded)
 
-                // Grant temporary premium (1 hour)
-                appStateService.grantTemporaryPremium(duration: 3600)
+                // Grant temporary premium (duration from AppStateConfiguration)
+                appStateService.grantTemporaryPremium()
 
                 // Show confetti celebration
                 withAnimation {
