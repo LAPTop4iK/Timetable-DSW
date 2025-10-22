@@ -1,5 +1,5 @@
 {
-  "sourceLanguage" : "en",
+  "sourceLanguage" : "pl",
   "strings" : {
     "" : {
 
@@ -9,7 +9,7 @@
     },
     "%@: %@" : {
       "localizations" : {
-        "en" : {
+        "pl" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@: %2$@"
@@ -583,9 +583,6 @@
           }
         }
       }
-    },
-    "Debug" : {
-
     },
     "Debug Tools" : {
 
@@ -1392,6 +1389,9 @@
 
     },
     "Ready to show" : {
+
+    },
+    "Release" : {
 
     },
     "Reset" : {

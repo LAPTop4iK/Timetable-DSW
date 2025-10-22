@@ -63,6 +63,7 @@ struct ContentView: View {
                     .premiumContent(
                         feature: .subjectsTab,
                         premiumAccess: premiumAccess,
+                        coordinator: adCoordinator,
                         onWatchAd: handleWatchAd,
                         onPurchase: handlePurchase
                     )
@@ -72,6 +73,7 @@ struct ContentView: View {
                     .premiumContent(
                         feature: .teachersTab,
                         premiumAccess: premiumAccess,
+                        coordinator: adCoordinator,
                         onWatchAd: handleWatchAd,
                         onPurchase: handlePurchase
                     )

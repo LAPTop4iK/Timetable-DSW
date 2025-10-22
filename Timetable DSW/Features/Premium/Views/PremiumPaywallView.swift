@@ -160,38 +160,38 @@ struct PremiumPaywallView: View {
             .buttonStyle(ScaleButtonStyle())
 
             // Purchase button
-            Button(action: {
-                dismiss()
-                onPurchase()
-            }) {
-                HStack {
-                    Image(systemName: "cart.fill")
-                    Text("Purchase Premium")
-                        .fontWeight(.semibold)
-                }
-                .font(AppTypography.body.font)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: gradientColors,
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .padding(Configuration.constants.buttonPadding)
-                .frame(maxWidth: .infinity)
-                .background {
-                    RoundedRectangle(cornerRadius: Configuration.constants.cornerRadius.value)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: gradientColors,
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 2
-                        )
-                }
-            }
-            .buttonStyle(ScaleButtonStyle())
+//            Button(action: {
+//                dismiss()
+//                onPurchase()
+//            }) {
+//                HStack {
+//                    Image(systemName: "cart.fill")
+//                    Text("Purchase Premium")
+//                        .fontWeight(.semibold)
+//                }
+//                .font(AppTypography.body.font)
+//                .foregroundStyle(
+//                    LinearGradient(
+//                        colors: gradientColors,
+//                        startPoint: .leading,
+//                        endPoint: .trailing
+//                    )
+//                )
+//                .padding(Configuration.constants.buttonPadding)
+//                .frame(maxWidth: .infinity)
+//                .background {
+//                    RoundedRectangle(cornerRadius: Configuration.constants.cornerRadius.value)
+//                        .strokeBorder(
+//                            LinearGradient(
+//                                colors: gradientColors,
+//                                startPoint: .leading,
+//                                endPoint: .trailing
+//                            ),
+//                            lineWidth: 2
+//                        )
+//                }
+//            }
+//            .buttonStyle(ScaleButtonStyle())
 
             // Close button
             Button("Maybe Later") {
