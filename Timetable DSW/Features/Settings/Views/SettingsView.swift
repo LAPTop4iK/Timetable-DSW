@@ -24,7 +24,7 @@ struct SettingsView: View {
 
     @StateObject private var viewModel = SettingsViewModel()
     @EnvironmentObject var appViewModel: AppViewModel
-    @Environment(\.featureFlagService) private var featureFlagService
+    @EnvironmentObject var featureFlagService: DefaultFeatureFlagService
     @Environment(\.adCoordinator) private var coordinator
     @Environment(\.bottomInsetService) private var bottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService

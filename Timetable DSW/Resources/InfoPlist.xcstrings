@@ -1,0 +1,53 @@
+{
+  "sourceLanguage" : "pl",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Timetable"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Timetable DSW"
+          }
+        }
+      }
+    },
+    "NSUserTrackingUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We use your device identifier (IDFA) to show relevant ads and support the app through advertising."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Używamy identyfikatora urządzenia (IDFA), aby wyświetlać dopasowane reklamy i wspierać działanie aplikacji."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ми використовуємо ідентифікатор пристрою (IDFA), щоб показувати релевантну рекламу та підтримувати роботу застосунку."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}
