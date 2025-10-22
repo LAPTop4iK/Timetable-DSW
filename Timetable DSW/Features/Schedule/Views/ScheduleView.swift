@@ -98,7 +98,7 @@ struct ScheduleView: View {
                 PremiumStatusScreen(
                     premiumAccess: PremiumAccess.from(appState: appStateService.state),
                     onWatchAd: {
-                        appStateService.grantTemporaryPremium(duration: 3600)
+                        appStateService.grantTemporaryPremium()
                     },
                     onPurchase: {
                         appStateService.grantPremium()
