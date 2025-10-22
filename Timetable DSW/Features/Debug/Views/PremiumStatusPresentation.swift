@@ -139,7 +139,7 @@ final class DebugMenuViewModel: ObservableObject {
             showSuccessAlert(LocalizedString.debugPremiumGranted.localized)
 
         case .grantTemporaryPremium:
-            appStateService.grantTemporaryPremium()
+            appStateService.grantTemporaryPremium(duration: nil)
             showSuccessAlert(LocalizedString.debugTemporaryPremiumGranted.localized)
 
         case .revokePremium:
