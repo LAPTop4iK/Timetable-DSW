@@ -19,17 +19,17 @@ struct PremiumStatusPresentation {
     init(status: PremiumStatus) {
         switch status {
         case .free:
-            self.statusText = "Free"
+            self.statusText = LocalizedString.debugFree.localized
             self.expirationDate = nil
             self.canRevoke = false
 
         case .premium:
-            self.statusText = "Premium"
+            self.statusText = LocalizedString.debugPremiumLabel.localized
             self.expirationDate = nil
             self.canRevoke = true
 
         case .temporaryPremium(let expiresAt):
-            self.statusText = "Trial"
+            self.statusText = LocalizedString.debugTrial.localized
             self.expirationDate = expiresAt
             self.canRevoke = true
         }
@@ -136,11 +136,11 @@ final class DebugMenuViewModel: ObservableObject {
         switch action {
         case .grantPremium:
             appStateService.grantPremium()
-            showSuccessAlert("Premium granted")
+            showSuccessAlert(LocalizedString.debugPremiumGranted.localized)
 
         case .grantTemporaryPremium:
             appStateService.grantTemporaryPremium()
-            showSuccessAlert("Temporary premium granted")
+            showSuccessAlert(LocalizedString.debugTemporaryPremiumGranted.localized)
 
         case .revokePremium:
             confirmationAction = action
@@ -173,16 +173,16 @@ final class DebugMenuViewModel: ObservableObject {
         switch action {
         case .revokePremium:
             appStateService.revokePremium()
-            showSuccessAlert("Premium revoked")
+            showSuccessAlert(LocalizedString.debugPremiumRevoked.localized)
 
         case .resetAllFlags:
             featureFlagService.resetAll()
-            showSuccessAlert("All flags reset to defaults")
+            showSuccessAlert(LocalizedString.debugAllFlagsReset.localized)
 
         case .clearAllData:
             featureFlagService.resetAll()
             appStateService.revokePremium()
-            showSuccessAlert("All data cleared")
+            showSuccessAlert(LocalizedString.debugAllDataCleared.localized)
 
         default:
             break
@@ -269,26 +269,26 @@ extension DebugAction {
     var confirmationTitle: String {
         switch self {
         case .revokePremium:
-            return "Revoke Premium?"
+            return LocalizedString.debugRevokePremiumQuestion.localized
         case .resetAllFlags:
-            return "Reset All Flags?"
+            return LocalizedString.debugResetAllFlagsQuestion.localized
         case .clearAllData:
-            return "Clear All Data?"
+            return LocalizedString.debugClearAllDataQuestion.localized
         default:
-            return "Confirm Action?"
+            return LocalizedString.debugConfirmActionQuestion.localized
         }
     }
 
     var confirmationMessage: String {
         switch self {
         case .revokePremium:
-            return "This will remove premium status."
+            return LocalizedString.debugWillRemovePremium.localized
         case .resetAllFlags:
-            return "All feature flags will be reset to their default values."
+            return LocalizedString.debugWillResetAllFlags.localized
         case .clearAllData:
-            return "This will reset all flags and remove premium status."
+            return LocalizedString.debugWillResetEverything.localized
         default:
-            return "Are you sure?"
+            return LocalizedString.debugAreYouSure.localized
         }
     }
 }
@@ -321,15 +321,15 @@ struct DebugMenuScreen: View {
                 statisticsSection
                 aboutSection
             }
-            .navigationTitle("🐛 Debug Menu")
+            .navigationTitle(LocalizedString.debugMenuTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(LocalizedString.debugDone.localized) { dismiss() }
                 }
             }
-            .alert("Action Result", isPresented: $viewModel.showAlert) {
-                Button("OK", role: .cancel) { }
+            .alert(LocalizedString.debugActionResult.localized, isPresented: $viewModel.showAlert) {
+                Button(LocalizedString.debugOK.localized, role: .cancel) { }
             } message: {
                 if let message = viewModel.alertMessage {
                     Text(message)
@@ -340,10 +340,10 @@ struct DebugMenuScreen: View {
                 isPresented: $viewModel.showConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Confirm", role: .destructive) {
+                Button(LocalizedString.debugConfirm.localized, role: .destructive) {
                     viewModel.confirmAction()
                 }
-                Button("Cancel", role: .cancel) { }
+                Button(LocalizedString.debugCancel.localized, role: .cancel) { }
             } message: {
                 Text(viewModel.confirmationAction?.confirmationMessage ?? "")
             }
@@ -355,7 +355,7 @@ struct DebugMenuScreen: View {
     private var premiumSection: some View {
         Section {
             HStack {
-                Label("Status", systemImage: "crown.fill")
+                Label(LocalizedString.debugStatus.localized, systemImage: "crown.fill")
                 Spacer()
                 Text(viewModel.premiumPresentation.statusText)
                     .foregroundColor(.secondary)
@@ -364,7 +364,7 @@ struct DebugMenuScreen: View {
 
             if let expiration = viewModel.premiumPresentation.expirationDate {
                 HStack {
-                    Label("Expires", systemImage: "clock.fill")
+                    Label(LocalizedString.debugExpires.localized, systemImage: "clock.fill")
                     Spacer()
                     Text(expiration, style: .relative)
                         .foregroundColor(.orange)
@@ -374,24 +374,24 @@ struct DebugMenuScreen: View {
             Button {
                 viewModel.handle(.grantPremium)
             } label: {
-                Label("Grant Premium", systemImage: "star.fill")
+                Label(LocalizedString.debugGrantPremium.localized, systemImage: "star.fill")
             }
 
             Button {
                 viewModel.handle(.grantTemporaryPremium)
             } label: {
-                Label("Grant Trial (1h)", systemImage: "timer")
+                Label(LocalizedString.debugGrantTrial1h.localized, systemImage: "timer")
             }
 
             if viewModel.premiumPresentation.canRevoke {
                 Button(role: .destructive) {
                     viewModel.handle(.revokePremium)
                 } label: {
-                    Label("Revoke Premium", systemImage: "xmark.circle.fill")
+                    Label(LocalizedString.debugRevokePremiumLabel.localized, systemImage: "xmark.circle.fill")
                 }
             }
         } header: {
-            Label("Premium Management", systemImage: "crown")
+            Label(LocalizedString.debugPremiumManagement.localized, systemImage: "crown")
         }
     }
 
@@ -424,7 +424,7 @@ struct DebugMenuScreen: View {
                         Button {
                             viewModel.handle(.resetFlag(presentation.flag))
                         } label: {
-                            Label("Reset to Default", systemImage: "arrow.counterclockwise")
+                            Label(LocalizedString.debugResetToDefaultLabel.localized, systemImage: "arrow.counterclockwise")
                                 .font(.caption)
                                 .foregroundColor(.orange)
                         }
@@ -436,15 +436,15 @@ struct DebugMenuScreen: View {
             Button(role: .destructive) {
                 viewModel.handle(.resetAllFlags)
             } label: {
-                Label("Reset All Flags", systemImage: "arrow.counterclockwise.circle.fill")
+                Label(LocalizedString.debugResetAllFlagsLabel.localized, systemImage: "arrow.counterclockwise.circle.fill")
             }
         } header: {
-            Label("Feature Flags", systemImage: "flag.fill")
+            Label(LocalizedString.debugFeatureFlagsTitle.localized, systemImage: "flag.fill")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Local overrides take priority over remote configuration")
+                Text(LocalizedString.debugLocalOverrides.localized)
                 if let lastSync = viewModel.lastSyncDate {
-                    Text("Last synced: \(lastSync, style: .relative)")
+                    Text("\(LocalizedString.debugLastSynced.localized): \(lastSync, style: .relative)")
                         .foregroundColor(.secondary)
                 }
             }
@@ -460,7 +460,7 @@ struct DebugMenuScreen: View {
                 viewModel.handle(.syncFlags)
             } label: {
                 HStack {
-                    Label("Sync from Server", systemImage: "arrow.triangle.2.circlepath")
+                    Label(LocalizedString.debugSyncFromServer.localized, systemImage: "arrow.triangle.2.circlepath")
 
                     Spacer()
 
@@ -481,10 +481,10 @@ struct DebugMenuScreen: View {
             Button(role: .destructive) {
                 viewModel.handle(.clearAllData)
             } label: {
-                Label("Clear All Data", systemImage: "trash.fill")
+                Label(LocalizedString.debugClearAllData.localized, systemImage: "trash.fill")
             }
         } header: {
-            Label("Actions", systemImage: "gearshape.fill")
+            Label(LocalizedString.debugActionsTitle.localized, systemImage: "gearshape.fill")
         }
     }
 
@@ -493,7 +493,7 @@ struct DebugMenuScreen: View {
     private var statisticsSection: some View {
         Section {
             HStack {
-                Label("Ads Watched", systemImage: "play.rectangle.fill")
+                Label(LocalizedString.debugAdsWatched.localized, systemImage: "play.rectangle.fill")
                 Spacer()
                 Text("\(viewModel.statistics.totalAdsWatched)")
                     .foregroundColor(.secondary)
@@ -502,7 +502,7 @@ struct DebugMenuScreen: View {
 
             if let lastAdDate = viewModel.statistics.lastAdWatchedDate {
                 HStack {
-                    Label("Last Ad", systemImage: "clock.fill")
+                    Label(LocalizedString.debugLastAd.localized, systemImage: "clock.fill")
                     Spacer()
                     Text(lastAdDate, style: .relative)
                         .foregroundColor(.secondary)
@@ -511,14 +511,14 @@ struct DebugMenuScreen: View {
 
             if let purchaseDate = viewModel.statistics.premiumPurchaseDate {
                 HStack {
-                    Label("Premium Since", systemImage: "calendar")
+                    Label(LocalizedString.debugPremiumSince.localized, systemImage: "calendar")
                     Spacer()
                     Text(purchaseDate, style: .date)
                         .foregroundColor(.secondary)
                 }
             }
         } header: {
-            Label("Statistics", systemImage: "chart.bar.fill")
+            Label(LocalizedString.debugStatistics.localized, systemImage: "chart.bar.fill")
         }
     }
 
@@ -527,30 +527,30 @@ struct DebugMenuScreen: View {
     private var aboutSection: some View {
         Section {
             HStack {
-                Text("Environment")
+                Text(LocalizedString.debugEnvironment.localized)
                 Spacer()
                 #if DEBUG
-                Text("Debug")
+                Text(LocalizedString.debugDebug.localized)
                     .foregroundColor(.orange)
                     .fontWeight(.medium)
                 #else
-                Text("Release")
+                Text(LocalizedString.debugRelease.localized)
                     .foregroundColor(.green)
                     .fontWeight(.medium)
                 #endif
             }
 
             HStack {
-                Text("Build")
+                Text(LocalizedString.debugBuild.localized)
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown")
                     .foregroundColor(.secondary)
                     .monospacedDigit()
             }
         } header: {
-            Label("About", systemImage: "info.circle.fill")
+            Label(LocalizedString.debugAbout.localized, systemImage: "info.circle.fill")
         } footer: {
-            Text("This menu is only available in debug builds")
+            Text(LocalizedString.debugOnlyInDebugBuilds.localized)
                 .font(.caption2)
         }
     }

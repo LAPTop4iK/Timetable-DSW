@@ -37,7 +37,7 @@ struct AdsDebugScreen: View {
             adInspectorSection
             logSection
         }
-        .navigationTitle("🧪 Ads Debug")
+        .navigationTitle(LocalizedString.adsDebugTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             updateReadyStates()
@@ -49,7 +49,7 @@ struct AdsDebugScreen: View {
     private var bannerSection: some View {
         Section {
             VStack(spacing: 12) {
-                Text("Adaptive Banner")
+                Text(LocalizedString.adsDebugAdaptiveBanner.localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
 
@@ -60,9 +60,9 @@ struct AdsDebugScreen: View {
             }
             .padding(.vertical, 8)
         } header: {
-            Label("Banner Ad", systemImage: "rectangle.3.group")
+            Label(LocalizedString.adsDebugBannerAd.localized, systemImage: "rectangle.3.group")
         } footer: {
-            Text("Adaptive banner автоматически подстраивается под ширину экрана")
+            Text(LocalizedString.adsDebugBannerDescription.localized)
                 .font(.caption2)
         }
     }
@@ -70,7 +70,7 @@ struct AdsDebugScreen: View {
     private var nativeSection: some View {
         Section {
             VStack(spacing: 12) {
-                Text("Банер Ad (Inline)")
+                Text(LocalizedString.adsDebugNativeAd.localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
 
@@ -82,9 +82,9 @@ struct AdsDebugScreen: View {
 
             .padding(.vertical, 8)
         } header: {
-            Label("Native Ad", systemImage: "square.and.pencil")
+            Label(LocalizedString.adsDebugNativeAd.localized, systemImage: "square.and.pencil")
         } footer: {
-            Text("Native ad встраивается в контент с кастомным дизайном")
+            Text(LocalizedString.adsDebugNativeDescription.localized)
                 .font(.caption2)
         }
         .withNativeAds()
@@ -98,7 +98,7 @@ struct AdsDebugScreen: View {
                         await loadAd(type: .interstitial)
                     }
                 } label: {
-                    Label("Load", systemImage: "arrow.down.circle")
+                    Label(LocalizedString.adsDebugLoad.localized, systemImage: "arrow.down.circle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -108,7 +108,7 @@ struct AdsDebugScreen: View {
                         await showAd(type: .interstitial)
                     }
                 } label: {
-                    Label("Show", systemImage: "play.circle.fill")
+                    Label(LocalizedString.adsDebugShow.localized, systemImage: "play.circle.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -116,14 +116,14 @@ struct AdsDebugScreen: View {
             }
 
             if isInterstitialReady {
-                Label("Ready to show", systemImage: "checkmark.circle.fill")
+                Label(LocalizedString.adsDebugReadyToShow.localized, systemImage: "checkmark.circle.fill")
                     .font(.caption)
                     .foregroundColor(.green)
             }
         } header: {
-            Label("Interstitial Ad", systemImage: "square.fill")
+            Label(LocalizedString.adsDebugInterstitialAd.localized, systemImage: "square.fill")
         } footer: {
-            Text("Полноэкранная реклама, показывается между экранами")
+            Text(LocalizedString.adsDebugInterstitialDescription.localized)
                 .font(.caption2)
         }
     }
@@ -136,7 +136,7 @@ struct AdsDebugScreen: View {
                         await loadAd(type: .rewarded)
                     }
                 } label: {
-                    Label("Load", systemImage: "arrow.down.circle")
+                    Label(LocalizedString.adsDebugLoad.localized, systemImage: "arrow.down.circle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -146,7 +146,7 @@ struct AdsDebugScreen: View {
                         await showAd(type: .rewarded)
                     }
                 } label: {
-                    Label("Show", systemImage: "gift.circle.fill")
+                    Label(LocalizedString.adsDebugShow.localized, systemImage: "gift.circle.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -154,14 +154,14 @@ struct AdsDebugScreen: View {
             }
 
             if isRewardedReady {
-                Label("Ready to show", systemImage: "checkmark.circle.fill")
+                Label(LocalizedString.adsDebugReadyToShow.localized, systemImage: "checkmark.circle.fill")
                     .font(.caption)
                     .foregroundColor(.green)
             }
         } header: {
-            Label("Rewarded Ad", systemImage: "gift")
+            Label(LocalizedString.adsDebugRewardedAd.localized, systemImage: "gift")
         } footer: {
-            Text("Пользователь получает награду за просмотр")
+            Text(LocalizedString.adsDebugRewardedDescription.localized)
                 .font(.caption2)
         }
     }
@@ -174,7 +174,7 @@ struct AdsDebugScreen: View {
                         await loadAd(type: .rewardedInterstitial)
                     }
                 } label: {
-                    Label("Load", systemImage: "arrow.down.circle")
+                    Label(LocalizedString.adsDebugLoad.localized, systemImage: "arrow.down.circle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -184,7 +184,7 @@ struct AdsDebugScreen: View {
                         await showAd(type: .rewardedInterstitial)
                     }
                 } label: {
-                    Label("Show", systemImage: "gift.circle.fill")
+                    Label(LocalizedString.adsDebugShow.localized, systemImage: "gift.circle.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -192,14 +192,14 @@ struct AdsDebugScreen: View {
             }
 
             if isRewardedInterstitialReady {
-                Label("Ready to show", systemImage: "checkmark.circle.fill")
+                Label(LocalizedString.adsDebugReadyToShow.localized, systemImage: "checkmark.circle.fill")
                     .font(.caption)
                     .foregroundColor(.green)
             }
         } header: {
-            Label("Rewarded Interstitial", systemImage: "gift.fill")
+            Label(LocalizedString.adsDebugRewardedInterstitial.localized, systemImage: "gift.fill")
         } footer: {
-            Text("Комбинация interstitial и rewarded")
+            Text(LocalizedString.adsDebugRewardedInterstitialDescription.localized)
                 .font(.caption2)
         }
     }
@@ -212,7 +212,7 @@ struct AdsDebugScreen: View {
                         await loadAd(type: .appOpen)
                     }
                 } label: {
-                    Label("Preload", systemImage: "arrow.down.circle")
+                    Label(LocalizedString.adsDebugPreload.localized, systemImage: "arrow.down.circle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -222,15 +222,15 @@ struct AdsDebugScreen: View {
                         await showAd(type: .appOpen)
                     }
                 } label: {
-                    Label("Show", systemImage: "arrow.up.forward.app")
+                    Label(LocalizedString.adsDebugShow.localized, systemImage: "arrow.up.forward.app")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
             }
         } header: {
-            Label("App Open Ad", systemImage: "app.badge")
+            Label(LocalizedString.adsDebugAppOpenAd.localized, systemImage: "app.badge")
         } footer: {
-            Text("Показывается при возврате в приложение. Cooldown: 1 минута")
+            Text(LocalizedString.adsDebugAppOpenDescription.localized)
                 .font(.caption2)
         }
     }
@@ -243,15 +243,15 @@ struct AdsDebugScreen: View {
                     addLog("Ad Inspector opened")
                 }
             } label: {
-                Label("Launch Ad Inspector", systemImage: "magnifyingglass.circle")
+                Label(LocalizedString.adsDebugLaunchAdInspector.localized, systemImage: "magnifyingglass.circle")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .tint(.purple)
         } header: {
-            Label("Developer Tools", systemImage: "wrench.and.screwdriver")
+            Label(LocalizedString.adsDebugDeveloperTools.localized, systemImage: "wrench.and.screwdriver")
         } footer: {
-            Text("Ad Inspector работает только с test device IDs")
+            Text(LocalizedString.adsDebugAdInspectorDescription.localized)
                 .font(.caption2)
         }
     }
@@ -259,7 +259,7 @@ struct AdsDebugScreen: View {
     private var logSection: some View {
         Section {
             if logs.isEmpty {
-                Text("No events yet")
+                Text(LocalizedString.adsDebugNoEventsYet.localized)
                     .foregroundColor(.secondary)
                     .font(.caption)
             } else {
@@ -275,14 +275,14 @@ struct AdsDebugScreen: View {
             }
 
             if !logs.isEmpty {
-                Button("Clear Log") {
+                Button(LocalizedString.adsDebugClearLog.localized) {
                     logs.removeAll()
                 }
                 .font(.caption)
                 .foregroundColor(.red)
             }
         } header: {
-            Label("Event Log", systemImage: "list.bullet.rectangle")
+            Label(LocalizedString.adsDebugEventLog.localized, systemImage: "list.bullet.rectangle")
         }
     }
 
