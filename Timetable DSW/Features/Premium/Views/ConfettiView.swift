@@ -86,7 +86,7 @@ struct ConfettiView: View {
                     .font(.system(size: 100))
                     .scaleEffect(isAnimating ? 1.0 : 0.5)
 
-                Text("Premium Unlocked!")
+                Text(LocalizedString.premiumUnlocked.localized)
                     .font(AppTypography.title.font)
                     .fontWeight(.bold)
                     .foregroundColor(.white)

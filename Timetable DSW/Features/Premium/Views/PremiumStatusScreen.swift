@@ -133,7 +133,7 @@ struct PremiumStatusScreen: View {
 
     private var premiumContent: some View {
         VStack(spacing: AppSpacing.large.value) {
-            Text("Premium Active")
+            Text(LocalizedString.premiumActive.localized)
                 .font(AppTypography.title.font)
                 .fontWeight(.bold)
                 .themedForeground(.primary, colorScheme: colorScheme)
@@ -151,12 +151,12 @@ struct PremiumStatusScreen: View {
 
     private var permanentPremiumView: some View {
         VStack(spacing: AppSpacing.medium.value) {
-            Text("Thank you for your support!")
+            Text(LocalizedString.premiumThankYou.localized)
                 .font(AppTypography.body.font)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 .multilineTextAlignment(.center)
 
-            Text("Enjoy all premium features")
+            Text(LocalizedString.premiumEnjoyFeatures.localized)
                 .font(AppTypography.headline.font)
                 .fontWeight(.semibold)
                 .themedForeground(.header, colorScheme: colorScheme)
@@ -175,7 +175,7 @@ struct PremiumStatusScreen: View {
 
     private var temporaryPremiumView: some View {
         VStack(spacing: AppSpacing.large.value) {
-            Text("Time Remaining")
+            Text(LocalizedString.premiumTimeRemaining.localized)
                 .font(AppTypography.subheadline.font)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
 
@@ -185,7 +185,7 @@ struct PremiumStatusScreen: View {
                 .themedForeground(.primary, colorScheme: colorScheme)
                 .monospacedDigit()
 
-            Text("Watch another ad to extend\nor purchase for unlimited access")
+            Text(LocalizedString.premiumWatchOrPurchase.localized)
                 .font(AppTypography.body.font)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 .multilineTextAlignment(.center)
@@ -195,12 +195,12 @@ struct PremiumStatusScreen: View {
 
     private var nonPremiumContent: some View {
         VStack(spacing: AppSpacing.large.value) {
-            Text("Unlock Premium")
+            Text(LocalizedString.premiumUnlockTitle.localized)
                 .font(AppTypography.title.font)
                 .fontWeight(.bold)
                 .themedForeground(.primary, colorScheme: colorScheme)
 
-            Text("Get access to exclusive features")
+            Text(LocalizedString.premiumGetAccess.localized)
                 .font(AppTypography.body.font)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 .multilineTextAlignment(.center)
@@ -252,7 +252,7 @@ struct PremiumStatusScreen: View {
             }) {
                 HStack {
                     Image(systemName: "play.rectangle.fill")
-                    Text("Watch Ad (1 hour free)")
+                    Text(LocalizedString.premiumWatchAdButton.localized)
                         .fontWeight(.semibold)
                 }
                 .font(AppTypography.body.font)
@@ -272,7 +272,7 @@ struct PremiumStatusScreen: View {
             }) {
                 HStack {
                     Image(systemName: "cart.fill")
-                    Text("Purchase Premium")
+                    Text(LocalizedString.premiumPurchaseButton.localized)
                         .fontWeight(.semibold)
                 }
                 .font(AppTypography.body.font)
