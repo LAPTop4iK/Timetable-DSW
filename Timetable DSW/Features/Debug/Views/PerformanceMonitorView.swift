@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-#if DEBUG
-
 struct PerformanceMonitorView: View {
     // MARK: - Properties
 
@@ -215,7 +213,7 @@ private struct EventRow: View {
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
                     .background(
-                        AppColor.accent.color(for: colorScheme).opacity(0.15),
+                        AppColor.themeAccent.color(for: colorScheme).opacity(0.15),
                         in: RoundedRectangle(cornerRadius: 4)
                     )
 
@@ -252,4 +250,3 @@ private struct EventRow: View {
     }
 }
 
-#endif

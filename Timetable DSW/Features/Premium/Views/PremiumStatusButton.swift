@@ -42,17 +42,11 @@ struct PremiumStatusButton: View {
         if premiumAccess.isPremium {
             Image(systemName: "crown.fill")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: gradientColors,
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .themedForeground(.header, colorScheme: colorScheme)
         } else {
             Image(systemName: "lock.fill")
-                .font(.system(size: 14))
-                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                .font(.system(size: 16))
+                .themedForeground(.header, colorScheme: colorScheme)
         }
     }
 
