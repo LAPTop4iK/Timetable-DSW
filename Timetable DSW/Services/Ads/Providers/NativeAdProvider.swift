@@ -105,9 +105,8 @@ final class NativeAdProvider: NSObject {
                     ad.delegate = self
 
                     // Setup video delegate
-                    if let videoController = ad.mediaContent.videoController {
+                    let videoController = ad.mediaContent.videoController
                         videoController.delegate = self
-                    }
 
                     // Cache the ad
                     Self.cacheAd(ad, for: self.configuration.adUnitID, cacheSize: self.configuration.cacheSize)

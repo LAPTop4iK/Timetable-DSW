@@ -6,7 +6,6 @@
 //
 
 
-#if DEBUG
 import SwiftUI
 
 struct DebugFeatureFlagsView: View {
@@ -184,7 +183,7 @@ private struct FeatureFlagRow: View {
                         if hasOverride {
                             Image(systemName: "gearshape.fill")
                                 .font(.caption2)
-                                .foregroundAppColor(.accent, colorScheme: colorScheme)
+                                .foregroundAppColor(.themeAccent, colorScheme: colorScheme)
                         }
                     }
 
@@ -240,4 +239,3 @@ struct DebugFeatureFlagsView_Previews: PreviewProvider {
     }
 }
 
-#endif

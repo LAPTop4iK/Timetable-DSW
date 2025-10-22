@@ -118,7 +118,7 @@ struct ConfettiView: View {
             ConfettiParticle(
                 color: configuration.colors.randomElement() ?? .blue,
                 x: CGFloat.random(in: -screenWidth/2...screenWidth/2),
-                y: CGFloat.random(in: -screenHeight/2...-100),
+                y: CGFloat.random(in: (-screenHeight)/2...(-100)),
                 rotation: Double.random(in: 0...360),
                 scale: CGFloat.random(in: 0.5...1.5)
             )
