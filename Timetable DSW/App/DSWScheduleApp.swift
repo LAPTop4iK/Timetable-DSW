@@ -16,6 +16,8 @@ struct DSWScheduleApp: App {
     @StateObject private var appViewModel: AppViewModel
     @StateObject private var appStateService: DefaultAppStateService
     @StateObject private var featureFlagService: DefaultFeatureFlagService
+    @StateObject private var parametersService: FeatureFlagParametersService
+    @StateObject private var bottomInsetService: DefaultBottomInsetService
 
     // AdCoordinator - не ObservableObject, поэтому @State
     @State private var adCoordinator: AdMobCoordinator
@@ -32,16 +34,26 @@ struct DSWScheduleApp: App {
         )
 
         // 2️⃣ Создаем сервисы как ObservableObject
+        let parameters = FeatureFlagParametersService()
         let featureFlags = DefaultFeatureFlagService(networkManager: networkManager)
-        let appState = DefaultAppStateService()
+        let appState = DefaultAppStateService(parametersService: parameters)
         let viewModel = AppViewModel(repository: repository)
 
-        // 3️⃣ Оборачиваем в StateObject
+        // 3️⃣ Создаем BottomInsetService с parameters
+        let bottomInset = DefaultBottomInsetService(
+            appStateService: appState,
+            featureFlagService: featureFlags,
+            parametersService: parameters
+        )
+
+        // 4️⃣ Оборачиваем в StateObject
         _appViewModel = StateObject(wrappedValue: viewModel)
         _appStateService = StateObject(wrappedValue: appState)
         _featureFlagService = StateObject(wrappedValue: featureFlags)
+        _parametersService = StateObject(wrappedValue: parameters)
+        _bottomInsetService = StateObject(wrappedValue: bottomInset)
 
-        // 4️⃣ Создаем AdCoordinator используя уже созданные сервисы
+        // 5️⃣ Создаем AdCoordinator используя уже созданные сервисы
         // ✅ Правильно: используем те же экземпляры, что и в StateObject
         let coordinator = AdMobCoordinator.makeForProduction(
             featureFlagService: featureFlags,
@@ -63,6 +75,10 @@ struct DSWScheduleApp: App {
                 .environmentObject(appViewModel)
                 .environmentObject(appStateService)
                 .environmentObject(featureFlagService)
+                .environmentObject(parametersService)
+                .environmentObject(bottomInsetService)
+                .environment(\.featureFlagParameters, parametersService)
+                .environment(\.bottomInsetService, bottomInsetService)
                 .adCoordinator(adCoordinator)
         }
     }

@@ -264,19 +264,15 @@ struct SettingsView: View {
     private var debugSection: some View {
         if featureFlagService.isEnabled(.showDebugMenu) == true {
             Section {
-                NavigationLink("🔧 Feature Flags") {
-                    DebugFeatureFlagsView()
-                }
-
-                NavigationLink("⚡️ Performance Monitor") {
-                    PerformanceMonitorView()
-                }
-
                 NavigationLink("🐛 Debug Menu") {
                     DebugMenuScreen(
                         featureFlagService: featureFlagService,
                         appStateService: appStateService
                     )
+                }
+
+                NavigationLink("⚡️ Performance Monitor") {
+                    PerformanceMonitorView()
                 }
 
                 NavigationLink("🧪 Ads Debug") {

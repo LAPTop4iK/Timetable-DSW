@@ -158,6 +158,7 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
 
     private let storage: AppStateStorage
     private let validator = PremiumStatusValidator()
+    private weak var parametersService: FeatureFlagParametersService?
 
     // MARK: - Published State
 
@@ -192,8 +193,12 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
 
     // MARK: - Initialization
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(
+        userDefaults: UserDefaults = .standard,
+        parametersService: FeatureFlagParametersService? = nil
+    ) {
         self.storage = AppStateStorage(userDefaults: userDefaults)
+        self.parametersService = parametersService
 
         // Временная инициализация для создания monitor
         self.state = .default
@@ -212,9 +217,19 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
     }
 
     func grantTemporaryPremium(
-        duration: TimeInterval = AppStateConfiguration.temporaryPremiumDuration
+        duration: TimeInterval? = nil
     ) {
-        let expiresAt = Date().addingTimeInterval(duration)
+        // Get duration from parameters service or use provided value or fallback to default
+        let effectiveDuration: TimeInterval
+        if let duration = duration {
+            effectiveDuration = duration
+        } else if let paramDuration = parametersService?.getInt(.premiumTrialDuration) {
+            effectiveDuration = TimeInterval(paramDuration)
+        } else {
+            effectiveDuration = AppStateConfiguration.temporaryPremiumDuration
+        }
+
+        let expiresAt = Date().addingTimeInterval(effectiveDuration)
         state.premiumStatus = .temporaryPremium(expiresAt: expiresAt)
     }
 
