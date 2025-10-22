@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
+    "(%lld)" : {
+
+    },
     "%@: %@" : {
       "localizations" : {
         "en" : {
@@ -14,13 +20,28 @@
     "%lld" : {
 
     },
+    "•" : {
+
+    },
     "• %@" : {
 
     },
     "⚠️ NativeAdViewModel not provided" : {
 
     },
+    "⚡️ Performance Monitor" : {
+
+    },
+    "🎉" : {
+
+    },
     "🐛 Debug Menu" : {
+
+    },
+    "🔧 Debug Feature Flags" : {
+
+    },
+    "🔧 Feature Flags" : {
 
     },
     "🧪 Ads Debug" : {
@@ -47,7 +68,13 @@
     "Ads Watched" : {
 
     },
+    "All" : {
+
+    },
     "App Open Ad" : {
+
+    },
+    "Average Duration" : {
 
     },
     "Banner Ad" : {
@@ -57,6 +84,12 @@
 
     },
     "Cancel" : {
+
+    },
+    "Category" : {
+
+    },
+    "Clear" : {
 
     },
     "Clear All Data" : {
@@ -554,10 +587,16 @@
     "Debug" : {
 
     },
+    "Debug Tools" : {
+
+    },
     "Developer Tools" : {
 
     },
     "Done" : {
+
+    },
+    "Enjoy all premium features" : {
 
     },
     "Environment" : {
@@ -658,13 +697,34 @@
     "Event Log" : {
 
     },
+    "Events (%lld)" : {
+
+    },
     "Expires" : {
+
+    },
+    "Export" : {
+
+    },
+    "Exported Events" : {
 
     },
     "Failed to load ad" : {
 
     },
+    "Fastest Event" : {
+
+    },
     "Feature Flags" : {
+
+    },
+    "Feature Flags (%lld)" : {
+
+    },
+    "Filter by Category" : {
+
+    },
+    "Flags with ⚙️ have local overrides. Tap to toggle, swipe to reset." : {
 
     },
     "general.cancel" : {
@@ -872,6 +932,15 @@
           }
         }
       }
+    },
+    "Get access to exclusive features" : {
+
+    },
+    "Grant 1 Hour Premium" : {
+
+    },
+    "Grant Permanent Premium" : {
+
     },
     "Grant Premium" : {
 
@@ -1178,6 +1247,9 @@
         }
       }
     },
+    "Hide Details" : {
+
+    },
     "Interstitial Ad" : {
 
     },
@@ -1268,10 +1340,19 @@
         }
       }
     },
+    "Maybe Later" : {
+
+    },
+    "Metrics" : {
+
+    },
     "Native Ad" : {
 
     },
     "Native ad встраивается в контент с кастомным дизайном" : {
+
+    },
+    "No events recorded" : {
 
     },
     "No events yet" : {
@@ -1280,7 +1361,19 @@
     "OK" : {
 
     },
+    "Performance Monitor" : {
+
+    },
     "Preload" : {
+
+    },
+    "Premium Active" : {
+
+    },
+    "Premium Controls" : {
+
+    },
+    "Premium Feature" : {
 
     },
     "Premium Management" : {
@@ -1289,10 +1382,25 @@
     "Premium Since" : {
 
     },
+    "Premium Status" : {
+
+    },
+    "Premium Unlocked!" : {
+
+    },
+    "Purchase Premium" : {
+
+    },
     "Ready to show" : {
 
     },
+    "Reset" : {
+
+    },
     "Reset All Flags" : {
+
+    },
+    "Reset All Flags?" : {
 
     },
     "Reset to Default" : {
@@ -1494,6 +1602,9 @@
         }
       }
     },
+    "Search flags..." : {
+
+    },
     "settings.about" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1605,6 +1716,75 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Зв’язок"
+          }
+        }
+      }
+    },
+    "settings.developer.action" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock Premium (1 hour)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odblokuj Premium (1 godzina)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розблокувати Преміум (1 година)"
+          }
+        }
+      }
+    },
+    "settings.developer.footer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watch a rewarded ad to support the developer and unlock Premium features for 1 hour."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obejrzyj reklamę z nagrodą, aby wesprzeć dewelopera i odblokować funkcje Premium na 1 godzinę."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перегляньте рекламу з винагородою, щоб підтримати розробника та розблокувати Преміум функції на 1 годину."
+          }
+        }
+      }
+    },
+    "settings.developer.sectionTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support Developer"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wspieraj dewelopera"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підтримати розробника"
           }
         }
       }
@@ -1747,75 +1927,6 @@
         }
       }
     },
-    "settings.developer.action" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unlock Premium (1 hour)"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odblokuj Premium (1 godzina)"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Розблокувати Преміум (1 година)"
-          }
-        }
-      }
-    },
-    "settings.developer.footer" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Watch a rewarded ad to support the developer and unlock Premium features for 1 hour."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obejrzyj reklamę z nagrodą, aby wesprzeć dewelopera i odblokować funkcje Premium na 1 godzinę."
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Перегляньте рекламу з винагородою, щоб підтримати розробника та розблокувати Преміум функції на 1 годину."
-          }
-        }
-      }
-    },
-    "settings.developer.sectionTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Support Developer"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wspieraj dewelopera"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Підтримати розробника"
-          }
-        }
-      }
-    },
     "settings.support.sectionTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1886,6 +1997,12 @@
       }
     },
     "Show" : {
+
+    },
+    "Show Details" : {
+
+    },
+    "Slowest Event" : {
 
     },
     "Statistics" : {
@@ -2238,6 +2355,9 @@
         }
       }
     },
+    "Sync from Remote" : {
+
+    },
     "Sync from Server" : {
 
     },
@@ -2332,6 +2452,9 @@
           }
         }
       }
+    },
+    "Tap to unlock" : {
+
     },
     "teachers.classes" : {
       "extractionState" : "manual",
@@ -2494,7 +2617,28 @@
         }
       }
     },
+    "Thank you for your support!" : {
+
+    },
     "This menu is only available in debug builds" : {
+
+    },
+    "This will reset all local overrides to default values." : {
+
+    },
+    "Time Remaining" : {
+
+    },
+    "Total Events" : {
+
+    },
+    "Unlock Premium" : {
+
+    },
+    "Watch Ad (1 hour free)" : {
+
+    },
+    "Watch another ad to extend\nor purchase for unlimited access" : {
 
     },
     "Банер Ad (Inline)" : {

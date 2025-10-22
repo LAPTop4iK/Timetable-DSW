@@ -45,7 +45,9 @@ struct SettingsView: View {
             Form {
                 groupSection
                 cacheSection
-                awardSection
+                if !(coordinator?.isAdDisabled() ?? true) {
+                    awardSection
+                }
                 contactSection
                 aboutSection
                 debugSection
@@ -151,7 +153,7 @@ struct SettingsView: View {
         let premiumAccess = PremiumAccess.from(appState: appStateService.state)
         let isPremium = premiumAccess.isPremium
 
-        Section {
+        return Section {
             Button {
                 Task {
                     do {

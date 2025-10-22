@@ -121,7 +121,7 @@ struct ErrorView: View {
                     buttonBackground
                 }
                 .shadow(
-                    color: gradientColors[0].opacity(Configuration.constants.gradientOpacity - 0.5),
+                    color: iconGradientColors[0].opacity(Configuration.constants.gradientOpacity - 0.5),
                     radius: Configuration.constants.shadowRadius,
                     x: 0,
                     y: Configuration.constants.shadowY
@@ -138,7 +138,7 @@ struct ErrorView: View {
             Capsule()
                 .fill(
                     LinearGradient(
-                        colors: gradientColors,
+                        colors: iconGradientColors,
                         startPoint: .leading,
                         endPoint: .trailing
                     )
