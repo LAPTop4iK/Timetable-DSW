@@ -108,7 +108,7 @@ struct PremiumPaywallView: View {
     }
 
     private var titleView: some View {
-        Text("Premium Feature")
+        Text(LocalizedString.premiumFeatureTitle.localized)
             .font(AppTypography.title.font)
             .fontWeight(.bold)
             .themedForeground(.primary, colorScheme: colorScheme)
@@ -140,7 +140,7 @@ struct PremiumPaywallView: View {
             }) {
                 HStack {
                     Image(systemName: "play.rectangle.fill")
-                    Text("Watch Ad (1 hour free)")
+                    Text(LocalizedString.premiumWatchAdButton.localized)
                         .fontWeight(.semibold)
                 }
                 .font(AppTypography.body.font)
@@ -194,7 +194,7 @@ struct PremiumPaywallView: View {
 //            .buttonStyle(ScaleButtonStyle())
 
             // Close button
-            Button("Maybe Later") {
+            Button(LocalizedString.premiumMaybeLater.localized) {
                 dismiss()
             }
             .font(AppTypography.subheadline.font)
