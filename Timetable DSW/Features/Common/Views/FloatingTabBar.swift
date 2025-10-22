@@ -51,7 +51,7 @@ struct TabBarConfiguration {
             cornerRadius: .xxl,
             height: AppDimensions.tabBarHeight.value,
             horizontalPadding: .xl,
-            bottomPadding: .small,
+            bottomPadding: .small, // xxl? cconfig
             showTopBorder: false,
             topBorderHeight: AppDimensions.lineSmall.value,
             buttonWidth: 60,

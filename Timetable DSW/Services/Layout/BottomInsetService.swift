@@ -28,11 +28,13 @@ enum BannerPosition: String, Codable, CaseIterable, Sendable {
 
 struct BottomInsetConfiguration {
     let tabBarHeight: CGFloat
+    let bottomInset: CGFloat
     let bannerHeight: CGFloat
     let spacing: CGFloat
 
     static let `default` = BottomInsetConfiguration(
         tabBarHeight: 78,      // Standard iOS tab bar with safe area
+        bottomInset: 32,
         bannerHeight: 50,      // Standard banner ad height
         spacing: 8             // Spacing between elements
     )
@@ -70,6 +72,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
 
     private var currentBannerHeight: CGFloat = 0
     private var currentTabBarHeight: CGFloat = 0
+    private var currentTabBarBottomInset: CGFloat = 32
 
     // MARK: - Initialization
 
@@ -93,10 +96,12 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         self.bannerPosition = positionFromParams
         self.currentTabBarHeight = configuration.tabBarHeight
         self.currentBannerHeight = configuration.bannerHeight
+        self.currentTabBarBottomInset = configuration.bottomInset
 
         // Calculate initial bottomInset using local variable to avoid 'self' before init
         let initialBottomInset = Self.calculateBottomInset(
             tabBarHeight: configuration.tabBarHeight,
+            bottomInset: configuration.bottomInset,
             bannerHeight: configuration.bannerHeight,
             bannerPosition: positionFromParams,
             isPremium: appStateService.isPremium,
@@ -166,6 +171,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
     private func recalculateInset() {
         bottomInset = Self.calculateBottomInset(
             tabBarHeight: currentTabBarHeight,
+            bottomInset: currentTabBarBottomInset,
             bannerHeight: currentBannerHeight,
             bannerPosition: bannerPosition,
             isPremium: appStateService.isPremium,
@@ -176,6 +182,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
 
     private static func calculateBottomInset(
         tabBarHeight: CGFloat,
+        bottomInset: CGFloat,
         bannerHeight: CGFloat,
         bannerPosition: BannerPosition,
         isPremium: Bool,
@@ -191,7 +198,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         switch bannerPosition {
         case .bottom:
             // Banner below tab bar: tab bar + banner + spacing
-            return tabBarHeight + bannerHeight + spacing
+            return tabBarHeight + bannerHeight + spacing + bottomInset
 
         case .top:
             // Banner at top: only tab bar height (banner doesn't affect bottom)
@@ -199,7 +206,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
 
         case .aboveTabBar:
             // Banner above tab bar: tab bar + banner + spacing
-            return tabBarHeight + bannerHeight + spacing
+            return tabBarHeight + bannerHeight + spacing + bottomInset
         }
     }
 }

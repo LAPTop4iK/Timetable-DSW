@@ -13,7 +13,7 @@ import os.log
 
 // MARK: - Performance Event
 
-struct PerformanceEvent: Identifiable, Sendable {
+struct PerformanceEvent: Identifiable, Sendable, Encodable {
     let id: UUID
     let timestamp: Date
     let category: PerformanceCategory

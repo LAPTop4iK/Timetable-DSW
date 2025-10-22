@@ -38,6 +38,7 @@ struct ScheduleHeaderView: View {
 
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var appStateService: DefaultAppStateService
+    @Environment(\.adCoordinator) private var coordinator
 
     // MARK: - Dependencies
 
@@ -78,7 +79,14 @@ struct ScheduleHeaderView: View {
     }
     
     // MARK: - Subviews
-    
+
+    private var formattedSelectedDate: String {
+        let formatter = DateFormatter()
+        formatter.locale = .current
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter.string(from: selectedDate)
+    }
+
     private var leftSection: some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(dateService.greeting(for: Date()))
@@ -86,7 +94,7 @@ struct ScheduleHeaderView: View {
                 .fontWeight(.semibold)
             
             HStack(spacing: Configuration.constants.dateSpacing.value) {
-                Text(dateService.formatDate(selectedDate))
+                Text(formattedSelectedDate)
                     .font(AppTypography.caption.font)
                     .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 
@@ -112,6 +120,13 @@ struct ScheduleHeaderView: View {
                     .foregroundAppColor(.warning, colorScheme: colorScheme)
             }
 
+            if let onPremiumTap = onPremiumTap, !(coordinator?.isAdDisabled() ?? true) {
+                PremiumStatusButton(
+                    premiumAccess: PremiumAccess.from(appState: appStateService.state),
+                    onTap: onPremiumTap
+                )
+            }
+
             // Return to today button (only show if not on today)
             if let onTodayTap = onTodayTap, !Calendar.current.isDateInToday(selectedDate) {
                 Button(action: onTodayTap) {
@@ -119,14 +134,6 @@ struct ScheduleHeaderView: View {
                         .font(AppTypography.title3.font)
                         .themedForeground(.header, colorScheme: colorScheme)
                 }
-            }
-
-            // Premium status button
-            if let onPremiumTap = onPremiumTap {
-                PremiumStatusButton(
-                    premiumAccess: PremiumAccess.from(appState: appStateService.state),
-                    onTap: onPremiumTap
-                )
             }
 
             Button(action: onCalendarTap) {

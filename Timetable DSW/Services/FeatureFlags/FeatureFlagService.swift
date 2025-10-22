@@ -169,9 +169,18 @@ final class ServiceContainer {
         featureFlagService: FeatureFlagService? = nil,
         appStateService: AppStateService? = nil
     ) -> ServiceContainer {
-        ServiceContainer(
-            featureFlagService: featureFlagService ?? MockFeatureFlagService(),
-            appStateService: appStateService ?? MockAppStateService()
+        let featureService: FeatureFlagService?
+        let appService: AppStateService?
+#if DEBUG
+        featureService = featureFlagService ?? MockFeatureFlagService()
+        appService = appStateService ?? MockAppStateService()
+#else
+        featureService = featureFlagService
+        appService = appStateService
+#endif
+        return ServiceContainer(
+            featureFlagService: featureService,
+            appStateService: appService
         )
     }
 }

@@ -97,7 +97,12 @@ struct ScheduleView: View {
             .sheet(isPresented: $showPremiumStatus) {
                 PremiumStatusScreen(
                     premiumAccess: PremiumAccess.from(appState: appStateService.state),
-                    onDismiss: { showPremiumStatus = false }
+                    onWatchAd: {
+                        appStateService.grantTemporaryPremium(duration: 3600)
+                    },
+                    onPurchase: {
+                        appStateService.grantPremium()
+                    }
                 )
             }
             .onAppear {
