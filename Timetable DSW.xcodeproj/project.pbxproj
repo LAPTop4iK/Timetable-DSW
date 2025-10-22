@@ -277,7 +277,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Timetable-DSW-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Timetable;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "$(NSUserTrackingUsageDescription)";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use your device identifier (IDFA) to show relevant ads and support the app through advertising.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -320,7 +321,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Timetable-DSW-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Timetable;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "$(NSUserTrackingUsageDescription)";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use your device identifier (IDFA) to show relevant ads and support the app through advertising.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

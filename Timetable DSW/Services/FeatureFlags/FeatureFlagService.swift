@@ -39,7 +39,7 @@ protocol AppStateService: AnyObject {
     
     // Actions
     func grantPremium()
-    func grantTemporaryPremium(duration: TimeInterval)
+    func grantTemporaryPremium(duration: TimeInterval?)
     func revokePremium()
     func recordAdWatched()
     
@@ -126,7 +126,8 @@ final class MockAppStateService: AppStateService {
         state.premiumPurchaseDate = Date()
     }
     
-    func grantTemporaryPremium(duration: TimeInterval = AppStateConfiguration.temporaryPremiumDuration) {
+    func grantTemporaryPremium(duration: TimeInterval? = AppStateConfiguration.temporaryPremiumDuration) {
+        let duration = duration ?? AppStateConfiguration.temporaryPremiumDuration
         let expiresAt = Date().addingTimeInterval(duration)
         state.premiumStatus = .temporaryPremium(expiresAt: expiresAt)
     }
