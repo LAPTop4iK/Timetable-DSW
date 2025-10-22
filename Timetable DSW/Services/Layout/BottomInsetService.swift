@@ -45,6 +45,7 @@ struct BottomInsetConfiguration {
 @MainActor
 protocol BottomInsetService: ObservableObject {
     var bottomInset: CGFloat { get }
+    var tabBarBottomPadding: CGFloat { get }
     var bannerPosition: BannerPosition { get }
 
     func updateBannerPosition(_ position: BannerPosition)
@@ -60,6 +61,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
     // MARK: - Published Properties
 
     @Published private(set) var bottomInset: CGFloat
+    @Published private(set) var tabBarBottomPadding: CGFloat
     @Published var bannerPosition: BannerPosition
 
     // MARK: - Private Properties
@@ -98,10 +100,20 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         self.currentBannerHeight = configuration.bannerHeight
         self.currentTabBarBottomInset = configuration.bottomInset
 
-        // Calculate initial bottomInset using local variable to avoid 'self' before init
+        // Calculate initial values using local variables to avoid 'self' before init
+        let initialPadding = Self.calculateTabBarBottomPadding(
+            bannerHeight: configuration.bannerHeight,
+            bannerPosition: positionFromParams,
+            isPremium: appStateService.isPremium,
+            showAds: featureFlagService.isEnabled(.showAds),
+            spacing: configuration.spacing,
+            defaultPadding: configuration.bottomInset
+        )
+        self.tabBarBottomPadding = initialPadding
+
         let initialBottomInset = Self.calculateBottomInset(
             tabBarHeight: configuration.tabBarHeight,
-            bottomInset: configuration.bottomInset,
+            tabBarBottomPadding: initialPadding,
             bannerHeight: configuration.bannerHeight,
             bannerPosition: positionFromParams,
             isPremium: appStateService.isPremium,
@@ -169,9 +181,18 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
     }
 
     private func recalculateInset() {
+        tabBarBottomPadding = Self.calculateTabBarBottomPadding(
+            bannerHeight: currentBannerHeight,
+            bannerPosition: bannerPosition,
+            isPremium: appStateService.isPremium,
+            showAds: featureFlagService.isEnabled(.showAds),
+            spacing: configuration.spacing,
+            defaultPadding: currentTabBarBottomInset
+        )
+
         bottomInset = Self.calculateBottomInset(
             tabBarHeight: currentTabBarHeight,
-            bottomInset: currentTabBarBottomInset,
+            tabBarBottomPadding: tabBarBottomPadding,
             bannerHeight: currentBannerHeight,
             bannerPosition: bannerPosition,
             isPremium: appStateService.isPremium,
@@ -180,33 +201,62 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         )
     }
 
+    private static func calculateTabBarBottomPadding(
+        bannerHeight: CGFloat,
+        bannerPosition: BannerPosition,
+        isPremium: Bool,
+        showAds: Bool,
+        spacing: CGFloat,
+        defaultPadding: CGFloat
+    ) -> CGFloat {
+        // If premium or ads disabled, use default padding
+        guard !isPremium && showAds else {
+            return defaultPadding
+        }
+
+        // Only add banner height if banner is at bottom (below tab bar)
+        switch bannerPosition {
+        case .bottom:
+            // TabBar needs to be lifted by banner height + spacing
+            return bannerHeight + spacing + defaultPadding
+
+        case .top, .aboveTabBar:
+            // Banner doesn't affect TabBar position
+            return defaultPadding
+        }
+    }
+
     private static func calculateBottomInset(
         tabBarHeight: CGFloat,
-        bottomInset: CGFloat,
+        tabBarBottomPadding: CGFloat,
         bannerHeight: CGFloat,
         bannerPosition: BannerPosition,
         isPremium: Bool,
         showAds: Bool,
         spacing: CGFloat
     ) -> CGFloat {
-        // If premium or ads disabled, only tab bar height
+        // Scroll inset should account for:
+        // 1. TabBar height
+        // 2. TabBar bottom padding (which already includes banner if needed)
+
+        // If premium or ads disabled, only tab bar + its padding
         guard !isPremium && showAds else {
-            return tabBarHeight
+            return tabBarHeight + tabBarBottomPadding
         }
 
         // Calculate based on banner position
         switch bannerPosition {
         case .bottom:
-            // Banner below tab bar: tab bar + banner + spacing
-            return tabBarHeight + bannerHeight + spacing + bottomInset
+            // TabBar padding already includes banner, so just add tab bar height
+            return tabBarHeight + tabBarBottomPadding
 
         case .top:
-            // Banner at top: only tab bar height (banner doesn't affect bottom)
-            return tabBarHeight
+            // Banner at top: tab bar + padding (banner doesn't affect bottom)
+            return tabBarHeight + tabBarBottomPadding
 
         case .aboveTabBar:
-            // Banner above tab bar: tab bar + banner + spacing
-            return tabBarHeight + bannerHeight + spacing + bottomInset
+            // Banner above tab bar: tab bar + padding + banner + spacing
+            return tabBarHeight + tabBarBottomPadding + bannerHeight + spacing
         }
     }
 }
@@ -236,13 +286,16 @@ extension View {
 @MainActor
 final class MockBottomInsetService: ObservableObject, BottomInsetService {
     @Published private(set) var bottomInset: CGFloat
+    @Published private(set) var tabBarBottomPadding: CGFloat
     @Published var bannerPosition: BannerPosition
 
     init(
         bottomInset: CGFloat = 78,
+        tabBarBottomPadding: CGFloat = 32,
         bannerPosition: BannerPosition = .bottom
     ) {
         self.bottomInset = bottomInset
+        self.tabBarBottomPadding = tabBarBottomPadding
         self.bannerPosition = bannerPosition
     }
 

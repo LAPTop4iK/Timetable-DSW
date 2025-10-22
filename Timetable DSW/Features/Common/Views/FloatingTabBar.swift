@@ -280,26 +280,31 @@ struct TabBarButton: View {
 
 struct FloatingTabBar: View {
     // MARK: - Properties
-    
+
     let tabs: [TabBarItem]
     @Binding var selectedTab: Int
-    
+
     // MARK: - Environment
-    
+
     @Environment(\.colorScheme) var colorScheme
-    
+    @Environment(\.bottomInsetService) private var bottomInsetService
+
     // MARK: - Namespace
-    
+
     @Namespace private var animation
-    
+
     // MARK: - Computed Properties
-    
+
     private var configuration: TabBarConfiguration.Constants {
         TabBarConfiguration.adaptive(colorScheme: colorScheme)
     }
-    
+
+    private var dynamicBottomPadding: CGFloat {
+        bottomInsetService?.tabBarBottomPadding ?? configuration.bottomPadding.value
+    }
+
     // MARK: - Body
-    
+
     var body: some View {
         HStack(spacing: 0) {
             ForEach(tabs) { tab in
@@ -322,7 +327,7 @@ struct FloatingTabBar: View {
             TabBarBackground(configuration: configuration)
         }
         .padding(.horizontal, configuration.horizontalPadding.value)
-        .padding(.bottom, configuration.bottomPadding.value)
+        .padding(.bottom, dynamicBottomPadding)
         .ignoresSafeArea(edges: .bottom)
     }
 }
