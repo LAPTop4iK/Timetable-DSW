@@ -22,7 +22,7 @@ enum FeatureFlag: String, CaseIterable, Codable, Sendable {
     nonisolated var defaultValue: Bool {
         switch self {
         case .showSubjectsTab, .showTeachersTab, .showAds:
-            return true
+            return false
         case .enableAnalytics, .enablePushNotifications:
             return false
         case .darkModeOnly:
@@ -257,13 +257,20 @@ final class DefaultFeatureFlagService: ObservableObject, FeatureFlagService {
     // MARK: - Private Methods
 
     private func loadInitialState() async {
-        state = await storage.loadState()
-        updatePublisher()
+        let should = await syncService.shouldSync(lastSyncDate: state.lastSync)
+            print("🟡 shouldSync=\(should) lastSync=\(String(describing: state.lastSync)) @\(Date())")
 
-        // Auto-sync if needed
-        if await syncService.shouldSync(lastSyncDate: state.lastSync) {
-            try? await syncFromRemote()
-        }
+            if should {
+                print("🟢 entering syncFromRemote @\(Date())")
+                do {
+                    try await syncFromRemote()
+                    print("✅ finished syncFromRemote @\(Date())")
+                } catch {
+                    print("❌ syncFromRemote error: \(error) @\(Date())")
+                }
+            } else {
+                print("⚪️ skip sync @\(Date())")
+            }
     }
 
     private func updatePublisher() {

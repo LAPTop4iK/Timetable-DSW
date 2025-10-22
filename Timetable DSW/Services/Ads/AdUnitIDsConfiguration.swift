@@ -24,9 +24,9 @@ struct AdUnitIDsConfiguration {
     )
 
     static let production = AdUnitIDsConfiguration(
-        rewarded: "YOUR_REWARDED_AD_UNIT_ID",
-        interstitial: "YOUR_INTERSTITIAL_AD_UNIT_ID",
-        banner: "YOUR_BANNER_AD_UNIT_ID",
+        rewarded: "ca-app-pub-2195931602320991/5476969834",
+        interstitial: "ca-app-pub-2195931602320991/5169848072",
+        banner: "ca-app-pub-2195931602320991/9416214847",
         rewardedInterstitial: "YOUR_REWARDED_INTERSTITIAL_AD_UNIT_ID",
         appOpen: "YOUR_APP_OPEN_AD_UNIT_ID",
         native: "YOUR_NATIVE_AD_UNIT_ID"

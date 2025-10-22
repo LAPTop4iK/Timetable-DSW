@@ -93,19 +93,26 @@ struct PremiumContentModifier: ViewModifier {
 // MARK: - View Extension
 
 extension View {
+    @ViewBuilder
     func premiumContent(
         feature: PremiumFeature,
         premiumAccess: PremiumAccess,
+        coordinator: AdCoordinator?,
         onWatchAd: @escaping () -> Void,
         onPurchase: @escaping () -> Void
     ) -> some View {
-        modifier(
-            PremiumContentModifier(
-                feature: feature,
-                premiumAccess: premiumAccess,
-                onWatchAd: onWatchAd,
-                onPurchase: onPurchase
+        if coordinator?.isAdDisabled() ?? true {
+            self
+        } else {
+            self.modifier(
+                PremiumContentModifier(
+                    feature: feature,
+                    premiumAccess: premiumAccess,
+                    onWatchAd: onWatchAd,
+                    onPurchase: onPurchase
+                )
             )
-        )
+        }
     }
 }
+
