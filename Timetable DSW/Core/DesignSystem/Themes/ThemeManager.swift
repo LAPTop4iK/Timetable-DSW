@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import WidgetKit
 
 // MARK: - Appearance Mode
 
@@ -44,6 +45,9 @@ class ThemeManager: ObservableObject {
     @Published var selectedThemeId: String {
         didSet {
             UserDefaults.standard.set(selectedThemeId, forKey: Keys.selectedTheme)
+            // Save to App Group for widget
+            AppGroupManager.saveSelectedTheme(id: selectedThemeId, appearanceMode: appearanceMode.rawValue)
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 
@@ -51,6 +55,9 @@ class ThemeManager: ObservableObject {
         didSet {
             UserDefaults.standard.set(appearanceMode.rawValue, forKey: Keys.appearanceMode)
             applyAppearanceMode()
+            // Save to App Group for widget
+            AppGroupManager.saveSelectedTheme(id: selectedThemeId, appearanceMode: appearanceMode.rawValue)
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 

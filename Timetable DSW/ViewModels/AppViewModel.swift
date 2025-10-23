@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import WidgetKit
 
 @MainActor
 final class AppViewModel: ObservableObject, EventsProviderProtocol {
@@ -148,6 +149,14 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
                     )
                     self.scheduleData = partialResponse
                     self.isLoading = false // Hide loading once semester schedule arrives
+
+                    // Save to App Group for widget
+                    AppGroupManager.saveSemesterSchedule(semesterSchedule)
+                    AppGroupManager.saveSelectedGroupId(self.groupId)
+                    AppGroupManager.saveLastUpdated(Date())
+
+                    // Reload widgets
+                    WidgetCenter.shared.reloadAllTimelines()
                 }
             )
             scheduleData = fresh // Update with full data including teachers
