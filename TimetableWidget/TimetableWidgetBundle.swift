@@ -16,13 +16,9 @@ struct TimetableWidgetBundle: WidgetBundle {
         TimetableWidget()
 
         // Live Activity for current class tracking
-        if #available(iOS 16.1, *) {
-            TimetableLiveActivity()
-        }
+        TimetableLiveActivity()
 
-        // Control Center widget (iOS 18+ only)
-        if #available(iOS 18.0, *) {
-            TimetableControlWidget()
-        }
+        // Control Center widget
+        TimetableControlWidget()
     }
 }

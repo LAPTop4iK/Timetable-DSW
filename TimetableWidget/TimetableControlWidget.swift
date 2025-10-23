@@ -9,8 +9,8 @@ import AppIntents
 import SwiftUI
 import WidgetKit
 
-// Control Widgets require iOS 18+
-@available(iOS 18.0, *)
+// MARK: - Control Widget
+
 struct TimetableControlWidget: ControlWidget {
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(
