@@ -28,6 +28,40 @@ struct ScheduleEvent: Identifiable, Hashable, Sendable {
 
     private static let dateService = DefaultDateService.shared
 
+    // MARK: - Memberwise Initializer
+
+    init(
+        title: String,
+        type: String? = nil,
+        startISO: String,
+        endISO: String,
+        room: String? = nil,
+        grading: String? = nil,
+        remarks: String? = nil,
+        studyTrack: String? = nil,
+        groups: String? = nil,
+        teacherId: Int? = nil,
+        teacherName: String? = nil,
+        teacherEmail: String? = nil
+    ) {
+        self.title = title
+        self.type = type
+        self.startISO = startISO
+        self.endISO = endISO
+        self.room = room
+        self.grading = grading
+        self.remarks = remarks
+        self.studyTrack = studyTrack
+        self.groups = groups
+        self.teacherId = teacherId
+        self.teacherName = teacherName
+        self.teacherEmail = teacherEmail
+
+        // Парсим даты при создании
+        self.startDate = ScheduleEvent.dateService.parseISO8601(startISO)
+        self.endDate = ScheduleEvent.dateService.parseISO8601(endISO)
+    }
+
     var id: String {
         "\(startISO)_\(title)_\(teacherId ?? 0)"
     }
@@ -37,6 +71,42 @@ struct ScheduleEvent: Identifiable, Hashable, Sendable {
 //            return "online"
 //        }
         return room ?? ""
+    }
+}
+
+// MARK: - Equatable & Hashable
+
+extension ScheduleEvent {
+    // Используем только ISO строки для сравнения и хеширования,
+    // чтобы избежать проблем с precision Date при парсинге
+    static func == (lhs: ScheduleEvent, rhs: ScheduleEvent) -> Bool {
+        lhs.title == rhs.title &&
+        lhs.type == rhs.type &&
+        lhs.startISO == rhs.startISO &&
+        lhs.endISO == rhs.endISO &&
+        lhs.room == rhs.room &&
+        lhs.grading == rhs.grading &&
+        lhs.remarks == rhs.remarks &&
+        lhs.studyTrack == rhs.studyTrack &&
+        lhs.groups == rhs.groups &&
+        lhs.teacherId == rhs.teacherId &&
+        lhs.teacherName == rhs.teacherName &&
+        lhs.teacherEmail == rhs.teacherEmail
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(title)
+        hasher.combine(type)
+        hasher.combine(startISO)
+        hasher.combine(endISO)
+        hasher.combine(room)
+        hasher.combine(grading)
+        hasher.combine(remarks)
+        hasher.combine(studyTrack)
+        hasher.combine(groups)
+        hasher.combine(teacherId)
+        hasher.combine(teacherName)
+        hasher.combine(teacherEmail)
     }
 }
 
