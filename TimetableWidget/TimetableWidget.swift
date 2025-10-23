@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct TimetableWidget: Widget {
     let kind: String = "TimetableWidget"
@@ -14,7 +15,7 @@ struct TimetableWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: WidgetConfigurationIntent.self,
+            intent: TimetableWidgetProvider.Intent.self,
             provider: TimetableWidgetProvider()
         ) { entry in
             TimetableWidgetEntryView(entry: entry)
@@ -80,3 +81,4 @@ struct TimetableWidgetEntryView: View {
         configuration: nil
     )
 }
+
