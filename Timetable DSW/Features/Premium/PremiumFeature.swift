@@ -14,6 +14,7 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
     case teachersTab = "teachers_tab"
     case subjectsTab = "subjects_tab"
     case themeSettings = "theme_settings"
+    case widgetSettings = "widget_settings"
 //    case advancedFilters = "advanced_filters"
 //    case exportSchedule = "export_schedule"
 
@@ -22,6 +23,7 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
         case .teachersTab: return "Teachers Section"
         case .subjectsTab: return "Subjects Section"
         case .themeSettings: return "Theme Customization"
+        case .widgetSettings: return "Widget Configuration"
 //        case .advancedFilters: return "Advanced Filters"
 //        case .exportSchedule: return "Export Schedule"
         }
@@ -35,6 +37,8 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
             return "Browse and view subject details"
         case .themeSettings:
             return "Customize app colors and appearance"
+        case .widgetSettings:
+            return "Configure and manage home screen widgets"
 //        case .advancedFilters:
 //            return "Advanced filtering options"
 //        case .exportSchedule:
@@ -47,6 +51,7 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
         case .teachersTab: return "person.2.fill"
         case .subjectsTab: return "book.fill"
         case .themeSettings: return "paintpalette.fill"
+        case .widgetSettings: return "square.grid.2x2.fill"
 //        case .advancedFilters: return "line.3.horizontal.decrease.circle.fill"
 //        case .exportSchedule: return "square.and.arrow.up.fill"
         }
