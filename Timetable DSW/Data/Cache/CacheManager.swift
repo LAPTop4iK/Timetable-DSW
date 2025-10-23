@@ -18,7 +18,7 @@ actor CacheManager {
     // MARK: - Initialization
     
     init() {
-        let paths = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+        let paths = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
         cacheDirectory = paths[0].appendingPathComponent("ScheduleCache")
         try? fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
     }
