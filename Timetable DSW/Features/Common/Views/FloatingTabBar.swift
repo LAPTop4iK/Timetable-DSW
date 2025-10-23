@@ -307,10 +307,9 @@ struct FloatingTabBar: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 0) {
-            bannerAd
-
+        VStack(spacing: 8) {
             tabBar
+            bannerAd
         }
     }
 
@@ -322,6 +321,8 @@ struct FloatingTabBar: View {
                     .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: -2)
             }
         }
+        .padding(.bottom, configuration.bottomPadding.value)
+        .ignoresSafeArea(edges: .bottom)
     }
 
     private var tabBar: some View {
@@ -346,7 +347,5 @@ struct FloatingTabBar: View {
             TabBarBackground(configuration: configuration)
         }
         .padding(.horizontal, configuration.horizontalPadding.value)
-        .padding(.bottom, dynamicBottomPadding)
-        .ignoresSafeArea(edges: .bottom)
     }
 }
