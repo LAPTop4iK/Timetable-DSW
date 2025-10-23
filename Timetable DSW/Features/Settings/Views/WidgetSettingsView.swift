@@ -44,7 +44,7 @@ struct WidgetSettingsView: View {
             .padding()
         }
         .background(AppColor.background.color(for: colorScheme))
-        .navigationTitle("Widget Settings")
+        .navigationTitle(LocalizedString.widgetSettingsTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -100,7 +100,7 @@ struct WidgetSettingsView: View {
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     } else {
-                        Text("Never updated")
+                        Text(LocalizedString.widgetNeverUpdated.localized)
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     }
@@ -126,7 +126,7 @@ struct WidgetSettingsView: View {
 
     private var instructionsSection: some View {
         VStack(alignment: .leading, spacing: Configuration.constants.itemSpacing.value) {
-            Text("How to Add Widget")
+            Text(LocalizedString.widgetHowToAdd.localized)
                 .font(AppTypography.title3.font)
                 .fontWeight(.semibold)
                 .foregroundAppColor(.primaryText, colorScheme: colorScheme)
@@ -171,7 +171,7 @@ struct WidgetSettingsView: View {
 
     private var widgetTypesSection: some View {
         VStack(alignment: .leading, spacing: Configuration.constants.itemSpacing.value) {
-            Text("Available Widgets")
+            Text(LocalizedString.widgetAvailable.localized)
                 .font(AppTypography.title3.font)
                 .fontWeight(.semibold)
                 .foregroundAppColor(.primaryText, colorScheme: colorScheme)
@@ -244,7 +244,7 @@ struct WidgetSettingsView: View {
 
     private var troubleshootingSection: some View {
         VStack(alignment: .leading, spacing: Configuration.constants.itemSpacing.value) {
-            Text("Troubleshooting")
+            Text(LocalizedString.widgetTroubleshooting.localized)
                 .font(AppTypography.title3.font)
                 .fontWeight(.semibold)
                 .foregroundAppColor(.primaryText, colorScheme: colorScheme)

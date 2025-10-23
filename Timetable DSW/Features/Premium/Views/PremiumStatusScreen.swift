@@ -64,14 +64,6 @@ struct PremiumStatusScreen: View {
                 }
                 .padding(Configuration.constants.padding.value)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(LocalizedString.generalDone.localized) {
-                        dismiss()
-                    }
-                }
-            }
             .onAppear {
                 startTimer()
             }

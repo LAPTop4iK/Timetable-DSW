@@ -40,6 +40,7 @@ struct ScheduleView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var appStateService: DefaultAppStateService
     @Environment(\.bottomInsetService) private var bottomInsetService
+    @Environment(\.adCoordinator) private var coordinator
     @State private var headerHeight: CGFloat = 0
     @State private var headerHeightMax: CGFloat = 0
     @State private var safeAreaTop: CGFloat = Configuration.constants.defaultSafeAreaTop
@@ -95,7 +96,15 @@ struct ScheduleView: View {
                 PremiumStatusScreen(
                     premiumAccess: PremiumAccess.from(appState: appStateService.state),
                     onWatchAd: {
-                        appStateService.grantTemporaryPremium()
+                        Task {
+                            do {
+                                try await coordinator?.loadAd(type: .rewarded)
+                                try await coordinator?.showAd(type: .rewarded)
+                                appStateService.grantTemporaryPremium()
+                            } catch {
+                                print("[Premium] Failed to show rewarded ad: \(error)")
+                            }
+                        }
                     },
                     onPurchase: {
                         appStateService.grantPremium()

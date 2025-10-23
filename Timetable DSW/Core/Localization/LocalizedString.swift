@@ -80,6 +80,7 @@ enum LocalizedString {
     case settingsLastUpdated
     case settingsNever
     case settingsPleaseSelectGroup
+    case settingsWidgetsTitle
 
     // Tabs
     case tabsSchedule
@@ -295,6 +296,16 @@ enum LocalizedString {
     case themeNameCherry
     case themeNameMidnight
     case themeNameMonochrome
+
+    case widgetAvailable
+    case widgetConfigure
+    case widgetHowToAdd
+    case widgetNeverUpdated
+    case widgetTroubleshooting
+    case widgetSettingsTitle
+    case widgetTitle
+    case widgetEnabled
+    case widgetAccess
 }
 
 extension LocalizedString {
@@ -379,6 +390,8 @@ extension LocalizedString {
         case .settingsLastUpdated: return String(localized: "settings.lastUpdated")
         case .settingsNever: return String(localized: "settings.never")
         case .settingsPleaseSelectGroup: return String(localized: "settings.pleaseSelectGroup")
+        case .settingsWidgetsTitle: return String(localized: "settings.widgetsTitle")
+
 
         // Tabs
         case .tabsSchedule: return String(localized: "tabs.schedule")
@@ -592,7 +605,17 @@ extension LocalizedString {
         case .themeNameLavender:   return String(localized: "theme.name.lavender")
         case .themeNameCherry:     return String(localized: "theme.name.cherry")
         case .themeNameMidnight:   return String(localized: "theme.name.midnight")
+
+        case .widgetSettingsTitle:   return String(localized: "widget.settings.title")
+        case .widgetTitle:     return String(localized: "widget.title")
+        case .widgetEnabled:   return String(localized: "widget.enabled")
+        case .widgetAccess: return String(localized: "widget.access")
         case .themeNameMonochrome: return String(localized: "theme.name.monochrome")
+        case .widgetTroubleshooting: return String(localized: "widget.troubleshooting")
+        case .widgetNeverUpdated: return String(localized: "widget.never.updated")
+        case .widgetHowToAdd: return String(localized: "widget.how.to.add")
+        case .widgetConfigure: return String(localized: "widget.configure")
+        case .widgetAvailable: return String(localized: "widget.available")
         }
     }
 
