@@ -85,37 +85,29 @@ actor ScheduleRepository {
     // MARK: - Parallel Loading Methods
 
     @MainActor func getScheduleWithRace(groupId: Int, from: String, to: String, onSemesterSchedule: @escaping (GroupScheduleResponse) -> Void) async throws -> AggregateResponse {
-        // Start both requests simultaneously
-        async let semesterTask: GroupScheduleResponse? = {
-            try? await self.getSemesterSchedule(groupId: groupId, from: from, to: to)
-        }()
-
-        async let aggregateTask: AggregateResponse = {
-            do {
-                return try await self.networkManager.fetch(
-                    endpoint: Configuration.Endpoint.aggregate(groupId: groupId, from: from, to: to)
-                )
-            } catch {
-                // If aggregate fails, try cached version
-                if let cached: AggregateResponse = try? await self.cacheManager.load(forKey: Configuration.CacheKey.schedule) {
-                    return cached
-                }
-                throw error
+        // Launch semester schedule request in parallel task
+        Task { @MainActor in
+            if let semesterSchedule = try? await self.getSemesterSchedule(groupId: groupId, from: from, to: to) {
+                // Call callback immediately when semester data arrives
+                onSemesterSchedule(semesterSchedule)
             }
-        }()
-
-        // Wait for both with race condition handling
-        let results = await (semester: semesterTask, aggregate: aggregateTask)
-
-        // If semester schedule arrived and was successful, call the callback
-        if let semesterSchedule = results.semester {
-            onSemesterSchedule(semesterSchedule)
         }
 
-        // Save aggregate to cache
-        try await cacheManager.save(results.aggregate, forKey: Configuration.CacheKey.schedule)
-
-        return results.aggregate
+        // Meanwhile, fetch aggregate (this is the main flow)
+        do {
+            let aggregate: AggregateResponse = try await networkManager.fetch(
+                endpoint: Configuration.Endpoint.aggregate(groupId: groupId, from: from, to: to)
+            )
+            // Save aggregate to cache
+            try await cacheManager.save(aggregate, forKey: Configuration.CacheKey.schedule)
+            return aggregate
+        } catch {
+            // If aggregate fails, try cached version
+            if let cached: AggregateResponse = try? await cacheManager.load(forKey: Configuration.CacheKey.schedule) {
+                return cached
+            }
+            throw error
+        }
     }
 
     // MARK: - Groups Methods
