@@ -256,6 +256,39 @@ struct MidnightTheme: Theme {
     var cancelled: Color { isDark ? Color(red: 0.9, green: 0.25, blue: 0.3) : Color(red: 0.85, green: 0.2, blue: 0.25) }
 }
 
+// MARK: - Monochrome Theme (Brutal/Neutral)
+
+struct MonochromeTheme: Theme {
+    let id = "monochrome"
+    let name = "Monochrome"
+    let icon = "square.grid.2x2.fill"
+    let isDark: Bool
+
+    // Muted steel grays - professional and minimal
+    var primary: Color { isDark ? Color(red: 0.45, green: 0.5, blue: 0.55) : Color(red: 0.4, green: 0.42, blue: 0.45) }
+    var secondary: Color { isDark ? Color(red: 0.35, green: 0.38, blue: 0.42) : Color(red: 0.5, green: 0.52, blue: 0.55) }
+    var tertiary: Color { isDark ? Color(red: 0.3, green: 0.33, blue: 0.37) : Color(red: 0.55, green: 0.57, blue: 0.6) }
+    var accent: Color { isDark ? Color(red: 0.5, green: 0.55, blue: 0.6) : Color(red: 0.35, green: 0.38, blue: 0.42) }
+
+    // Muted but distinct event colors - subdued contrast
+    var lectureStart: Color { Color(red: 0.6, green: 0.5, blue: 0.4) }    // Muted brown-gray
+    var lectureEnd: Color { Color(red: 0.5, green: 0.42, blue: 0.35) }    // Dark taupe
+    var exerciseStart: Color { Color(red: 0.4, green: 0.48, blue: 0.55) } // Steel blue-gray
+    var exerciseEnd: Color { Color(red: 0.35, green: 0.42, blue: 0.48) }  // Dark slate
+    var laboratoryStart: Color { Color(red: 0.45, green: 0.52, blue: 0.45) } // Muted olive-gray
+    var laboratoryEnd: Color { Color(red: 0.38, green: 0.45, blue: 0.38) }   // Dark moss
+
+    // Subdued status colors
+    var success: Color { Color(red: 0.4, green: 0.55, blue: 0.5) }
+    var warning: Color { Color(red: 0.65, green: 0.55, blue: 0.4) }
+    var error: Color { Color(red: 0.6, green: 0.4, blue: 0.4) }
+    var info: Color { Color(red: 0.4, green: 0.48, blue: 0.55) }
+
+    // Even online/cancelled are muted in this theme
+    var online: Color { isDark ? Color(red: 0.8, green: 0.75, blue: 0.5) : Color(red: 0.75, green: 0.7, blue: 0.45) }
+    var cancelled: Color { isDark ? Color(red: 0.7, green: 0.45, blue: 0.45) : Color(red: 0.65, green: 0.4, blue: 0.4) }
+}
+
 // MARK: - Theme Factory
 
 struct ThemeFactory {
@@ -268,7 +301,8 @@ struct ThemeFactory {
             ForestTheme(isDark: isDark),
             LavenderTheme(isDark: isDark),
             CherryBlossomTheme(isDark: isDark),
-            MidnightTheme(isDark: isDark)
+            MidnightTheme(isDark: isDark),
+            MonochromeTheme(isDark: isDark)
         ]
     }
 
@@ -281,6 +315,7 @@ struct ThemeFactory {
         case "lavender": return LavenderTheme(isDark: isDark)
         case "cherry": return CherryBlossomTheme(isDark: isDark)
         case "midnight": return MidnightTheme(isDark: isDark)
+        case "monochrome": return MonochromeTheme(isDark: isDark)
         default: return DefaultTheme(isDark: isDark)
         }
     }
