@@ -254,7 +254,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         switch bannerPosition {
         case .bottom:
             // TabBar padding already includes banner, so just add tab bar height
-            return tabBarHeight + tabBarBottomPadding
+            return tabBarHeight + tabBarBottomPadding + safeAreaBottom
 
         case .top:
             // Banner at top: tab bar + padding (banner doesn't affect bottom)
