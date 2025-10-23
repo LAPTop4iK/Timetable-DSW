@@ -52,20 +52,21 @@ struct DefaultTheme: Theme {
     var tertiary: Color { isDark ? Color.pink.opacity(0.8) : Color.blue.opacity(0.6) }
     var accent: Color { isDark ? Color.purple : Color.pink }
 
-    var lectureStart: Color { Color.orange.opacity(0.9) }
-    var lectureEnd: Color { Color.red.opacity(isDark ? 0.7 : 0.6) }
-    var exerciseStart: Color { Color.blue.opacity(0.9) }
-    var exerciseEnd: Color { Color.cyan.opacity(isDark ? 0.7 : 0.6) }
-    var laboratoryStart: Color { Color.purple.opacity(0.9) }
-    var laboratoryEnd: Color { Color.pink.opacity(isDark ? 0.7 : 0.6) }
+    // Highly contrasting event type colors
+    var lectureStart: Color { Color(red: 1.0, green: 0.5, blue: 0.0) }  // Pure orange
+    var lectureEnd: Color { Color(red: 0.9, green: 0.2, blue: 0.1) }    // Deep orange-red
+    var exerciseStart: Color { Color(red: 0.1, green: 0.6, blue: 1.0) } // Bright sky blue
+    var exerciseEnd: Color { Color(red: 0.0, green: 0.8, blue: 0.9) }   // Cyan
+    var laboratoryStart: Color { Color(red: 0.7, green: 0.2, blue: 0.9) } // Vibrant purple
+    var laboratoryEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.7) }   // Magenta
 
     var success: Color { .green }
     var warning: Color { .orange }
     var error: Color { .red }
     var info: Color { .blue }
 
-    // Universal status colors - always recognizable
-    var online: Color { isDark ? Color(red: 0.4, green: 0.8, blue: 0.3) : Color(red: 0.3, green: 0.7, blue: 0.2) }
+    // Bright and highly visible online status
+    var online: Color { isDark ? Color(red: 0.4, green: 1.0, blue: 0.2) : Color(red: 0.2, green: 0.9, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.25) : Color(red: 0.9, green: 0.15, blue: 0.2) }
 }
 
@@ -82,20 +83,21 @@ struct OceanTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.1, green: 0.4, blue: 0.7) : Color(red: 0.0, green: 0.35, blue: 0.6) }
     var accent: Color { isDark ? Color.cyan : Color.teal }
 
-    var lectureStart: Color { Color(red: 0.0, green: 0.6, blue: 0.8) }
-    var lectureEnd: Color { Color(red: 0.0, green: 0.4, blue: 0.6) }
-    var exerciseStart: Color { Color(red: 0.2, green: 0.7, blue: 0.9) }
-    var exerciseEnd: Color { Color.cyan }
-    var laboratoryStart: Color { Color.teal }
-    var laboratoryEnd: Color { Color(red: 0.0, green: 0.55, blue: 0.65) }
+    // Highly contrasting ocean-themed event colors
+    var lectureStart: Color { Color(red: 1.0, green: 0.6, blue: 0.2) }    // Warm coral
+    var lectureEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.2) }      // Deep coral
+    var exerciseStart: Color { Color(red: 0.0, green: 0.7, blue: 1.0) }   // Bright ocean blue
+    var exerciseEnd: Color { Color(red: 0.2, green: 0.9, blue: 1.0) }     // Light cyan
+    var laboratoryStart: Color { Color(red: 0.1, green: 0.5, blue: 0.7) } // Deep teal
+    var laboratoryEnd: Color { Color(red: 0.0, green: 0.65, blue: 0.8) }  // Turquoise
 
     var success: Color { Color(red: 0.0, green: 0.75, blue: 0.65) }
     var warning: Color { Color(red: 1.0, green: 0.7, blue: 0.0) }
     var error: Color { Color(red: 0.9, green: 0.3, blue: 0.3) }
     var info: Color { Color.cyan }
 
-    // Universal status colors with slight ocean tint
-    var online: Color { isDark ? Color(red: 0.35, green: 0.8, blue: 0.4) : Color(red: 0.25, green: 0.7, blue: 0.3) }
+    // Bright lime green for high visibility
+    var online: Color { isDark ? Color(red: 0.5, green: 1.0, blue: 0.3) : Color(red: 0.3, green: 0.95, blue: 0.2) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.3) : Color(red: 0.9, green: 0.2, blue: 0.25) }
 }
 
@@ -112,20 +114,21 @@ struct SunsetTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.9, green: 0.35, blue: 0.5) : Color(red: 0.85, green: 0.25, blue: 0.4) }
     var accent: Color { isDark ? Color.orange : Color(red: 1.0, green: 0.3, blue: 0.3) }
 
-    var lectureStart: Color { Color(red: 1.0, green: 0.5, blue: 0.2) }
-    var lectureEnd: Color { Color(red: 0.95, green: 0.3, blue: 0.3) }
-    var exerciseStart: Color { Color(red: 1.0, green: 0.65, blue: 0.3) }
-    var exerciseEnd: Color { Color(red: 0.9, green: 0.45, blue: 0.2) }
-    var laboratoryStart: Color { Color(red: 0.9, green: 0.35, blue: 0.5) }
-    var laboratoryEnd: Color { Color(red: 0.8, green: 0.2, blue: 0.4) }
+    // Warm sunset colors with high contrast
+    var lectureStart: Color { Color(red: 1.0, green: 0.4, blue: 0.0) }    // Bright orange
+    var lectureEnd: Color { Color(red: 0.95, green: 0.15, blue: 0.1) }    // Deep red-orange
+    var exerciseStart: Color { Color(red: 1.0, green: 0.75, blue: 0.2) }  // Golden yellow
+    var exerciseEnd: Color { Color(red: 1.0, green: 0.55, blue: 0.0) }    // Amber
+    var laboratoryStart: Color { Color(red: 0.9, green: 0.2, blue: 0.5) } // Hot pink
+    var laboratoryEnd: Color { Color(red: 0.75, green: 0.1, blue: 0.35) } // Deep magenta
 
     var success: Color { Color(red: 1.0, green: 0.7, blue: 0.2) }
     var warning: Color { Color(red: 1.0, green: 0.55, blue: 0.1) }
     var error: Color { Color(red: 0.9, green: 0.2, blue: 0.2) }
     var info: Color { Color(red: 1.0, green: 0.6, blue: 0.3) }
 
-    // Universal status colors with warm sunset tint
-    var online: Color { isDark ? Color(red: 0.5, green: 0.8, blue: 0.25) : Color(red: 0.4, green: 0.7, blue: 0.15) }
+    // Bright yellow-green for visibility against warm palette
+    var online: Color { isDark ? Color(red: 0.6, green: 1.0, blue: 0.2) : Color(red: 0.5, green: 0.95, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.15, blue: 0.2) : Color(red: 0.9, green: 0.1, blue: 0.15) }
 }
 
@@ -142,20 +145,21 @@ struct ForestTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.3, green: 0.6, blue: 0.4) : Color(red: 0.15, green: 0.5, blue: 0.25) }
     var accent: Color { isDark ? Color.mint : Color.green }
 
-    var lectureStart: Color { Color(red: 0.6, green: 0.8, blue: 0.3) }
-    var lectureEnd: Color { Color(red: 0.4, green: 0.7, blue: 0.2) }
-    var exerciseStart: Color { Color(red: 0.3, green: 0.75, blue: 0.5) }
-    var exerciseEnd: Color { Color(red: 0.2, green: 0.6, blue: 0.4) }
-    var laboratoryStart: Color { Color(red: 0.45, green: 0.85, blue: 0.6) }
-    var laboratoryEnd: Color { Color.mint }
+    // Nature-inspired with strong differentiation
+    var lectureStart: Color { Color(red: 0.8, green: 0.7, blue: 0.2) }    // Earthy yellow
+    var lectureEnd: Color { Color(red: 0.6, green: 0.5, blue: 0.1) }      // Olive
+    var exerciseStart: Color { Color(red: 0.2, green: 0.6, blue: 0.5) }   // Forest teal
+    var exerciseEnd: Color { Color(red: 0.1, green: 0.5, blue: 0.4) }     // Deep teal
+    var laboratoryStart: Color { Color(red: 0.5, green: 0.8, blue: 0.3) } // Bright lime
+    var laboratoryEnd: Color { Color(red: 0.3, green: 0.7, blue: 0.2) }   // Grass green
 
     var success: Color { Color(red: 0.3, green: 0.8, blue: 0.4) }
     var warning: Color { Color(red: 0.9, green: 0.75, blue: 0.2) }
     var error: Color { Color(red: 0.85, green: 0.35, blue: 0.3) }
     var info: Color { Color(red: 0.4, green: 0.75, blue: 0.5) }
 
-    // Universal status colors - green theme already has good green, use brighter for online
-    var online: Color { isDark ? Color(red: 0.5, green: 0.85, blue: 0.3) : Color(red: 0.4, green: 0.75, blue: 0.2) }
+    // Very bright chartreuse for maximum visibility
+    var online: Color { isDark ? Color(red: 0.7, green: 1.0, blue: 0.3) : Color(red: 0.6, green: 0.95, blue: 0.2) }
     var cancelled: Color { isDark ? Color(red: 0.9, green: 0.2, blue: 0.25) : Color(red: 0.85, green: 0.15, blue: 0.2) }
 }
 
@@ -172,20 +176,21 @@ struct LavenderTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.6, green: 0.5, blue: 0.8) : Color(red: 0.5, green: 0.35, blue: 0.7) }
     var accent: Color { isDark ? Color(red: 0.75, green: 0.65, blue: 0.95) : Color(red: 0.65, green: 0.5, blue: 0.85) }
 
-    var lectureStart: Color { Color(red: 0.8, green: 0.6, blue: 0.9) }
-    var lectureEnd: Color { Color(red: 0.65, green: 0.45, blue: 0.8) }
-    var exerciseStart: Color { Color(red: 0.7, green: 0.65, blue: 0.95) }
-    var exerciseEnd: Color { Color(red: 0.6, green: 0.55, blue: 0.85) }
-    var laboratoryStart: Color { Color(red: 0.75, green: 0.5, blue: 0.85) }
-    var laboratoryEnd: Color { Color(red: 0.65, green: 0.4, blue: 0.75) }
+    // Distinct purple/violet variations
+    var lectureStart: Color { Color(red: 0.5, green: 0.3, blue: 0.9) }    // Deep violet
+    var lectureEnd: Color { Color(red: 0.4, green: 0.2, blue: 0.75) }     // Royal purple
+    var exerciseStart: Color { Color(red: 0.7, green: 0.5, blue: 1.0) }   // Light violet
+    var exerciseEnd: Color { Color(red: 0.6, green: 0.4, blue: 0.9) }     // Medium lavender
+    var laboratoryStart: Color { Color(red: 0.85, green: 0.4, blue: 0.9) } // Bright magenta-purple
+    var laboratoryEnd: Color { Color(red: 0.75, green: 0.3, blue: 0.8) }   // Deep fuchsia
 
     var success: Color { Color(red: 0.6, green: 0.8, blue: 0.7) }
     var warning: Color { Color(red: 0.9, green: 0.7, blue: 0.5) }
     var error: Color { Color(red: 0.9, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.7, green: 0.6, blue: 0.9) }
 
-    // Universal status colors with slight lavender tint
-    var online: Color { isDark ? Color(red: 0.45, green: 0.8, blue: 0.4) : Color(red: 0.35, green: 0.7, blue: 0.3) }
+    // Vibrant lime green stands out against purple
+    var online: Color { isDark ? Color(red: 0.5, green: 1.0, blue: 0.4) : Color(red: 0.4, green: 0.95, blue: 0.3) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.35) : Color(red: 0.9, green: 0.2, blue: 0.3) }
 }
 
@@ -202,20 +207,21 @@ struct CherryBlossomTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.9, green: 0.5, blue: 0.7) : Color(red: 0.85, green: 0.35, blue: 0.55) }
     var accent: Color { isDark ? Color.pink : Color(red: 0.95, green: 0.4, blue: 0.6) }
 
-    var lectureStart: Color { Color(red: 1.0, green: 0.65, blue: 0.75) }
-    var lectureEnd: Color { Color(red: 0.9, green: 0.45, blue: 0.6) }
-    var exerciseStart: Color { Color(red: 0.95, green: 0.75, blue: 0.85) }
-    var exerciseEnd: Color { Color(red: 0.85, green: 0.55, blue: 0.7) }
-    var laboratoryStart: Color { Color(red: 0.9, green: 0.6, blue: 0.8) }
-    var laboratoryEnd: Color { Color(red: 0.8, green: 0.4, blue: 0.65) }
+    // Delicate pink variations with clear separation
+    var lectureStart: Color { Color(red: 1.0, green: 0.5, blue: 0.7) }    // Hot pink
+    var lectureEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.5) }      // Deep rose
+    var exerciseStart: Color { Color(red: 1.0, green: 0.75, blue: 0.85) } // Light blush
+    var exerciseEnd: Color { Color(red: 0.95, green: 0.6, blue: 0.75) }   // Medium pink
+    var laboratoryStart: Color { Color(red: 0.9, green: 0.45, blue: 0.75) } // Orchid pink
+    var laboratoryEnd: Color { Color(red: 0.75, green: 0.25, blue: 0.55) }  // Deep magenta
 
     var success: Color { Color(red: 0.9, green: 0.75, blue: 0.8) }
     var warning: Color { Color(red: 1.0, green: 0.75, blue: 0.6) }
     var error: Color { Color(red: 0.95, green: 0.35, blue: 0.45) }
     var info: Color { Color(red: 0.95, green: 0.7, blue: 0.85) }
 
-    // Universal status colors with pink tint
-    var online: Color { isDark ? Color(red: 0.5, green: 0.8, blue: 0.35) : Color(red: 0.4, green: 0.7, blue: 0.25) }
+    // Bright spring green contrasts beautifully with pink
+    var online: Color { isDark ? Color(red: 0.55, green: 1.0, blue: 0.4) : Color(red: 0.45, green: 0.95, blue: 0.3) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.3) : Color(red: 0.9, green: 0.15, blue: 0.25) }
 }
 
@@ -232,20 +238,21 @@ struct MidnightTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.3, green: 0.45, blue: 0.8) : Color(red: 0.2, green: 0.3, blue: 0.65) }
     var accent: Color { isDark ? Color.indigo : Color(red: 0.3, green: 0.4, blue: 0.8) }
 
-    var lectureStart: Color { Color(red: 0.45, green: 0.55, blue: 0.95) }
-    var lectureEnd: Color { Color(red: 0.3, green: 0.4, blue: 0.8) }
-    var exerciseStart: Color { Color(red: 0.5, green: 0.45, blue: 0.9) }
-    var exerciseEnd: Color { Color(red: 0.35, green: 0.3, blue: 0.75) }
-    var laboratoryStart: Color { Color(red: 0.4, green: 0.5, blue: 0.85) }
-    var laboratoryEnd: Color { Color.indigo }
+    // Cool night sky colors with strong contrast
+    var lectureStart: Color { Color(red: 0.3, green: 0.5, blue: 1.0) }    // Bright sky blue
+    var lectureEnd: Color { Color(red: 0.2, green: 0.35, blue: 0.8) }     // Deep blue
+    var exerciseStart: Color { Color(red: 0.5, green: 0.35, blue: 0.9) }  // Purple-blue
+    var exerciseEnd: Color { Color(red: 0.35, green: 0.2, blue: 0.7) }    // Deep indigo
+    var laboratoryStart: Color { Color(red: 0.4, green: 0.6, blue: 0.95) } // Light periwinkle
+    var laboratoryEnd: Color { Color(red: 0.25, green: 0.45, blue: 0.75) } // Medium blue
 
     var success: Color { Color(red: 0.4, green: 0.7, blue: 0.9) }
     var warning: Color { Color(red: 0.8, green: 0.65, blue: 0.4) }
     var error: Color { Color(red: 0.85, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.5, green: 0.6, blue: 0.95) }
 
-    // Universal status colors with cool blue tint
-    var online: Color { isDark ? Color(red: 0.4, green: 0.75, blue: 0.35) : Color(red: 0.3, green: 0.65, blue: 0.25) }
+    // Electric lime green pops against dark blue
+    var online: Color { isDark ? Color(red: 0.5, green: 1.0, blue: 0.35) : Color(red: 0.4, green: 0.95, blue: 0.25) }
     var cancelled: Color { isDark ? Color(red: 0.9, green: 0.25, blue: 0.3) : Color(red: 0.85, green: 0.2, blue: 0.25) }
 }
 
