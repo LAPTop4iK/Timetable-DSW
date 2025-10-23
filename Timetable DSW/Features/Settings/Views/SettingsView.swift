@@ -37,7 +37,6 @@ struct SettingsView: View {
     @State private var showConfetti = false
     @State private var timeRemaining = ""
     @State private var timer: Timer?
-    @State private var showingThemeSettings = false
 
     @Environment(\.colorScheme) var colorScheme
 
@@ -99,9 +98,6 @@ struct SettingsView: View {
             Text(LocalizedString.settingsClearCacheMessage.localized)
         }
         .confetti(isShowing: $showConfetti, configuration: .rainbow)
-        .sheet(isPresented: $showingThemeSettings) {
-            ThemeSettingsView()
-        }
         .onAppear {
             updateTimeRemaining()
             startTimer()
@@ -113,7 +109,7 @@ struct SettingsView: View {
 
     private var themeSection: some View {
         Section {
-            Button(action: { showingThemeSettings = true }) {
+            NavigationLink(destination: ThemeSettingsView()) {
                 HStack(spacing: Configuration.constants.spacing.value) {
                     iconView(icon: .paintpaletteFill, colors: gradientColors)
                     VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
@@ -124,10 +120,6 @@ struct SettingsView: View {
                             .font(AppTypography.body.font)
                             .foregroundAppColor(.primaryText, colorScheme: colorScheme)
                     }
-                    Spacer()
-                    AppIcon.chevronRight.image()
-                        .font(AppTypography.caption.font)
-                        .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 }
             }
         } header: {
