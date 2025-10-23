@@ -27,7 +27,7 @@ final class WeekNavigationController: ObservableObject {
     // MARK: - Init
     init(
         initialDate: Date = Date(),
-        dateService: DateService = DefaultDateService(),
+        dateService: DateService = DefaultDateService.shared,
         calendar: Calendar = .current
     ) {
         self.dateService = dateService

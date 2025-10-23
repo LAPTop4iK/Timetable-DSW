@@ -124,7 +124,7 @@ struct EventCard: View {
         onTeacherTap: (() -> Void)? = nil,
         onCardTap: (() -> Void)? = nil,
         now: Date = Date(),
-        dateService: DateService = DefaultDateService()
+        dateService: DateService = DefaultDateService.shared
     ) {
         self.event = event
         self.showTeacherName = showTeacherName

@@ -54,7 +54,7 @@ struct ScheduleHeaderView: View {
         onCalendarTap: @escaping () -> Void,
         onPremiumTap: (() -> Void)? = nil,
         onTodayTap: (() -> Void)? = nil,
-        dateService: DateService = DefaultDateService()
+        dateService: DateService = DefaultDateService.shared
     ) {
         self.selectedDate = selectedDate
         self.isRefreshing = isRefreshing
