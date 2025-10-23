@@ -75,7 +75,8 @@ struct SmallWidgetView: View {
                 .lineLimit(2)
                 .foregroundColor(.primary)
 
-            if let room = event.displayRoom, !room.isEmpty {
+            if !event.displayRoom.isEmpty {
+                let room = event.displayRoom
                 Label(room, systemImage: "location.fill")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
@@ -107,7 +108,8 @@ struct SmallWidgetView: View {
                     .foregroundColor(theme.primary)
             }
 
-            if let room = event.displayRoom, !room.isEmpty {
+            if !event.displayRoom.isEmpty {
+                let room = event.displayRoom
                 Label(room, systemImage: "location.fill")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
@@ -243,7 +245,8 @@ struct MediumWidgetView: View {
                         .lineLimit(1)
                         .foregroundColor(.primary)
 
-                    if let room = event.displayRoom, !room.isEmpty {
+                    if !event.displayRoom.isEmpty {
+                        let room = event.displayRoom
                         Text(room)
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)

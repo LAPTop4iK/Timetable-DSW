@@ -780,6 +780,12 @@
         }
       }
     },
+    "Available Widgets" : {
+
+    },
+    "Configure home screen widgets" : {
+
+    },
     "contact.action.reportProblem" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2942,6 +2948,12 @@
         }
       }
     },
+    "How to Add Widget" : {
+
+    },
+    "Last updated: %@ ago" : {
+
+    },
     "mail.copyAddress" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3010,6 +3022,12 @@
           }
         }
       }
+    },
+    "Manage your home screen widgets and customize their appearance" : {
+
+    },
+    "Never updated" : {
+
     },
     "perfMonitor.all" : {
       "localizations" : {
@@ -4296,6 +4314,9 @@
         }
       }
     },
+    "Status" : {
+
+    },
     "subjects.classes" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5145,6 +5166,21 @@
           }
         }
       }
+    },
+    "Troubleshooting" : {
+
+    },
+    "Widget Settings" : {
+
+    },
+    "Widgets" : {
+
+    },
+    "Widgets Enabled" : {
+
+    },
+    "Your widgets have access to your schedule data" : {
+
     }
   },
   "version" : "1.0"
