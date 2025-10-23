@@ -158,6 +158,7 @@ struct DayScheduleTabView: View {
                         topScrollInset: topInset,
                         bottomScrollInset: bottomInset
                     )
+                    .id(daysInWeek[index])
                     .frame(width: width)
                     .offset(x: CGFloat(index) * width + offset)
                 }
