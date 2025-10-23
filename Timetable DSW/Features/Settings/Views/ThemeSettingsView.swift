@@ -31,7 +31,7 @@ struct ThemeSettingsView: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var themeManager = ThemeManager.shared
+    @EnvironmentObject var themeManager: ThemeManager
 
     // MARK: - Body
 
