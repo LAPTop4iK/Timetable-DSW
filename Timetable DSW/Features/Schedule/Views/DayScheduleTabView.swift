@@ -5,7 +5,6 @@
 //  Created by Mikita Laptsionak on 18/10/2025.
 //
 
-
 import SwiftUI
 
 struct DayScheduleTabView: View {
@@ -108,16 +107,15 @@ struct DayScheduleTabView: View {
     private var tabView: some View {
         TabView(selection: createSelectionBinding()) {
             ForEach(Array(daysInWeek.enumerated()), id: \.element) { index, date in
-                GeometryReader { _ in
-                    DayEventsView(
-                        date: date,
-                        events: events,
-                        showTeacherName: showTeacherName,
-                        onTeacherTap: onTeacherTap,
-                        topScrollInset: topInset,
-                        bottomScrollInset: bottomInset
-                    )
-                }
+                // Убрали ненужный GeometryReader — снижает стоимость layout
+                DayEventsView(
+                    date: date,
+                    events: events,
+                    showTeacherName: showTeacherName,
+                    onTeacherTap: onTeacherTap,
+                    topScrollInset: topInset,
+                    bottomScrollInset: bottomInset
+                )
                 .tag(index)
                 .gesture(
                     SimultaneousDragGesture(
@@ -132,7 +130,7 @@ struct DayScheduleTabView: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .transaction { $0.animation = nil } // отключаем implicit-анимации для программной синхры
+        .transaction { $0.animation = nil } // без implicit-анимаций при программной синхронизации
         .id(weekIdentifier)
     }
 
@@ -191,7 +189,7 @@ struct DayScheduleTabView: View {
                             colors: [AppColor.white.color(for: colorScheme).opacity(Configuration.constants.arrowGlowOpacity),
                                      AppColor.clear.color(for: colorScheme)],
                             center: .topLeading,
-                            startRadius: 5,
+                            startRadius: Configuration.constants.arrowGlowStartRadius,
                             endRadius: Configuration.constants.arrowBlurSize * Configuration.constants.arrowGlowRadiusMultiplier
                         )
                     )
@@ -219,30 +217,11 @@ struct DayScheduleTabView: View {
                 let startTime = CFAbsoluteTimeGetCurrent()
                 #endif
 
-                guard !applyingSelection else {
-                    #if DEBUG
-                    print("[TabView] ⚠️ Selection change blocked - already applying")
-                    #endif
-                    return
-                }
-                guard daysInWeek.indices.contains(newIndex) else {
-                    #if DEBUG
-                    print("[TabView] ⚠️ Index out of range: \(newIndex)")
-                    #endif
-                    return
-                }
+                guard !applyingSelection else { return }
+                guard daysInWeek.indices.contains(newIndex) else { return }
 
                 let newDate = daysInWeek[newIndex]
-                guard !calendar.isDate(selectedDate, inSameDayAs: newDate) else {
-                    #if DEBUG
-                    print("[TabView] ℹ️ Same date selected, skipping")
-                    #endif
-                    return
-                }
-
-                #if DEBUG
-                print("[TabView] 📍 Tab change: \(selectedDayIndex) → \(newIndex)")
-                #endif
+                guard !calendar.isDate(selectedDate, inSameDayAs: newDate) else { return }
 
                 applyingSelection = true
                 DispatchQueue.main.async { applyingSelection = false }
@@ -273,32 +252,19 @@ struct DayScheduleTabView: View {
         #endif
 
         guard isHorizontalSwipe(translation) else {
-            #if DEBUG
-            print("[TabView] 🔄 Vertical swipe detected, hiding arrows")
-            #endif
             hideArrowsIfNeeded()
             return
         }
 
         dragTranslation = translation.width
 
-        #if DEBUG
-        print("[TabView] 👆 Drag changed - Index: \(index), Translation: \(String(format: "%.1f", translation.width))px")
-        #endif
-
         let isFirst = index == 0
         let isLast  = index == daysInWeek.count - 1
 
         if isLast && dragTranslation < 0 {
             let p = min(abs(dragTranslation) / Configuration.constants.weekChangeThreshold, 1.0)
-            #if DEBUG
-            print("[TabView] ➡️ Next week progress: \(String(format: "%.2f", p)) (\(String(format: "%.1f", abs(dragTranslation)))px / \(Configuration.constants.weekChangeThreshold)px)")
-            #endif
             updateArrowProgress(&nextWeekArrowProgress, to: p)
             if p >= 0.5 && !hasTriggeredLightHapticNext {
-                #if DEBUG
-                print("[TabView] 📳 Next week haptic triggered")
-                #endif
                 triggerLightHaptic()
                 hasTriggeredLightHapticNext = true
             }
@@ -309,14 +275,8 @@ struct DayScheduleTabView: View {
 
         if isFirst && dragTranslation > 0 {
             let p = min(dragTranslation / Configuration.constants.weekChangeThreshold, 1.0)
-            #if DEBUG
-            print("[TabView] ⬅️ Prev week progress: \(String(format: "%.2f", p)) (\(String(format: "%.1f", dragTranslation))px / \(Configuration.constants.weekChangeThreshold)px)")
-            #endif
             updateArrowProgress(&prevWeekArrowProgress, to: p)
             if p >= 0.5 && !hasTriggeredLightHapticPrev {
-                #if DEBUG
-                print("[TabView] 📳 Prev week haptic triggered")
-                #endif
                 triggerLightHaptic()
                 hasTriggeredLightHapticPrev = true
             }
@@ -338,9 +298,6 @@ struct DayScheduleTabView: View {
         #endif
 
         guard isHorizontalSwipe(translation) else {
-            #if DEBUG
-            print("[TabView] ℹ️ Not horizontal swipe, resetting")
-            #endif
             resetDragState()
             return
         }
@@ -349,21 +306,11 @@ struct DayScheduleTabView: View {
         let isLast  = index == daysInWeek.count - 1
 
         if isLast && translation.width < -Configuration.constants.weekChangeThreshold {
-            #if DEBUG
-            print("[TabView] ✅ Week change triggered: NEXT")
-            #endif
             triggerHaptic()
             onNextWeekFromTabView()
         } else if isFirst && translation.width > Configuration.constants.weekChangeThreshold {
-            #if DEBUG
-            print("[TabView] ✅ Week change triggered: PREVIOUS")
-            #endif
             triggerHaptic()
             onPreviousWeekFromTabView()
-        } else {
-            #if DEBUG
-            print("[TabView] ℹ️ No week change - threshold not met")
-            #endif
         }
 
         resetDragState()
@@ -377,18 +324,10 @@ struct DayScheduleTabView: View {
     private let progressEpsilon: CGFloat = 0.02
     private func updateArrowProgress(_ p: inout CGFloat, to v: CGFloat) {
         let clamped = min(max(v, 0), 1)
-        guard abs(p - clamped) > progressEpsilon else {
-            #if DEBUG
-            // Suppressed - too noisy
-            // print("[TabView] Arrow progress unchanged: \(String(format: "%.3f", p))")
-            #endif
-            return
-        }
-        #if DEBUG
-        print("[TabView] 🎯 Arrow progress updated: \(String(format: "%.3f", p)) → \(String(format: "%.3f", clamped))")
-        #endif
+        guard abs(p - clamped) > progressEpsilon else { return }
         p = clamped
     }
+
     private func hideArrowsIfNeeded() {
         guard nextWeekArrowProgress > 0 || prevWeekArrowProgress > 0 else { return }
         withAnimation(.easeOut(duration: 0.15)) {
@@ -396,6 +335,7 @@ struct DayScheduleTabView: View {
             prevWeekArrowProgress = 0
         }
     }
+
     private func resetDragState() {
         withAnimation(.easeOut(duration: 0.15)) {
             dragTranslation = 0
@@ -405,6 +345,7 @@ struct DayScheduleTabView: View {
             hasTriggeredLightHapticPrev = false
         }
     }
+
     private func triggerLightHaptic() { hapticService.impact(style: .light) }
     private func triggerHaptic()      { hapticService.impact(style: .medium) }
 }

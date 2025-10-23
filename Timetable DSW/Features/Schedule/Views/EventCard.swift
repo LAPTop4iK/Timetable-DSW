@@ -7,6 +7,40 @@
 
 import SwiftUI
 
+// MARK: - Lightweight props for Equatable comparison
+
+struct EventCardProps: Equatable, Identifiable {
+    let id: String
+    let title: String
+    let type: String?
+    let start: Date?
+    let end: Date?
+    let room: String
+    let grading: String?
+    let remarks: String?
+    let studyTrack: String?
+    let groups: String?
+    let teacherId: Int?
+    let teacherName: String?
+
+    static func from(_ e: ScheduleEvent) -> EventCardProps {
+        .init(
+            id: e.id,
+            title: e.title,
+            type: e.type,
+            start: e.startDate,
+            end: e.endDate,
+            room: e.displayRoom,
+            grading: e.grading,
+            remarks: e.remarks,
+            studyTrack: e.studyTrack,
+            groups: e.groups,
+            teacherId: e.teacherId,
+            teacherName: e.teacherName
+        )
+    }
+}
+
 // MARK: - Event Style Configuration
 
 struct EventStyle {
@@ -116,6 +150,10 @@ struct EventCard: View {
         return end < now
     }
 
+    private var props: EventCardProps {
+        EventCardProps.from(event)
+    }
+
     // MARK: - Initialization
 
     init(
@@ -191,6 +229,7 @@ struct EventCard: View {
         }
         .modifier(StatusDimModifier(isPast: isPast, isCancelled: style.isCancelled))
         .onTapGesture { onCardTap?() }
+        .equatable(by: props) // не перестраивать без изменения входных пропсов
     }
 
     // MARK: - Computed Properties
@@ -733,9 +772,6 @@ private struct LargeBage: View {
     }
     private let c = Constants()
 
-    // Новый параметризированный бейдж:
-    // style: .online (по умолчанию) или .cancelled
-    // text: если nil — используем ONLINE, иначе показываем переданный текст
     var style: GradientStyle = .online
     var text: String? = nil
 
@@ -772,4 +808,21 @@ private struct LargeBage: View {
         )
         .fixedSize()
     }
+}
+
+// MARK: - Equatable helper
+
+extension View {
+    /// Оборачивает в EquatableView, сравнивая по предоставленному значению.
+    func equatable<T: Equatable>(by value: T) -> some View {
+        EquatableWrapper(content: self, value: value)
+    }
+}
+
+private struct EquatableWrapper<Content: View, Value: Equatable>: View, Equatable {
+    let content: Content
+    let value: Value
+
+    static func == (l: Self, r: Self) -> Bool { l.value == r.value }
+    var body: some View { content }
 }
