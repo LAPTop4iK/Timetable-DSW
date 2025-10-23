@@ -25,6 +25,7 @@ struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var featureFlagService: DefaultFeatureFlagService
+    @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.adCoordinator) private var coordinator
     @Environment(\.bottomInsetService) private var bottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService
@@ -131,8 +132,8 @@ struct SettingsView: View {
     }
 
     private var currentThemeName: String {
-        let theme = ThemeManager.shared.currentTheme(for: colorScheme)
-        return "\(theme.name) • \(ThemeManager.shared.appearanceMode.displayName)"
+        let theme = themeManager.currentTheme(for: colorScheme)
+        return "\(theme.name) • \(themeManager.appearanceMode.displayName)"
     }
 
     private var groupSection: some View {
@@ -355,7 +356,8 @@ struct SettingsView: View {
     }
 
     private var gradientColors: [Color] {
-        GradientStyle.header.colors(for: colorScheme)
+        let theme = themeManager.currentTheme(for: colorScheme)
+        return GradientStyle.header.colors(for: colorScheme, theme: theme)
     }
 
     private var contactComposer: ContactComposer {
