@@ -7,13 +7,14 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct TimetableWidgetEntry: TimelineEntry {
     let date: Date
     let schedule: GroupScheduleResponse?
     let selectedThemeId: String
     let appearanceMode: String
-    let configuration: WidgetConfigurationIntent?
+    let configuration: (any WidgetConfigurationIntent)?
 
     var todayEvents: [ScheduleEvent] {
         guard let schedule = schedule else { return [] }
