@@ -81,12 +81,6 @@ struct ScheduleView: View {
                     Spacer()
                 }
                 .zIndex(1)
-
-                VStack {
-                    Spacer()
-                    bannerAd
-                }
-                .zIndex(2)
             }
             .ignoresSafeArea()
             .navigationBarHidden(true)
@@ -247,19 +241,6 @@ struct ScheduleView: View {
             onDateSelected: { viewModel.navigation.selectDate($0) },
             eventTypeForDate: { appViewModel.eventType(on: $0) }
         )
-    }
-    
-    private var bannerAd: some View {
-        VStack(spacing: 0) {
-            if adCoordinator?.isAdDisabled() == false {
-                AdaptiveBannerView()
-                    .background(AppColor.background.color(for: colorScheme))
-                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: -2)
-                    .offset(y:-(UIApplication.shared.connectedScenes
-                        .compactMap { $0 as? UIWindowScene }
-                        .first?.windows.first?.safeAreaInsets.bottom ?? 0))
-            }
-        }
     }
 
     private var selectedTeacherBinding: Binding<Teacher?> {

@@ -75,6 +75,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
     private var currentBannerHeight: CGFloat = 0
     private var currentTabBarHeight: CGFloat = 0
     private var currentTabBarBottomInset: CGFloat = 8
+    private var cachedIsPremium: Bool = false
 
     // MARK: - Initialization
 
@@ -99,6 +100,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         self.currentTabBarHeight = configuration.tabBarHeight
         self.currentBannerHeight = configuration.bannerHeight
         self.currentTabBarBottomInset = configuration.bottomInset
+        self.cachedIsPremium = appStateService.isPremium
 
         // Calculate initial values using local variables to avoid 'self' before init
         let initialPadding = Self.calculateTabBarBottomPadding(
@@ -149,8 +151,10 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         appStateService.statePublisher
             .map(\.premiumStatus.isPremium)
             .removeDuplicates()
-            .sink { [weak self] _ in
-                self?.recalculateInset()
+            .sink { [weak self] isPremium in
+                guard let self = self else { return }
+                self.cachedIsPremium = isPremium
+                self.recalculateInset()
             }
             .store(in: &cancellables)
 
@@ -184,7 +188,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         tabBarBottomPadding = Self.calculateTabBarBottomPadding(
             bannerHeight: currentBannerHeight,
             bannerPosition: bannerPosition,
-            isPremium: appStateService.isPremium,
+            isPremium: cachedIsPremium,
             showAds: featureFlagService.isEnabled(.showAds),
             spacing: configuration.spacing,
             defaultPadding: currentTabBarBottomInset
@@ -195,7 +199,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
             tabBarBottomPadding: tabBarBottomPadding,
             bannerHeight: currentBannerHeight,
             bannerPosition: bannerPosition,
-            isPremium: appStateService.isPremium,
+            isPremium: cachedIsPremium,
             showAds: featureFlagService.isEnabled(.showAds),
             spacing: configuration.spacing
         )
@@ -209,10 +213,6 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         spacing: CGFloat,
         defaultPadding: CGFloat
     ) -> CGFloat {
-
-        if isPremium {
-            return defaultPadding
-        }
         // If premium or ads disabled, use default padding
         guard !isPremium && showAds else {
             return defaultPadding
