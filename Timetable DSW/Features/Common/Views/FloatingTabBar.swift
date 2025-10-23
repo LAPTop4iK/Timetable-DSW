@@ -288,6 +288,7 @@ struct FloatingTabBar: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.bottomInsetService) private var bottomInsetService
+    @Environment(\.adCoordinator) private var adCoordinator
 
     // MARK: - Namespace
 
@@ -306,6 +307,24 @@ struct FloatingTabBar: View {
     // MARK: - Body
 
     var body: some View {
+        VStack(spacing: 0) {
+            bannerAd
+
+            tabBar
+        }
+    }
+
+    private var bannerAd: some View {
+        VStack(spacing: 0) {
+            if adCoordinator?.isAdDisabled() == false {
+                AdaptiveBannerView()
+                    .background(AppColor.background.color(for: colorScheme))
+                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: -2)
+            }
+        }
+    }
+
+    private var tabBar: some View {
         HStack(spacing: 0) {
             ForEach(tabs) { tab in
                 TabBarButton(
