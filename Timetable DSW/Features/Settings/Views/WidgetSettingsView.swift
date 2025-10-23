@@ -26,7 +26,6 @@ struct WidgetSettingsView: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.bottomInsetService) private var bottomInsetService
-    @Environment(\.dismiss) private var dismiss
 
     // MARK: - State
 
@@ -46,18 +45,8 @@ struct WidgetSettingsView: View {
         }
         .background(AppColor.background.color(for: colorScheme))
         .navigationTitle("Widget Settings")
-        .navigationBarTitleDisplayMode(.large)
-        .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    AppIcon.chevronLeft.image()
-                        .font(.system(size: 18, weight: .semibold))
-                        .themedForeground(.header, colorScheme: colorScheme)
-                }
-            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     refreshWidgets()
