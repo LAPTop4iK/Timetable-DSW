@@ -31,7 +31,7 @@ final class SubjectDetailViewModel: ObservableObject {
 
     init(
         subject: Subject,
-        dateService: DateService = DefaultDateService(),
+        dateService: DateService = DefaultDateService.shared,
         eventTypeDetector: EventTypeDetector = DefaultEventTypeDetector()
     ) {
         self.subject = subject
