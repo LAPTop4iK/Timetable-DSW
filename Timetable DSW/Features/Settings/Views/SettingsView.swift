@@ -46,6 +46,7 @@ struct SettingsView: View {
             Form {
                 groupSection
                 themeSection
+                widgetSection
                 cacheSection
                 if !(coordinator?.isAdDisabled() ?? true) {
                     awardSection
@@ -109,33 +110,8 @@ struct SettingsView: View {
     }
 
     private var themeSection: some View {
-        let premiumAccess = PremiumAccess.from(appState: appStateService.state)
-
-        return Section {
-            NavigationLink(destination:
-                ThemeSettingsView()
-                    .premiumContent(
-                        feature: .themeSettings,
-                        premiumAccess: premiumAccess,
-                        coordinator: coordinator,
-                        onWatchAd: {
-                            Task {
-                                do {
-                                    try await coordinator?.loadAd(type: .rewarded)
-                                    try await coordinator?.showAd(type: .rewarded)
-                                    appStateService.grantTemporaryPremium()
-                                } catch {
-                                    print("[Premium] Failed to show rewarded ad: \(error)")
-                                }
-                            }
-                        },
-                        onPurchase: {
-                            #if DEBUG
-                            appStateService.grantPremium()
-                            #endif
-                        }
-                    )
-            ) {
+        Section {
+            NavigationLink(destination: ThemeSettingsContainer()) {
                 HStack(spacing: Configuration.constants.spacing.value) {
                     iconView(icon: .paintpaletteFill, colors: gradientColors)
                     VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
@@ -159,6 +135,29 @@ struct SettingsView: View {
     private var currentThemeName: String {
         let theme = themeManager.currentTheme(for: colorScheme)
         return "\(theme.name) • \(themeManager.appearanceMode.displayName)"
+    }
+
+    private var widgetSection: some View {
+        Section {
+            NavigationLink(destination: WidgetSettingsContainer()) {
+                HStack(spacing: Configuration.constants.spacing.value) {
+                    iconView(icon: .squareGrid2x2Fill, colors: gradientColors)
+                    VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
+                        Text("Widgets")
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                        Text("Configure home screen widgets")
+                            .font(AppTypography.body.font)
+                            .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+                    }
+                }
+            }
+        } header: {
+            Text("Widgets")
+        } footer: {
+            Text("Manage your home screen widgets and customize their appearance")
+                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+        }
     }
 
     private var groupSection: some View {
