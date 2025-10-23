@@ -321,7 +321,6 @@ struct FloatingTabBar: View {
                     .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: -2)
             }
         }
-        .padding(.bottom, configuration.bottomPadding.value)
         .ignoresSafeArea(edges: .bottom)
     }
 
