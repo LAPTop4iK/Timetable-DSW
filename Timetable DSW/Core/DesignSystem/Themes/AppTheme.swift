@@ -65,8 +65,8 @@ struct DefaultTheme: Theme {
     var error: Color { .red }
     var info: Color { .blue }
 
-    // Bright and highly visible online status
-    var online: Color { isDark ? Color(red: 0.4, green: 1.0, blue: 0.2) : Color(red: 0.2, green: 0.9, blue: 0.1) }
+    // Bright yellow/amber for high visibility
+    var online: Color { isDark ? Color(red: 1.0, green: 0.85, blue: 0.2) : Color(red: 1.0, green: 0.75, blue: 0.0) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.25) : Color(red: 0.9, green: 0.15, blue: 0.2) }
 }
 
@@ -96,8 +96,8 @@ struct OceanTheme: Theme {
     var error: Color { Color(red: 0.9, green: 0.3, blue: 0.3) }
     var info: Color { Color.cyan }
 
-    // Bright lime green for high visibility
-    var online: Color { isDark ? Color(red: 0.5, green: 1.0, blue: 0.3) : Color(red: 0.3, green: 0.95, blue: 0.2) }
+    // Bright golden yellow for high visibility
+    var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.3) : Color(red: 1.0, green: 0.8, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.3) : Color(red: 0.9, green: 0.2, blue: 0.25) }
 }
 
@@ -127,8 +127,8 @@ struct SunsetTheme: Theme {
     var error: Color { Color(red: 0.9, green: 0.2, blue: 0.2) }
     var info: Color { Color(red: 1.0, green: 0.6, blue: 0.3) }
 
-    // Bright yellow-green for visibility against warm palette
-    var online: Color { isDark ? Color(red: 0.6, green: 1.0, blue: 0.2) : Color(red: 0.5, green: 0.95, blue: 0.1) }
+    // Bright orange-yellow for visibility against warm palette
+    var online: Color { isDark ? Color(red: 1.0, green: 0.85, blue: 0.25) : Color(red: 1.0, green: 0.75, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.15, blue: 0.2) : Color(red: 0.9, green: 0.1, blue: 0.15) }
 }
 
@@ -158,8 +158,8 @@ struct ForestTheme: Theme {
     var error: Color { Color(red: 0.85, green: 0.35, blue: 0.3) }
     var info: Color { Color(red: 0.4, green: 0.75, blue: 0.5) }
 
-    // Very bright chartreuse for maximum visibility
-    var online: Color { isDark ? Color(red: 0.7, green: 1.0, blue: 0.3) : Color(red: 0.6, green: 0.95, blue: 0.2) }
+    // Bright yellow stands out in forest theme
+    var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.2) : Color(red: 1.0, green: 0.8, blue: 0.0) }
     var cancelled: Color { isDark ? Color(red: 0.9, green: 0.2, blue: 0.25) : Color(red: 0.85, green: 0.15, blue: 0.2) }
 }
 
@@ -189,8 +189,8 @@ struct LavenderTheme: Theme {
     var error: Color { Color(red: 0.9, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.7, green: 0.6, blue: 0.9) }
 
-    // Vibrant lime green stands out against purple
-    var online: Color { isDark ? Color(red: 0.5, green: 1.0, blue: 0.4) : Color(red: 0.4, green: 0.95, blue: 0.3) }
+    // Bright yellow-gold stands out against purple
+    var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.3) : Color(red: 1.0, green: 0.8, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.35) : Color(red: 0.9, green: 0.2, blue: 0.3) }
 }
 
@@ -220,8 +220,8 @@ struct CherryBlossomTheme: Theme {
     var error: Color { Color(red: 0.95, green: 0.35, blue: 0.45) }
     var info: Color { Color(red: 0.95, green: 0.7, blue: 0.85) }
 
-    // Bright spring green contrasts beautifully with pink
-    var online: Color { isDark ? Color(red: 0.55, green: 1.0, blue: 0.4) : Color(red: 0.45, green: 0.95, blue: 0.3) }
+    // Bright yellow contrasts beautifully with pink
+    var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.35) : Color(red: 1.0, green: 0.8, blue: 0.15) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.3) : Color(red: 0.9, green: 0.15, blue: 0.25) }
 }
 
@@ -251,8 +251,8 @@ struct MidnightTheme: Theme {
     var error: Color { Color(red: 0.85, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.5, green: 0.6, blue: 0.95) }
 
-    // Electric lime green pops against dark blue
-    var online: Color { isDark ? Color(red: 0.5, green: 1.0, blue: 0.35) : Color(red: 0.4, green: 0.95, blue: 0.25) }
+    // Bright yellow pops against dark blue
+    var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.3) : Color(red: 1.0, green: 0.8, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.9, green: 0.25, blue: 0.3) : Color(red: 0.85, green: 0.2, blue: 0.25) }
 }
 
