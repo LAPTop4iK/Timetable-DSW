@@ -7,20 +7,45 @@
 
 import SwiftUI
 
+enum ThemeConst {
+    enum id {
+        static let `default`   = "default"
+        static let ocean       = "ocean"
+        static let sunset      = "sunset"
+        static let forest      = "forest"
+        static let lavender    = "lavender"
+        static let cherry      = "cherry"
+        static let midnight    = "midnight"
+        static let monochrome  = "monochrome"
+    }
+
+    /// Технические имена тем (могут использоваться как fallback/отладка).
+    /// Для UI мы показываем локализованное имя через `LocalizedString.themeName(for:)`.
+    enum name {
+        static let `default`   = "Default"
+        static let ocean       = "Ocean"
+        static let sunset      = "Sunset"
+        static let forest      = "Forest"
+        static let lavender    = "Lavender"
+        static let cherry      = "Cherry Blossom"
+        static let midnight    = "Midnight"
+        static let monochrome  = "Monochrome"
+    }
+}
+
 // MARK: - Theme Protocol
 
 protocol Theme {
     var id: String { get }
-    var name: String { get }
-    var icon: String { get }
+    var name: String { get }      // техническое имя (для логов / fallback)
+    var icon: AppIcon { get }     // системная иконка через AppIcon
+    var isDark: Bool { get }
 
-    // Primary colors
     var primary: Color { get }
     var secondary: Color { get }
     var tertiary: Color { get }
     var accent: Color { get }
 
-    // Event type colors
     var lectureStart: Color { get }
     var lectureEnd: Color { get }
     var exerciseStart: Color { get }
@@ -28,23 +53,21 @@ protocol Theme {
     var laboratoryStart: Color { get }
     var laboratoryEnd: Color { get }
 
-    // Status colors
     var success: Color { get }
     var warning: Color { get }
     var error: Color { get }
     var info: Color { get }
 
-    // Special states
     var online: Color { get }
     var cancelled: Color { get }
 }
 
-// MARK: - Default Theme (Original Purple/Pink)
+// MARK: - Default Theme
 
 struct DefaultTheme: Theme {
-    let id = "default"
-    let name = "Default"
-    let icon = "sparkles"
+    let id = ThemeConst.id.default
+    let name = ThemeConst.name.default
+    let icon: AppIcon = .sparkles
     let isDark: Bool
 
     var primary: Color { isDark ? Color.purple.opacity(0.9) : Color.pink.opacity(0.9) }
@@ -52,20 +75,18 @@ struct DefaultTheme: Theme {
     var tertiary: Color { isDark ? Color.pink.opacity(0.8) : Color.blue.opacity(0.6) }
     var accent: Color { isDark ? Color.purple : Color.pink }
 
-    // Highly contrasting event type colors
-    var lectureStart: Color { Color(red: 1.0, green: 0.5, blue: 0.0) }  // Pure orange
-    var lectureEnd: Color { Color(red: 0.9, green: 0.2, blue: 0.1) }    // Deep orange-red
-    var exerciseStart: Color { Color(red: 0.1, green: 0.6, blue: 1.0) } // Bright sky blue
-    var exerciseEnd: Color { Color(red: 0.0, green: 0.8, blue: 0.9) }   // Cyan
-    var laboratoryStart: Color { Color(red: 0.7, green: 0.2, blue: 0.9) } // Vibrant purple
-    var laboratoryEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.7) }   // Magenta
+    var lectureStart: Color { Color(red: 1.0, green: 0.5, blue: 0.0) }
+    var lectureEnd: Color { Color(red: 0.9, green: 0.2, blue: 0.1) }
+    var exerciseStart: Color { Color(red: 0.1, green: 0.6, blue: 1.0) }
+    var exerciseEnd: Color { Color(red: 0.0, green: 0.8, blue: 0.9) }
+    var laboratoryStart: Color { Color(red: 0.7, green: 0.2, blue: 0.9) }
+    var laboratoryEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.7) }
 
-    var success: Color { .green }
+    var success: Color { Color(red: 0.18, green: 0.78, blue: 0.70) }
     var warning: Color { .orange }
     var error: Color { .red }
-    var info: Color { .blue }
+    var info: Color { Color(red: 0.40, green: 0.45, blue: 0.95) }
 
-    // Bright yellow/amber for high visibility
     var online: Color { isDark ? Color(red: 1.0, green: 0.85, blue: 0.2) : Color(red: 1.0, green: 0.75, blue: 0.0) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.25) : Color(red: 0.9, green: 0.15, blue: 0.2) }
 }
@@ -73,9 +94,9 @@ struct DefaultTheme: Theme {
 // MARK: - Ocean Theme
 
 struct OceanTheme: Theme {
-    let id = "ocean"
-    let name = "Ocean"
-    let icon = "water.waves"
+    let id = ThemeConst.id.ocean
+    let name = ThemeConst.name.ocean
+    let icon: AppIcon = .waterWaves
     let isDark: Bool
 
     var primary: Color { isDark ? Color(red: 0.2, green: 0.6, blue: 0.86) : Color(red: 0.0, green: 0.48, blue: 0.8) }
@@ -83,20 +104,18 @@ struct OceanTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.1, green: 0.4, blue: 0.7) : Color(red: 0.0, green: 0.35, blue: 0.6) }
     var accent: Color { isDark ? Color.cyan : Color.teal }
 
-    // Highly contrasting ocean-themed event colors
-    var lectureStart: Color { Color(red: 1.0, green: 0.6, blue: 0.2) }    // Warm coral
-    var lectureEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.2) }      // Deep coral
-    var exerciseStart: Color { Color(red: 0.0, green: 0.7, blue: 1.0) }   // Bright ocean blue
-    var exerciseEnd: Color { Color(red: 0.2, green: 0.9, blue: 1.0) }     // Light cyan
-    var laboratoryStart: Color { Color(red: 0.1, green: 0.5, blue: 0.7) } // Deep teal
-    var laboratoryEnd: Color { Color(red: 0.0, green: 0.65, blue: 0.8) }  // Turquoise
+    var lectureStart: Color { Color(red: 1.0, green: 0.6, blue: 0.2) }
+    var lectureEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.2) }
+    var exerciseStart: Color { Color(red: 0.0, green: 0.7, blue: 1.0) }
+    var exerciseEnd: Color { Color(red: 0.2, green: 0.9, blue: 1.0) }
+    var laboratoryStart: Color { Color(red: 0.1, green: 0.5, blue: 0.7) }
+    var laboratoryEnd: Color { Color(red: 0.0, green: 0.65, blue: 0.8) }
 
     var success: Color { Color(red: 0.0, green: 0.75, blue: 0.65) }
     var warning: Color { Color(red: 1.0, green: 0.7, blue: 0.0) }
     var error: Color { Color(red: 0.9, green: 0.3, blue: 0.3) }
     var info: Color { Color.cyan }
 
-    // Bright golden yellow for high visibility
     var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.3) : Color(red: 1.0, green: 0.8, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.3) : Color(red: 0.9, green: 0.2, blue: 0.25) }
 }
@@ -104,9 +123,9 @@ struct OceanTheme: Theme {
 // MARK: - Sunset Theme
 
 struct SunsetTheme: Theme {
-    let id = "sunset"
-    let name = "Sunset"
-    let icon = "sunset.fill"
+    let id = ThemeConst.id.sunset
+    let name = ThemeConst.name.sunset
+    let icon: AppIcon = .sunsetFill
     let isDark: Bool
 
     var primary: Color { isDark ? Color(red: 1.0, green: 0.45, blue: 0.35) : Color(red: 0.95, green: 0.3, blue: 0.2) }
@@ -114,20 +133,18 @@ struct SunsetTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.9, green: 0.35, blue: 0.5) : Color(red: 0.85, green: 0.25, blue: 0.4) }
     var accent: Color { isDark ? Color.orange : Color(red: 1.0, green: 0.3, blue: 0.3) }
 
-    // Warm sunset colors with high contrast
-    var lectureStart: Color { Color(red: 1.0, green: 0.4, blue: 0.0) }    // Bright orange
-    var lectureEnd: Color { Color(red: 0.95, green: 0.15, blue: 0.1) }    // Deep red-orange
-    var exerciseStart: Color { Color(red: 1.0, green: 0.75, blue: 0.2) }  // Golden yellow
-    var exerciseEnd: Color { Color(red: 1.0, green: 0.55, blue: 0.0) }    // Amber
-    var laboratoryStart: Color { Color(red: 0.9, green: 0.2, blue: 0.5) } // Hot pink
-    var laboratoryEnd: Color { Color(red: 0.75, green: 0.1, blue: 0.35) } // Deep magenta
+    var lectureStart: Color { Color(red: 1.0, green: 0.4, blue: 0.0) }
+    var lectureEnd: Color { Color(red: 0.95, green: 0.15, blue: 0.1) }
+    var exerciseStart: Color { Color(red: 1.0, green: 0.75, blue: 0.2) }
+    var exerciseEnd: Color { Color(red: 1.0, green: 0.55, blue: 0.0) }
+    var laboratoryStart: Color { Color(red: 0.9, green: 0.2, blue: 0.5) }
+    var laboratoryEnd: Color { Color(red: 0.75, green: 0.1, blue: 0.35) }
 
     var success: Color { Color(red: 1.0, green: 0.7, blue: 0.2) }
     var warning: Color { Color(red: 1.0, green: 0.55, blue: 0.1) }
     var error: Color { Color(red: 0.9, green: 0.2, blue: 0.2) }
     var info: Color { Color(red: 1.0, green: 0.6, blue: 0.3) }
 
-    // Bright orange-yellow for visibility against warm palette
     var online: Color { isDark ? Color(red: 1.0, green: 0.85, blue: 0.25) : Color(red: 1.0, green: 0.75, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.15, blue: 0.2) : Color(red: 0.9, green: 0.1, blue: 0.15) }
 }
@@ -135,9 +152,9 @@ struct SunsetTheme: Theme {
 // MARK: - Forest Theme
 
 struct ForestTheme: Theme {
-    let id = "forest"
-    let name = "Forest"
-    let icon = "leaf.fill"
+    let id = ThemeConst.id.forest
+    let name = ThemeConst.name.forest
+    let icon: AppIcon = .leafFill
     let isDark: Bool
 
     var primary: Color { isDark ? Color(red: 0.4, green: 0.75, blue: 0.45) : Color(red: 0.2, green: 0.65, blue: 0.3) }
@@ -145,20 +162,18 @@ struct ForestTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.3, green: 0.6, blue: 0.4) : Color(red: 0.15, green: 0.5, blue: 0.25) }
     var accent: Color { isDark ? Color.mint : Color.green }
 
-    // Nature-inspired with strong differentiation
-    var lectureStart: Color { Color(red: 0.8, green: 0.7, blue: 0.2) }    // Earthy yellow
-    var lectureEnd: Color { Color(red: 0.6, green: 0.5, blue: 0.1) }      // Olive
-    var exerciseStart: Color { Color(red: 0.2, green: 0.6, blue: 0.5) }   // Forest teal
-    var exerciseEnd: Color { Color(red: 0.1, green: 0.5, blue: 0.4) }     // Deep teal
-    var laboratoryStart: Color { Color(red: 0.5, green: 0.8, blue: 0.3) } // Bright lime
-    var laboratoryEnd: Color { Color(red: 0.3, green: 0.7, blue: 0.2) }   // Grass green
+    var lectureStart: Color { Color(red: 0.8, green: 0.7, blue: 0.2) }
+    var lectureEnd: Color { Color(red: 0.6, green: 0.5, blue: 0.1) }
+    var exerciseStart: Color { Color(red: 0.2, green: 0.6, blue: 0.5) }
+    var exerciseEnd: Color { Color(red: 0.1, green: 0.5, blue: 0.4) }
+    var laboratoryStart: Color { Color(red: 0.5, green: 0.8, blue: 0.3) }
+    var laboratoryEnd: Color { Color(red: 0.3, green: 0.7, blue: 0.2) }
 
     var success: Color { Color(red: 0.3, green: 0.8, blue: 0.4) }
     var warning: Color { Color(red: 0.9, green: 0.75, blue: 0.2) }
     var error: Color { Color(red: 0.85, green: 0.35, blue: 0.3) }
     var info: Color { Color(red: 0.4, green: 0.75, blue: 0.5) }
 
-    // Bright yellow stands out in forest theme
     var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.2) : Color(red: 1.0, green: 0.8, blue: 0.0) }
     var cancelled: Color { isDark ? Color(red: 0.9, green: 0.2, blue: 0.25) : Color(red: 0.85, green: 0.15, blue: 0.2) }
 }
@@ -166,9 +181,9 @@ struct ForestTheme: Theme {
 // MARK: - Lavender Theme
 
 struct LavenderTheme: Theme {
-    let id = "lavender"
-    let name = "Lavender"
-    let icon = "sparkle"
+    let id = ThemeConst.id.lavender
+    let name = ThemeConst.name.lavender
+    let icon: AppIcon = .sparkle
     let isDark: Bool
 
     var primary: Color { isDark ? Color(red: 0.7, green: 0.6, blue: 0.9) : Color(red: 0.6, green: 0.45, blue: 0.8) }
@@ -176,20 +191,18 @@ struct LavenderTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.6, green: 0.5, blue: 0.8) : Color(red: 0.5, green: 0.35, blue: 0.7) }
     var accent: Color { isDark ? Color(red: 0.75, green: 0.65, blue: 0.95) : Color(red: 0.65, green: 0.5, blue: 0.85) }
 
-    // Distinct purple/violet variations
-    var lectureStart: Color { Color(red: 0.5, green: 0.3, blue: 0.9) }    // Deep violet
-    var lectureEnd: Color { Color(red: 0.4, green: 0.2, blue: 0.75) }     // Royal purple
-    var exerciseStart: Color { Color(red: 0.7, green: 0.5, blue: 1.0) }   // Light violet
-    var exerciseEnd: Color { Color(red: 0.6, green: 0.4, blue: 0.9) }     // Medium lavender
-    var laboratoryStart: Color { Color(red: 0.85, green: 0.4, blue: 0.9) } // Bright magenta-purple
-    var laboratoryEnd: Color { Color(red: 0.75, green: 0.3, blue: 0.8) }   // Deep fuchsia
+    var lectureStart: Color { Color(red: 0.5, green: 0.3, blue: 0.9) }
+    var lectureEnd: Color { Color(red: 0.4, green: 0.2, blue: 0.75) }
+    var exerciseStart: Color { Color(red: 0.7, green: 0.5, blue: 1.0) }
+    var exerciseEnd: Color { Color(red: 0.6, green: 0.4, blue: 0.9) }
+    var laboratoryStart: Color { Color(red: 0.85, green: 0.4, blue: 0.9) }
+    var laboratoryEnd: Color { Color(red: 0.75, green: 0.3, blue: 0.8) }
 
     var success: Color { Color(red: 0.6, green: 0.8, blue: 0.7) }
     var warning: Color { Color(red: 0.9, green: 0.7, blue: 0.5) }
     var error: Color { Color(red: 0.9, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.7, green: 0.6, blue: 0.9) }
 
-    // Bright yellow-gold stands out against purple
     var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.3) : Color(red: 1.0, green: 0.8, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.35) : Color(red: 0.9, green: 0.2, blue: 0.3) }
 }
@@ -197,9 +210,9 @@ struct LavenderTheme: Theme {
 // MARK: - Cherry Blossom Theme
 
 struct CherryBlossomTheme: Theme {
-    let id = "cherry"
-    let name = "Cherry Blossom"
-    let icon = "heart.fill"
+    let id = ThemeConst.id.cherry
+    let name = ThemeConst.name.cherry
+    let icon: AppIcon = .heartFill
     let isDark: Bool
 
     var primary: Color { isDark ? Color(red: 1.0, green: 0.7, blue: 0.8) : Color(red: 0.95, green: 0.5, blue: 0.65) }
@@ -207,20 +220,18 @@ struct CherryBlossomTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.9, green: 0.5, blue: 0.7) : Color(red: 0.85, green: 0.35, blue: 0.55) }
     var accent: Color { isDark ? Color.pink : Color(red: 0.95, green: 0.4, blue: 0.6) }
 
-    // Delicate pink variations with clear separation
-    var lectureStart: Color { Color(red: 1.0, green: 0.5, blue: 0.7) }    // Hot pink
-    var lectureEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.5) }      // Deep rose
-    var exerciseStart: Color { Color(red: 1.0, green: 0.75, blue: 0.85) } // Light blush
-    var exerciseEnd: Color { Color(red: 0.95, green: 0.6, blue: 0.75) }   // Medium pink
-    var laboratoryStart: Color { Color(red: 0.9, green: 0.45, blue: 0.75) } // Orchid pink
-    var laboratoryEnd: Color { Color(red: 0.75, green: 0.25, blue: 0.55) }  // Deep magenta
+    var lectureStart: Color { Color(red: 1.0, green: 0.5, blue: 0.7) }
+    var lectureEnd: Color { Color(red: 0.9, green: 0.3, blue: 0.5) }
+    var exerciseStart: Color { Color(red: 1.0, green: 0.75, blue: 0.85) }
+    var exerciseEnd: Color { Color(red: 0.95, green: 0.6, blue: 0.75) }
+    var laboratoryStart: Color { Color(red: 0.9, green: 0.45, blue: 0.75) }
+    var laboratoryEnd: Color { Color(red: 0.75, green: 0.25, blue: 0.55) }
 
     var success: Color { Color(red: 0.9, green: 0.75, blue: 0.8) }
     var warning: Color { Color(red: 1.0, green: 0.75, blue: 0.6) }
     var error: Color { Color(red: 0.95, green: 0.35, blue: 0.45) }
     var info: Color { Color(red: 0.95, green: 0.7, blue: 0.85) }
 
-    // Bright yellow contrasts beautifully with pink
     var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.35) : Color(red: 1.0, green: 0.8, blue: 0.15) }
     var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.3) : Color(red: 0.9, green: 0.15, blue: 0.25) }
 }
@@ -228,9 +239,9 @@ struct CherryBlossomTheme: Theme {
 // MARK: - Midnight Theme
 
 struct MidnightTheme: Theme {
-    let id = "midnight"
-    let name = "Midnight"
-    let icon = "moon.stars.fill"
+    let id = ThemeConst.id.midnight
+    let name = ThemeConst.name.midnight
+    let icon: AppIcon = .moonStarsFill
     let isDark: Bool
 
     var primary: Color { isDark ? Color(red: 0.4, green: 0.5, blue: 0.9) : Color(red: 0.25, green: 0.35, blue: 0.75) }
@@ -238,53 +249,47 @@ struct MidnightTheme: Theme {
     var tertiary: Color { isDark ? Color(red: 0.3, green: 0.45, blue: 0.8) : Color(red: 0.2, green: 0.3, blue: 0.65) }
     var accent: Color { isDark ? Color.indigo : Color(red: 0.3, green: 0.4, blue: 0.8) }
 
-    // Cool night sky colors with strong contrast
-    var lectureStart: Color { Color(red: 0.3, green: 0.5, blue: 1.0) }    // Bright sky blue
-    var lectureEnd: Color { Color(red: 0.2, green: 0.35, blue: 0.8) }     // Deep blue
-    var exerciseStart: Color { Color(red: 0.5, green: 0.35, blue: 0.9) }  // Purple-blue
-    var exerciseEnd: Color { Color(red: 0.35, green: 0.2, blue: 0.7) }    // Deep indigo
-    var laboratoryStart: Color { Color(red: 0.4, green: 0.6, blue: 0.95) } // Light periwinkle
-    var laboratoryEnd: Color { Color(red: 0.25, green: 0.45, blue: 0.75) } // Medium blue
+    var lectureStart: Color { Color(red: 0.3, green: 0.5, blue: 1.0) }
+    var lectureEnd: Color { Color(red: 0.2, green: 0.35, blue: 0.8) }
+    var exerciseStart: Color { Color(red: 0.5, green: 0.35, blue: 0.9) }
+    var exerciseEnd: Color { Color(red: 0.35, green: 0.2, blue: 0.7) }
+    var laboratoryStart: Color { Color(red: 0.4, green: 0.6, blue: 0.95) }
+    var laboratoryEnd: Color { Color(red: 0.25, green: 0.45, blue: 0.75) }
 
     var success: Color { Color(red: 0.4, green: 0.7, blue: 0.9) }
     var warning: Color { Color(red: 0.8, green: 0.65, blue: 0.4) }
     var error: Color { Color(red: 0.85, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.5, green: 0.6, blue: 0.95) }
 
-    // Bright yellow pops against dark blue
     var online: Color { isDark ? Color(red: 1.0, green: 0.9, blue: 0.3) : Color(red: 1.0, green: 0.8, blue: 0.1) }
     var cancelled: Color { isDark ? Color(red: 0.9, green: 0.25, blue: 0.3) : Color(red: 0.85, green: 0.2, blue: 0.25) }
 }
 
-// MARK: - Monochrome Theme (Brutal/Neutral)
+// MARK: - Monochrome Theme
 
 struct MonochromeTheme: Theme {
-    let id = "monochrome"
-    let name = "Monochrome"
-    let icon = "square.grid.2x2.fill"
+    let id = ThemeConst.id.monochrome
+    let name = ThemeConst.name.monochrome
+    let icon: AppIcon = .squareGrid2x2Fill
     let isDark: Bool
 
-    // Muted steel grays - professional and minimal
     var primary: Color { isDark ? Color(red: 0.45, green: 0.5, blue: 0.55) : Color(red: 0.4, green: 0.42, blue: 0.45) }
     var secondary: Color { isDark ? Color(red: 0.35, green: 0.38, blue: 0.42) : Color(red: 0.5, green: 0.52, blue: 0.55) }
     var tertiary: Color { isDark ? Color(red: 0.3, green: 0.33, blue: 0.37) : Color(red: 0.55, green: 0.57, blue: 0.6) }
     var accent: Color { isDark ? Color(red: 0.5, green: 0.55, blue: 0.6) : Color(red: 0.35, green: 0.38, blue: 0.42) }
 
-    // Muted but distinct event colors - subdued contrast
-    var lectureStart: Color { Color(red: 0.6, green: 0.5, blue: 0.4) }    // Muted brown-gray
-    var lectureEnd: Color { Color(red: 0.5, green: 0.42, blue: 0.35) }    // Dark taupe
-    var exerciseStart: Color { Color(red: 0.4, green: 0.48, blue: 0.55) } // Steel blue-gray
-    var exerciseEnd: Color { Color(red: 0.35, green: 0.42, blue: 0.48) }  // Dark slate
-    var laboratoryStart: Color { Color(red: 0.45, green: 0.52, blue: 0.45) } // Muted olive-gray
-    var laboratoryEnd: Color { Color(red: 0.38, green: 0.45, blue: 0.38) }   // Dark moss
+    var lectureStart: Color { Color(red: 0.6, green: 0.5, blue: 0.4) }
+    var lectureEnd: Color { Color(red: 0.5, green: 0.42, blue: 0.35) }
+    var exerciseStart: Color { Color(red: 0.4, green: 0.48, blue: 0.55) }
+    var exerciseEnd: Color { Color(red: 0.35, green: 0.42, blue: 0.48) }
+    var laboratoryStart: Color { Color(red: 0.45, green: 0.52, blue: 0.45) }
+    var laboratoryEnd: Color { Color(red: 0.38, green: 0.45, blue: 0.38) }
 
-    // Subdued status colors
     var success: Color { Color(red: 0.4, green: 0.55, blue: 0.5) }
     var warning: Color { Color(red: 0.65, green: 0.55, blue: 0.4) }
     var error: Color { Color(red: 0.6, green: 0.4, blue: 0.4) }
     var info: Color { Color(red: 0.4, green: 0.48, blue: 0.55) }
 
-    // Even online/cancelled are muted in this theme
     var online: Color { isDark ? Color(red: 0.8, green: 0.75, blue: 0.5) : Color(red: 0.75, green: 0.7, blue: 0.45) }
     var cancelled: Color { isDark ? Color(red: 0.7, green: 0.45, blue: 0.45) : Color(red: 0.65, green: 0.4, blue: 0.4) }
 }
@@ -309,14 +314,14 @@ struct ThemeFactory {
     static func theme(withId id: String, for colorScheme: ColorScheme) -> any Theme {
         let isDark = colorScheme == .dark
         switch id {
-        case "ocean": return OceanTheme(isDark: isDark)
-        case "sunset": return SunsetTheme(isDark: isDark)
-        case "forest": return ForestTheme(isDark: isDark)
-        case "lavender": return LavenderTheme(isDark: isDark)
-        case "cherry": return CherryBlossomTheme(isDark: isDark)
-        case "midnight": return MidnightTheme(isDark: isDark)
-        case "monochrome": return MonochromeTheme(isDark: isDark)
-        default: return DefaultTheme(isDark: isDark)
+        case ThemeConst.id.ocean:      return OceanTheme(isDark: isDark)
+        case ThemeConst.id.sunset:     return SunsetTheme(isDark: isDark)
+        case ThemeConst.id.forest:     return ForestTheme(isDark: isDark)
+        case ThemeConst.id.lavender:   return LavenderTheme(isDark: isDark)
+        case ThemeConst.id.cherry:     return CherryBlossomTheme(isDark: isDark)
+        case ThemeConst.id.midnight:   return MidnightTheme(isDark: isDark)
+        case ThemeConst.id.monochrome: return MonochromeTheme(isDark: isDark)
+        default:                       return DefaultTheme(isDark: isDark)
         }
     }
 }

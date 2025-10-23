@@ -34,7 +34,7 @@ struct BottomInsetConfiguration {
 
     static let `default` = BottomInsetConfiguration(
         tabBarHeight: 78,      // Standard iOS tab bar with safe area
-        bottomInset: 32,
+        bottomInset: 8,
         bannerHeight: 50,      // Standard banner ad height
         spacing: 8             // Spacing between elements
     )
@@ -74,7 +74,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
 
     private var currentBannerHeight: CGFloat = 0
     private var currentTabBarHeight: CGFloat = 0
-    private var currentTabBarBottomInset: CGFloat = 32
+    private var currentTabBarBottomInset: CGFloat = 8
 
     // MARK: - Initialization
 
@@ -209,6 +209,10 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         spacing: CGFloat,
         defaultPadding: CGFloat
     ) -> CGFloat {
+
+        if isPremium {
+            return defaultPadding
+        }
         // If premium or ads disabled, use default padding
         guard !isPremium && showAds else {
             return defaultPadding

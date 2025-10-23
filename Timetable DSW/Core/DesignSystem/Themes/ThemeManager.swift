@@ -19,17 +19,17 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .system: return "System"
-        case .light: return "Light"
-        case .dark: return "Dark"
+        case .system: return LocalizedString.appearanceSystem.localized
+        case .light:  return LocalizedString.appearanceLight.localized
+        case .dark:   return LocalizedString.appearanceDark.localized
         }
     }
 
-    var icon: String {
+    var icon: AppIcon {
         switch self {
-        case .system: return "circle.lefthalf.filled"
-        case .light: return "sun.max.fill"
-        case .dark: return "moon.fill"
+        case .system: return .circleLeftHalfFilled
+        case .light:  return .sunMaxFill
+        case .dark:   return .moonFill
         }
     }
 }
