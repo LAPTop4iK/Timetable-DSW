@@ -38,7 +38,7 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
         case .themeSettings:
             return "Customize app colors and appearance"
         case .widgetSettings:
-            return "Configure and manage home screen widgets"
+            return LocalizedString.widgetConfigure.localized
 //        case .advancedFilters:
 //            return "Advanced filtering options"
 //        case .exportSchedule:
