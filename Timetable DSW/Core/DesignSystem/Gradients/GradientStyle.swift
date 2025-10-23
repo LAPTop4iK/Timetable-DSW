@@ -22,73 +22,94 @@ enum GradientStyle {
     case online
     case cancelled
 
-    func colors(for scheme: ColorScheme) -> [Color] {
+    func colors(for scheme: ColorScheme, theme: (any Theme)? = nil) -> [Color] {
+        let currentTheme = theme ?? ThemeManager.shared.currentTheme(for: scheme)
+        let opacity1: Double = scheme == .dark ? 0.9 : 0.9
+        let opacity2: Double = scheme == .dark ? 0.7 : 0.6
+
         switch self {
         case .primary:
-            return scheme == .dark
-                ? [Color.purple.opacity(0.9), Color.blue.opacity(0.7), Color.pink.opacity(0.8)]
-                : [Color.pink.opacity(0.9), Color.purple.opacity(0.8), Color.blue.opacity(0.6)]
+            return [
+                currentTheme.primary,
+                currentTheme.secondary.opacity(opacity2),
+                currentTheme.tertiary.opacity(0.8)
+            ]
 
         case .secondary:
-            return scheme == .dark
-                ? [Color.blue.opacity(0.9), Color.cyan.opacity(0.7)]
-                : [Color.blue.opacity(0.9), Color.cyan.opacity(0.6)]
+            return [
+                currentTheme.secondary.opacity(opacity1),
+                currentTheme.tertiary.opacity(opacity2)
+            ]
 
         case .accent:
-            return scheme == .dark
-                ? [Color.purple.opacity(0.9), Color.pink.opacity(0.7)]
-                : [Color.purple.opacity(0.9), Color.pink.opacity(0.6)]
+            return [
+                currentTheme.accent.opacity(opacity1),
+                currentTheme.primary.opacity(opacity2)
+            ]
 
         case .success:
-            return scheme == .dark
-                ? [Color.green.opacity(0.9), Color.cyan.opacity(0.7)]
-                : [Color.green.opacity(0.9), Color.cyan.opacity(0.6)]
+            return [
+                currentTheme.success.opacity(opacity1),
+                currentTheme.info.opacity(opacity2)
+            ]
 
         case .warning:
-            return [Color.orange.opacity(0.9), Color.red.opacity(0.7)]
+            return [
+                currentTheme.warning.opacity(opacity1),
+                currentTheme.error.opacity(opacity2)
+            ]
 
         case .error:
-            return [Color.orange.opacity(0.9), Color.red.opacity(0.7)]
+            return [
+                currentTheme.error.opacity(opacity1),
+                currentTheme.warning.opacity(opacity2)
+            ]
 
         case .lecture:
-            return scheme == .dark
-                ? [Color.orange.opacity(0.9), Color.red.opacity(0.7)]
-                : [Color.orange.opacity(0.9), Color.red.opacity(0.6)]
+            return [
+                currentTheme.lectureStart.opacity(opacity1),
+                currentTheme.lectureEnd.opacity(opacity2)
+            ]
 
         case .exercise:
-            return scheme == .dark
-                ? [Color.blue.opacity(0.9), Color.cyan.opacity(0.7)]
-                : [Color.blue.opacity(0.9), Color.cyan.opacity(0.6)]
+            return [
+                currentTheme.exerciseStart.opacity(opacity1),
+                currentTheme.exerciseEnd.opacity(opacity2)
+            ]
 
         case .laboratory:
-            return scheme == .dark
-                ? [Color.purple.opacity(0.9), Color.pink.opacity(0.7)]
-                : [Color.purple.opacity(0.9), Color.pink.opacity(0.6)]
+            return [
+                currentTheme.laboratoryStart.opacity(opacity1),
+                currentTheme.laboratoryEnd.opacity(opacity2)
+            ]
 
         case .header:
             return scheme == .dark
-                ? [Color.purple.opacity(0.9), Color.blue.opacity(0.7)]
-                : [Color.pink.opacity(0.9), Color.purple.opacity(0.7)]
+                ? [currentTheme.primary, currentTheme.secondary.opacity(opacity2)]
+                : [currentTheme.accent, currentTheme.primary.opacity(opacity2)]
 
         case .online:
-            return scheme == .dark
-                ? [Color.yellow.opacity(0.95), Color.orange.opacity(0.7)]
-                : [Color.yellow.opacity(0.95), Color.orange.opacity(0.6)]
+            return [
+                currentTheme.online.opacity(0.95),
+                currentTheme.warning.opacity(opacity2)
+            ]
 
         case .cancelled:
-            return scheme == .dark
-            ? [Color(red: 0.90, green: 0.12, blue: 0.22).opacity(0.95), Color(red: 0.40, green: 0.00, blue: 0.12).opacity(0.85)]
-            : [Color(red: 0.95, green: 0.22, blue: 0.30).opacity(0.95), Color(red: 0.65, green: 0.00, blue: 0.18).opacity(0.70)]
+            return [
+                currentTheme.cancelled.opacity(0.95),
+                currentTheme.cancelled.opacity(0.85)
+            ]
         }
     }
 
     func linearGradient(
         for scheme: ColorScheme,
         startPoint: UnitPoint = .topLeading,
-        endPoint: UnitPoint = .bottomTrailing
+        endPoint: UnitPoint = .bottomTrailing,
+        theme: (any Theme)? = nil
     ) -> LinearGradient {
         LinearGradient(
-            colors: colors(for: scheme),
+            colors: colors(for: scheme, theme: theme),
             startPoint: startPoint,
             endPoint: endPoint
         )
@@ -97,10 +118,10 @@ enum GradientStyle {
 
 // MARK: - View Extension
 extension View {
-    func themedForeground(_ style: GradientStyle, colorScheme: ColorScheme) -> some View {
+    func themedForeground(_ style: GradientStyle, colorScheme: ColorScheme, theme: (any Theme)? = nil) -> some View {
         self.foregroundStyle(
             LinearGradient(
-                colors: style.colors(for: colorScheme),
+                colors: style.colors(for: colorScheme, theme: theme),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )

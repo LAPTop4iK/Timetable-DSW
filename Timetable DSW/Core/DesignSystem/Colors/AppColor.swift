@@ -14,24 +14,24 @@ enum AppColor {
     case secondaryText
     case tertiaryText
     case quaternaryText
-    
+
     // MARK: - Background Colors
     case background
     case secondaryBackground
     case tertiaryBackground
-    
+
     // MARK: - Theme Colors
     case themePrimary
     case themeSecondary
     case themeTertiary
     case themeAccent
-    
+
     // MARK: - Status Colors
     case success
     case warning
     case error
     case info
-    
+
     // MARK: - Basic Colors
     case white
     case black
@@ -43,12 +43,14 @@ enum AppColor {
     case purple
     case pink
     case cyan
-    
+
     // MARK: - Custom
     case custom(Color, opacity: Double)
-    
+
     // MARK: - Method
-    func color(for scheme: ColorScheme) -> Color {
+    func color(for scheme: ColorScheme, theme: (any Theme)? = nil) -> Color {
+        let currentTheme = theme ?? ThemeManager.shared.currentTheme(for: scheme)
+
         switch self {
         case .primaryText:
             return .primary
@@ -58,32 +60,32 @@ enum AppColor {
             return scheme == .dark ? Color.white.opacity(0.6) : Color.black.opacity(0.5)
         case .quaternaryText:
             return scheme == .dark ? Color.white.opacity(0.4) : Color.black.opacity(0.3)
-            
+
         case .background:
             return Color(.systemBackground)
         case .secondaryBackground:
             return Color(.secondarySystemBackground)
         case .tertiaryBackground:
             return Color(.tertiarySystemBackground)
-            
+
         case .themePrimary:
-            return scheme == .dark ? Color.purple.opacity(0.9) : Color.pink.opacity(0.9)
+            return currentTheme.primary
         case .themeSecondary:
-            return scheme == .dark ? Color.blue.opacity(0.7) : Color.purple.opacity(0.7)
+            return currentTheme.secondary
         case .themeTertiary:
-            return scheme == .dark ? Color.pink.opacity(0.8) : Color.blue.opacity(0.6)
+            return currentTheme.tertiary
         case .themeAccent:
-            return scheme == .dark ? Color.purple : Color.pink
-            
+            return currentTheme.accent
+
         case .success:
-            return .green
+            return currentTheme.success
         case .warning:
-            return .orange
+            return currentTheme.warning
         case .error:
-            return .red
+            return currentTheme.error
         case .info:
-            return .blue
-            
+            return currentTheme.info
+
         case .white:
             return .white
         case .black:
@@ -104,7 +106,7 @@ enum AppColor {
             return .pink
         case .cyan:
             return .cyan
-            
+
         case .custom(let color, let opacity):
             return color.opacity(opacity)
         }
@@ -113,7 +115,7 @@ enum AppColor {
 
 // MARK: - View Extension
 extension View {
-    func foregroundAppColor(_ appColor: AppColor, colorScheme: ColorScheme) -> some View {
-        self.foregroundColor(appColor.color(for: colorScheme))
+    func foregroundAppColor(_ appColor: AppColor, colorScheme: ColorScheme, theme: (any Theme)? = nil) -> some View {
+        self.foregroundColor(appColor.color(for: colorScheme, theme: theme))
     }
 }

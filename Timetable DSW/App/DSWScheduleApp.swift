@@ -18,6 +18,7 @@ struct DSWScheduleApp: App {
     @StateObject private var featureFlagService: DefaultFeatureFlagService
     @StateObject private var parametersService: FeatureFlagParametersService
     @StateObject private var bottomInsetService: DefaultBottomInsetService
+    @StateObject private var themeManager = ThemeManager.shared
 
     // AdCoordinator - не ObservableObject, поэтому @State
     @State private var adCoordinator: AdMobCoordinator
@@ -77,8 +78,10 @@ struct DSWScheduleApp: App {
                 .environmentObject(featureFlagService)
                 .environmentObject(parametersService)
                 .environmentObject(bottomInsetService)
+                .environmentObject(themeManager)
                 .environment(\.featureFlagParameters, parametersService)
                 .environment(\.bottomInsetService, bottomInsetService)
+                .environment(\.themeManager, themeManager)
                 .adCoordinator(adCoordinator)
         }
     }
