@@ -32,7 +32,6 @@ struct ThemeSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.bottomInsetService) private var bottomInsetService
-    @Environment(\.dismiss) private var dismiss
 
     // MARK: - Body
 
@@ -46,19 +45,7 @@ struct ThemeSettingsView: View {
         }
         .background(AppColor.background.color(for: colorScheme))
         .navigationTitle(LocalizedString.themeSettingsTitle.localized)
-        .navigationBarTitleDisplayMode(.large)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    AppIcon.chevronLeft.image()
-                        .font(.system(size: 18, weight: .semibold))
-                        .themedForeground(.header, colorScheme: colorScheme)
-                }
-            }
-        }
+        .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             AppColor.clear.color(for: colorScheme)
                 .frame(height: bottomInsetService?.bottomInset ?? 78)
