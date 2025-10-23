@@ -31,6 +31,8 @@ struct ThemeSettingsView: View {
 
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var themeManager: ThemeManager
+    @Environment(\.bottomInsetService) private var bottomInsetService
+    @Environment(\.dismiss) private var dismiss
 
     // MARK: - Body
 
@@ -43,15 +45,31 @@ struct ThemeSettingsView: View {
             .padding()
         }
         .background(AppColor.background.color(for: colorScheme))
-        .navigationTitle("Theme Settings")
+        .navigationTitle(LocalizedString.themeSettingsTitle.localized)
         .navigationBarTitleDisplayMode(.large)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    AppIcon.chevronLeft.image()
+                        .font(.system(size: 18, weight: .semibold))
+                        .themedForeground(.header, colorScheme: colorScheme)
+                }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            AppColor.clear.color(for: colorScheme)
+                .frame(height: bottomInsetService?.bottomInset ?? 78)
+        }
     }
 
     // MARK: - Appearance Mode Section
 
     private var appearanceModeSection: some View {
         VStack(alignment: .leading, spacing: Configuration.constants.itemSpacing.value) {
-            Text("Appearance")
+            Text(LocalizedString.themeSettingsAppearanceTitle.localized)
                 .font(AppTypography.title3.font)
                 .fontWeight(.semibold)
                 .foregroundAppColor(.primaryText, colorScheme: colorScheme)
@@ -76,7 +94,7 @@ struct ThemeSettingsView: View {
 
     private var colorThemeSection: some View {
         VStack(alignment: .leading, spacing: Configuration.constants.itemSpacing.value) {
-            Text("Color Theme")
+            Text(LocalizedString.themeSettingsColorThemeTitle.localized)
                 .font(AppTypography.title3.font)
                 .fontWeight(.semibold)
                 .foregroundAppColor(.primaryText, colorScheme: colorScheme)
@@ -124,7 +142,7 @@ private struct AppearanceModeCard: View {
                         )
                         .frame(width: 44, height: 44)
 
-                    Image(systemName: mode.icon)
+                    mode.icon.image()
                         .font(.system(size: 20, weight: .medium))
                         .foregroundStyle(
                             LinearGradient(
@@ -149,7 +167,7 @@ private struct AppearanceModeCard: View {
                 Spacer()
 
                 if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
+                    AppIcon.checkmarkCircleFill.image()
                         .font(.system(size: 24))
                         .foregroundStyle(
                             LinearGradient(
@@ -188,9 +206,9 @@ private struct AppearanceModeCard: View {
 
     private var modeDescription: String {
         switch mode {
-        case .system: return "Follow system settings"
-        case .light: return "Always use light mode"
-        case .dark: return "Always use dark mode"
+        case .system: return LocalizedString.appearanceDescSystem.localized
+        case .light:  return LocalizedString.appearanceDescLight.localized
+        case .dark:   return LocalizedString.appearanceDescDark.localized
         }
     }
 }
@@ -231,7 +249,7 @@ private struct ThemeCard: View {
                                 .frame(width: 16, height: 16)
                         }
 
-                        Image(systemName: theme.icon)
+                        theme.icon.image()
                             .font(.system(size: 32, weight: .medium))
                             .foregroundColor(.white.opacity(0.9))
                     }
@@ -255,15 +273,15 @@ private struct ThemeCard: View {
                         )
                 )
 
-                // Name
+                // Localized Name
                 HStack {
-                    Text(theme.name)
+                    Text(LocalizedString.themeName(for: theme.id))
                         .font(AppTypography.body.font)
                         .fontWeight(isSelected ? .semibold : .medium)
                         .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
                     if isSelected {
-                        Image(systemName: "checkmark.circle.fill")
+                        AppIcon.checkmarkCircleFill.image()
                             .font(.system(size: 16))
                             .foregroundColor(theme.success)
                     }

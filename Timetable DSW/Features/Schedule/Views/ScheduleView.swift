@@ -255,6 +255,9 @@ struct ScheduleView: View {
                 AdaptiveBannerView()
                     .background(AppColor.background.color(for: colorScheme))
                     .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: -2)
+                    .offset(y:-(UIApplication.shared.connectedScenes
+                        .compactMap { $0 as? UIWindowScene }
+                        .first?.windows.first?.safeAreaInsets.bottom ?? 0))
             }
         }
     }

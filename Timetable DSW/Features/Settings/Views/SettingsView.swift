@@ -114,7 +114,7 @@ struct SettingsView: View {
                 HStack(spacing: Configuration.constants.spacing.value) {
                     iconView(icon: .paintpaletteFill, colors: gradientColors)
                     VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
-                        Text("Theme")
+                        Text(LocalizedString.settingsThemeSectionTitle.localized)
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                         Text(currentThemeName)
@@ -124,9 +124,9 @@ struct SettingsView: View {
                 }
             }
         } header: {
-            Text("Appearance")
+            Text(LocalizedString.settingsThemeSectionHeader.localized)
         } footer: {
-            Text("Customize the app's color theme and appearance mode")
+            Text(LocalizedString.settingsThemeSectionFooter.localized)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
         }
     }
@@ -292,7 +292,13 @@ struct SettingsView: View {
     @ViewBuilder
     // SettingsView: добавь секцию
     private var debugSection: some View {
-        if featureFlagService.isEnabled(.showDebugMenu) == true {
+        #if DEBUG
+        let isDebug = true
+        #else
+        let isDebug = false
+        #endif
+
+        if isDebug || featureFlagService.isEnabled(.showDebugMenu) {
             Section {
                 NavigationLink("🐛 Debug Menu") {
                     DebugMenuScreen(
@@ -348,8 +354,10 @@ struct SettingsView: View {
             viewModel: selectionVM,
             onSelectGroup: { group in
                 viewModel.selectGroup(group)
-                Task { try? await coordinator?.showAd(type: .interstitial) }
-            }
+                Task {
+                    try? await Task.sleep(nanoseconds: 600_000_000) // 0.6 seconds
+                    try? await coordinator?.showAd(type: .interstitial)
+                }            }
         )
         .onAppear { selectionVM.setupWithAppViewModel(appViewModel) }
         .preloadAds(.interstitial, coordinator: coordinator)
