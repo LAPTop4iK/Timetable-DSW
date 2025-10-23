@@ -36,13 +36,20 @@ struct EmptyDayView: View {
     private let dateService: DateService
     
     // MARK: - Initialization
-    
+
     init(
         date: Date,
         dateService: DateService = DefaultDateService.shared
     ) {
         self.date = date
         self.dateService = dateService
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm EEEE"
+        formatter.locale = Locale(identifier: "en_US")
+
+        print("🗓️ [EmptyDayView.init] Creating empty view for date: \(formatter.string(from: date))")
+        print("🗓️ [EmptyDayView.init] Day name that will be shown: \(dateService.weekdayFull(date))")
     }
     
     // MARK: - Body

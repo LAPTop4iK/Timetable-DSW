@@ -58,17 +58,44 @@ struct DayEventsView: View {
         self.bottomScrollInset = bottomScrollInset
         self.dateService = dateService
 
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm EEEE"
+        formatter.locale = Locale(identifier: "en_US")
+
+        print("📅 [DayEventsView.init] Creating view for date: \(formatter.string(from: date))")
+        print("📊 [DayEventsView.init] Total events received: \(events.count)")
+
         // Вычисляем отфильтрованные события один раз в init
         // вместо computed property, чтобы избежать повторного парсинга дат
         self.filteredEvents = events
             .filter { event in
-                guard let d = event.startDate else { return false }
-                return Calendar.current.isDate(d, inSameDayAs: date)
+                guard let d = event.startDate else {
+                    print("⚠️ [DayEventsView.init] Event '\(event.title)' has nil startDate (ISO: \(event.startISO))")
+                    return false
+                }
+                let matches = Calendar.current.isDate(d, inSameDayAs: date)
+                if matches {
+                    print("✅ [DayEventsView.init] Event '\(event.title)' matches: \(formatter.string(from: d))")
+                }
+                return matches
             }
             .sorted { a, b in
                 guard let d1 = a.startDate, let d2 = b.startDate else { return false }
                 return d1 < d2
             }
+
+        print("🎯 [DayEventsView.init] Filtered events count: \(filteredEvents.count)")
+        if filteredEvents.isEmpty {
+            print("🔍 [DayEventsView.init] No events for this day - will show EmptyDayView")
+            print("🔍 [DayEventsView.init] Sample event dates:")
+            events.prefix(5).forEach { event in
+                if let d = event.startDate {
+                    print("   - '\(event.title)': \(formatter.string(from: d))")
+                } else {
+                    print("   - '\(event.title)': NIL (ISO: \(event.startISO))")
+                }
+            }
+        }
     }
 
     // MARK: - Body

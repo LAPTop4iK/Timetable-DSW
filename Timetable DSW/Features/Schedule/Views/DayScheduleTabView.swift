@@ -87,10 +87,29 @@ struct DayScheduleTabView: View {
         self.onNextWeekFromTabView = onNextWeekFromTabView
         self.onPreviousWeekFromTabView = onPreviousWeekFromTabView
         self.hapticService = hapticService
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd EEEE"
+        formatter.locale = Locale(identifier: "en_US")
+
+        print("📱 [DayScheduleTabView.init] Initializing with \(daysInWeek.count) days")
+        print("📱 [DayScheduleTabView.init] Selected date: \(formatter.string(from: selectedDate))")
+        print("📱 [DayScheduleTabView.init] Days in week:")
+        daysInWeek.enumerated().forEach { index, date in
+            print("   [\(index)]: \(formatter.string(from: date))")
+        }
     }
 
     private var selectedDayIndex: Int {
-        daysInWeek.firstIndex { calendar.isDate($0, inSameDayAs: selectedDate) } ?? 0
+        let index = daysInWeek.firstIndex { calendar.isDate($0, inSameDayAs: selectedDate) } ?? 0
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd EEEE"
+        formatter.locale = Locale(identifier: "en_US")
+
+        print("🎯 [DayScheduleTabView.selectedDayIndex] Computed index: \(index) for selectedDate: \(formatter.string(from: selectedDate))")
+
+        return index
     }
 
     private var weekIdentifier: String {
@@ -169,7 +188,21 @@ struct DayScheduleTabView: View {
             indices.append(current + 1)
         }
 
-        return indices.sorted()
+        let sorted = indices.sorted()
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd EEEE"
+        formatter.locale = Locale(identifier: "en_US")
+
+        print("👁️ [DayScheduleTabView.visibleIndices] Current index: \(current)")
+        print("👁️ [DayScheduleTabView.visibleIndices] Visible indices: \(sorted)")
+        sorted.forEach { index in
+            if daysInWeek.indices.contains(index) {
+                print("   [\(index)] -> \(formatter.string(from: daysInWeek[index]))")
+            }
+        }
+
+        return sorted
     }
 
     private var arrowOverlays: some View {
