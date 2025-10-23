@@ -37,6 +37,7 @@ struct SettingsView: View {
     @State private var showConfetti = false
     @State private var timeRemaining = ""
     @State private var timer: Timer?
+    @State private var showingThemeSettings = false
 
     @Environment(\.colorScheme) var colorScheme
 
@@ -44,6 +45,7 @@ struct SettingsView: View {
         NavigationView {
             Form {
                 groupSection
+                themeSection
                 cacheSection
                 if !(coordinator?.isAdDisabled() ?? true) {
                     awardSection
@@ -97,6 +99,9 @@ struct SettingsView: View {
             Text(LocalizedString.settingsClearCacheMessage.localized)
         }
         .confetti(isShowing: $showConfetti, configuration: .rainbow)
+        .sheet(isPresented: $showingThemeSettings) {
+            ThemeSettingsView()
+        }
         .onAppear {
             updateTimeRemaining()
             startTimer()
@@ -104,6 +109,38 @@ struct SettingsView: View {
         .onDisappear {
             stopTimer()
         }
+    }
+
+    private var themeSection: some View {
+        Section {
+            Button(action: { showingThemeSettings = true }) {
+                HStack(spacing: Configuration.constants.spacing.value) {
+                    iconView(icon: .paintpaletteFill, colors: gradientColors)
+                    VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
+                        Text("Theme")
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                        Text(currentThemeName)
+                            .font(AppTypography.body.font)
+                            .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+                    }
+                    Spacer()
+                    AppIcon.chevronRight.image()
+                        .font(AppTypography.caption.font)
+                        .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                }
+            }
+        } header: {
+            Text("Appearance")
+        } footer: {
+            Text("Customize the app's color theme and appearance mode")
+                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+        }
+    }
+
+    private var currentThemeName: String {
+        let theme = ThemeManager.shared.currentTheme(for: colorScheme)
+        return "\(theme.name) • \(ThemeManager.shared.appearanceMode.displayName)"
     }
 
     private var groupSection: some View {
