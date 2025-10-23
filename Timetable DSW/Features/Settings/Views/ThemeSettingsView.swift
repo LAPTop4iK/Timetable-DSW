@@ -30,31 +30,21 @@ struct ThemeSettingsView: View {
     // MARK: - Environment
 
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var themeManager: ThemeManager
 
     // MARK: - Body
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: Configuration.constants.sectionSpacing.value) {
-                    appearanceModeSection
-                    colorThemeSection
-                }
-                .padding()
+        ScrollView {
+            VStack(spacing: Configuration.constants.sectionSpacing.value) {
+                appearanceModeSection
+                colorThemeSection
             }
-            .background(AppColor.background.color(for: colorScheme))
-            .navigationTitle("Theme Settings")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
+            .padding()
         }
+        .background(AppColor.background.color(for: colorScheme))
+        .navigationTitle("Theme Settings")
+        .navigationBarTitleDisplayMode(.large)
     }
 
     // MARK: - Appearance Mode Section
