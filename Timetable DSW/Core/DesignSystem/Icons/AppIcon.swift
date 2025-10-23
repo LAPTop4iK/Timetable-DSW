@@ -5,7 +5,6 @@
 //  Created by Mikita Laptsionak on 18/10/2025.
 //
 
-
 import SwiftUI
 
 enum AppIcon {
@@ -19,7 +18,7 @@ enum AppIcon {
     case chevronDown
     case chevronLeftCircleFill
     case chevronRightCircleFill
-    
+
     // MARK: - Actions
     case checkmark
     case xmark
@@ -30,7 +29,7 @@ enum AppIcon {
     case arrowClockwise
     case pencil
     case squareAndArrowUp
-    
+
     // MARK: - Status
     case checkmarkCircleFill
     case exclamationTriangleFill
@@ -40,31 +39,46 @@ enum AppIcon {
     case wifi
     case circle
     case circleFill
-    
+    case circleLeftHalfFilled  // NEW
+
     // MARK: - Calendar
     case calendarBadgeCheckmark
     case clock
     case clockFill
-    
+
     // MARK: - People
     case person
     case person2
     case person3Fill
     case personFill
     case person2Slash
-    
+
     // MARK: - Search
     case magnifyingGlass
     case listBullet
     case lineHorizontal3DecreaseCircle
 
+    // MARK: - Misc
     case envelope
     case lockOpen
     case paintpaletteFill
 
+    // MARK: - Themes / Appearance (NEW)
+    case sunMaxFill
+    case moonFill
+    case waterWaves
+    case sunsetFill
+    case leafFill
+    case sparkles
+    case sparkle
+    case heartFill
+    case moonStarsFill
+    case squareGrid2x2Fill
+
     // MARK: - System Name
     var systemName: String {
         switch self {
+        // Navigation
         case .calendar: return "calendar"
         case .people: return "person.2"
         case .gear: return "gear"
@@ -74,7 +88,8 @@ enum AppIcon {
         case .chevronDown: return "chevron.down"
         case .chevronLeftCircleFill: return "chevron.left.circle.fill"
         case .chevronRightCircleFill: return "chevron.right.circle.fill"
-            
+
+        // Actions
         case .checkmark: return "checkmark"
         case .xmark: return "xmark"
         case .plus: return "plus"
@@ -84,7 +99,8 @@ enum AppIcon {
         case .arrowClockwise: return "arrow.clockwise"
         case .pencil: return "pencil"
         case .squareAndArrowUp: return "square.and.arrow.up"
-            
+
+        // Status
         case .checkmarkCircleFill: return "checkmark.circle.fill"
         case .exclamationTriangleFill: return "exclamationmark.triangle.fill"
         case .exclamationMarkCircle: return "exclamationmark.circle"
@@ -93,27 +109,44 @@ enum AppIcon {
         case .wifi: return "wifi"
         case .circle: return "circle"
         case .circleFill: return "circle.fill"
-            
+        case .circleLeftHalfFilled: return "circle.lefthalf.filled"
+
+        // Calendar
         case .calendarBadgeCheckmark: return "calendar.badge.checkmark"
         case .clock: return "clock"
         case .clockFill: return "clock.fill"
-            
+
+        // People
         case .person: return "person"
         case .person2: return "person.2"
         case .person3Fill: return "person.3.fill"
         case .personFill: return "person.fill"
         case .person2Slash: return "person.2.slash"
-            
+
+        // Search
         case .magnifyingGlass: return "magnifyingglass"
         case .listBullet: return "list.bullet"
         case .lineHorizontal3DecreaseCircle: return "line.horizontal.3.decrease.circle"
 
+        // Misc
         case .envelope: return "envelope"
         case .lockOpen: return "lock.open"
         case .paintpaletteFill: return "paintpalette.fill"
+
+        // Themes / Appearance
+        case .sunMaxFill: return "sun.max.fill"
+        case .moonFill: return "moon.fill"
+        case .waterWaves: return "water.waves"
+        case .sunsetFill: return "sunset.fill"
+        case .leafFill: return "leaf.fill"
+        case .sparkles: return "sparkles"
+        case .sparkle: return "sparkle"
+        case .heartFill: return "heart.fill"
+        case .moonStarsFill: return "moon.stars.fill"
+        case .squareGrid2x2Fill: return "square.grid.2x2.fill"
         }
     }
-    
+
     // MARK: - Image
     func image() -> Image {
         Image(systemName: systemName)
