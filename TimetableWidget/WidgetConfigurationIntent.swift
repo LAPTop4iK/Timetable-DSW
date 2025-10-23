@@ -8,25 +8,15 @@
 import AppIntents
 import WidgetKit
 
-struct WidgetConfigurationIntent: WidgetConfigurationIntent {
+struct ConfigurationAppIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Configure Widget"
-    static var description = IntentDescription("Choose widget display options")
+    static var description: IntentDescription = IntentDescription("Choose widget display options")
 
-    @Parameter(title: "View Type")
+    @Parameter(title: "View Type", default: .today)
     var viewType: WidgetViewType
 
-    @Parameter(title: "Show Online Status")
+    @Parameter(title: "Show Online Status", default: true)
     var showOnlineStatus: Bool
-
-    init() {
-        self.viewType = .today
-        self.showOnlineStatus = true
-    }
-
-    init(viewType: WidgetViewType, showOnlineStatus: Bool) {
-        self.viewType = viewType
-        self.showOnlineStatus = showOnlineStatus
-    }
 }
 
 enum WidgetViewType: String, AppEnum {
