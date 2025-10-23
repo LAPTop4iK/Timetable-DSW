@@ -89,6 +89,8 @@ struct ScheduleView: View {
                 .zIndex(2)
             }
             .ignoresSafeArea()
+            .navigationBarHidden(true)
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $viewModel.navigation.showingDatePicker) {
                 datePickerSheet
             }
