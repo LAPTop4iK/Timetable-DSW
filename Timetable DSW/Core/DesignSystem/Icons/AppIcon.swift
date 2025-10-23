@@ -60,6 +60,7 @@ enum AppIcon {
 
     case envelope
     case lockOpen
+    case paintpaletteFill
 
     // MARK: - System Name
     var systemName: String {
@@ -109,6 +110,7 @@ enum AppIcon {
 
         case .envelope: return "envelope"
         case .lockOpen: return "lock.open"
+        case .paintpaletteFill: return "paintpalette.fill"
         }
     }
     
