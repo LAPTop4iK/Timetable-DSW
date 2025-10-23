@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - SubjectDetailView
+// MARK: - SubjectDetailView (final, optimized)
 
 struct SubjectDetailView: View {
     // MARK: Configuration
@@ -43,11 +43,22 @@ struct SubjectDetailView: View {
     // MARK: Environment & State
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
+
     @StateObject var viewModel: SubjectDetailViewModel
+
+    // Перенос тяжёлого дерева на следующий тик после анимации
+    @State private var didAppear = false
+
+    // Стабилизация «текущего времени» для EventCard
+    @State private var now = Date()
+
+    // Предварительно вычисленное значение (во избежание вычислений в body)
+    private let precomputedMostCommonGrading: String?
 
     // MARK: Init
     init(subject: Subject) {
         _viewModel = StateObject(wrappedValue: SubjectDetailViewModel(subject: subject))
+        self.precomputedMostCommonGrading = Self.computeMostCommonGrading(subject.schedule)
     }
 
     // MARK: Derived
@@ -63,7 +74,7 @@ struct SubjectDetailView: View {
         let isDark = colorScheme == .dark
         return LinearGradient(
             colors: isDark
-                ? [Color.white.opacity(0.10), Color.white.opacity(0.04)] // чистый «white-glass» в тёмной теме
+                ? [Color.white.opacity(0.10), Color.white.opacity(0.04)] // white-glass в тёмной теме
                 : [Color.white.opacity(0.96), Color.white.opacity(0.88)], // почти белая в светлой
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -74,14 +85,18 @@ struct SubjectDetailView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: Configuration.constants.spacing.value) {
+                LazyVStack(spacing: Configuration.constants.spacing.value) { // ← ленивый контейнер
                     VStack(alignment: .leading, spacing: Configuration.constants.headerTightSpacing) {
                         subjectHeader
                         assessmentLine
                     }
 
                     statsSection
-                    sectionsList
+
+                    // Отложенная инициализация тяжёлого списка секций
+                    if didAppear {
+                        sectionsList
+                    }
                 }
                 .padding(.horizontal, Configuration.constants.padding.value)
                 .padding(.bottom, Configuration.constants.padding.value)
@@ -94,6 +109,13 @@ struct SubjectDetailView: View {
             #if DEBUG
             .measurePerformance(name: "SubjectDetailView", category: .viewAppear)
             #endif
+            .onAppear {
+                // Дать закончиться переходу и зафиксировать «сейчас»
+                DispatchQueue.main.async {
+                    self.didAppear = true
+                    self.now = Date()
+                }
+            }
         }
     }
 
@@ -104,8 +126,6 @@ struct SubjectDetailView: View {
             .font(AppTypography.title2.font)
             .fontWeight(.semibold)
             .multilineTextAlignment(.leading)
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
             .themedForeground(.primary, colorScheme: colorScheme)
             .accessibilityLabel(viewModel.subject.name)
@@ -115,7 +135,7 @@ struct SubjectDetailView: View {
 
     private var assessmentLine: some View {
         Group {
-            if let grading = mostCommonGrading, !grading.isEmpty {
+            if let grading = precomputedMostCommonGrading, !grading.isEmpty {
                 Text("\(LocalizedString.subjectsGradingType.localized): \(grading)")
                     .font(AppTypography.subheadline.font)
                     .fontWeight(.semibold)
@@ -124,15 +144,6 @@ struct SubjectDetailView: View {
                     .accessibilityLabel("\(LocalizedString.subjectsGradingType.localized): \(grading)")
             }
         }
-    }
-
-    private var mostCommonGrading: String? {
-        let values = viewModel.subject.schedule
-            .compactMap { $0.grading?.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-        guard !values.isEmpty else { return nil }
-        let freq = Dictionary(grouping: values, by: { $0 }).mapValues(\.count)
-        return freq.max(by: { $0.value < $1.value })?.key
     }
 
     // MARK: - Navbar
@@ -176,15 +187,17 @@ struct SubjectDetailView: View {
                     x: 0, y: 0
                 )
         )
+        .compositingGroup()           // объединяем в один слой
+        .drawingGroup(opaque: false)  // снижает композитинг-стоимость
     }
 
     private func statPill(title: String, value: Int) -> some View {
         ZStack {
-            // Лёгкое свечение — оставляем
+            // Лёгкое свечение — без blur (дешевле, чем offscreen blur)
             RoundedRectangle(cornerRadius: Configuration.constants.statItemCorner.value)
                 .fill(
                     LinearGradient(
-                        colors: gradientColors.map { $0.opacity(0.10) },
+                        colors: gradientColors.map { $0.opacity(0.12) },
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -241,7 +254,7 @@ struct SubjectDetailView: View {
                                 event: ev,
                                 showTeacherName: true,
                                 onTeacherTap: nil,
-                                now: Date()
+                                now: now
                             )
                         }
                     }
@@ -266,6 +279,19 @@ struct SubjectDetailView: View {
         }
         .padding(.vertical, Configuration.constants.dateChipVPad)
         .padding(.horizontal, Configuration.constants.dateChipHPad)
+    }
+}
+
+// MARK: - Helpers
+
+private extension SubjectDetailView {
+    static func computeMostCommonGrading(_ events: [ScheduleEvent]) -> String? {
+        let values = events
+            .compactMap { $0.grading?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        guard !values.isEmpty else { return nil }
+        let freq = Dictionary(grouping: values, by: { $0 }).mapValues(\.count)
+        return freq.max(by: { $0.value < $1.value })?.key
     }
 }
 
