@@ -64,8 +64,9 @@ struct DefaultTheme: Theme {
     var error: Color { .red }
     var info: Color { .blue }
 
-    var online: Color { Color.yellow.opacity(0.95) }
-    var cancelled: Color { isDark ? Color(red: 0.90, green: 0.12, blue: 0.22) : Color(red: 0.95, green: 0.22, blue: 0.30) }
+    // Universal status colors - always recognizable
+    var online: Color { isDark ? Color(red: 0.4, green: 0.8, blue: 0.3) : Color(red: 0.3, green: 0.7, blue: 0.2) }
+    var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.25) : Color(red: 0.9, green: 0.15, blue: 0.2) }
 }
 
 // MARK: - Ocean Theme
@@ -93,8 +94,9 @@ struct OceanTheme: Theme {
     var error: Color { Color(red: 0.9, green: 0.3, blue: 0.3) }
     var info: Color { Color.cyan }
 
-    var online: Color { Color(red: 0.4, green: 0.85, blue: 0.95) }
-    var cancelled: Color { Color(red: 0.4, green: 0.5, blue: 0.6) }
+    // Universal status colors with slight ocean tint
+    var online: Color { isDark ? Color(red: 0.35, green: 0.8, blue: 0.4) : Color(red: 0.25, green: 0.7, blue: 0.3) }
+    var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.3) : Color(red: 0.9, green: 0.2, blue: 0.25) }
 }
 
 // MARK: - Sunset Theme
@@ -122,8 +124,9 @@ struct SunsetTheme: Theme {
     var error: Color { Color(red: 0.9, green: 0.2, blue: 0.2) }
     var info: Color { Color(red: 1.0, green: 0.6, blue: 0.3) }
 
-    var online: Color { Color(red: 1.0, green: 0.75, blue: 0.3) }
-    var cancelled: Color { Color(red: 0.6, green: 0.3, blue: 0.3) }
+    // Universal status colors with warm sunset tint
+    var online: Color { isDark ? Color(red: 0.5, green: 0.8, blue: 0.25) : Color(red: 0.4, green: 0.7, blue: 0.15) }
+    var cancelled: Color { isDark ? Color(red: 0.95, green: 0.15, blue: 0.2) : Color(red: 0.9, green: 0.1, blue: 0.15) }
 }
 
 // MARK: - Forest Theme
@@ -151,8 +154,9 @@ struct ForestTheme: Theme {
     var error: Color { Color(red: 0.85, green: 0.35, blue: 0.3) }
     var info: Color { Color(red: 0.4, green: 0.75, blue: 0.5) }
 
-    var online: Color { Color(red: 0.7, green: 0.9, blue: 0.4) }
-    var cancelled: Color { Color(red: 0.5, green: 0.55, blue: 0.5) }
+    // Universal status colors - green theme already has good green, use brighter for online
+    var online: Color { isDark ? Color(red: 0.5, green: 0.85, blue: 0.3) : Color(red: 0.4, green: 0.75, blue: 0.2) }
+    var cancelled: Color { isDark ? Color(red: 0.9, green: 0.2, blue: 0.25) : Color(red: 0.85, green: 0.15, blue: 0.2) }
 }
 
 // MARK: - Lavender Theme
@@ -180,8 +184,9 @@ struct LavenderTheme: Theme {
     var error: Color { Color(red: 0.9, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.7, green: 0.6, blue: 0.9) }
 
-    var online: Color { Color(red: 0.85, green: 0.75, blue: 0.95) }
-    var cancelled: Color { Color(red: 0.6, green: 0.55, blue: 0.7) }
+    // Universal status colors with slight lavender tint
+    var online: Color { isDark ? Color(red: 0.45, green: 0.8, blue: 0.4) : Color(red: 0.35, green: 0.7, blue: 0.3) }
+    var cancelled: Color { isDark ? Color(red: 0.95, green: 0.25, blue: 0.35) : Color(red: 0.9, green: 0.2, blue: 0.3) }
 }
 
 // MARK: - Cherry Blossom Theme
@@ -209,8 +214,9 @@ struct CherryBlossomTheme: Theme {
     var error: Color { Color(red: 0.95, green: 0.35, blue: 0.45) }
     var info: Color { Color(red: 0.95, green: 0.7, blue: 0.85) }
 
-    var online: Color { Color(red: 1.0, green: 0.8, blue: 0.9) }
-    var cancelled: Color { Color(red: 0.7, green: 0.5, blue: 0.6) }
+    // Universal status colors with pink tint
+    var online: Color { isDark ? Color(red: 0.5, green: 0.8, blue: 0.35) : Color(red: 0.4, green: 0.7, blue: 0.25) }
+    var cancelled: Color { isDark ? Color(red: 0.95, green: 0.2, blue: 0.3) : Color(red: 0.9, green: 0.15, blue: 0.25) }
 }
 
 // MARK: - Midnight Theme
@@ -238,8 +244,9 @@ struct MidnightTheme: Theme {
     var error: Color { Color(red: 0.85, green: 0.4, blue: 0.5) }
     var info: Color { Color(red: 0.5, green: 0.6, blue: 0.95) }
 
-    var online: Color { Color(red: 0.6, green: 0.7, blue: 1.0) }
-    var cancelled: Color { Color(red: 0.4, green: 0.45, blue: 0.6) }
+    // Universal status colors with cool blue tint
+    var online: Color { isDark ? Color(red: 0.4, green: 0.75, blue: 0.35) : Color(red: 0.3, green: 0.65, blue: 0.25) }
+    var cancelled: Color { isDark ? Color(red: 0.9, green: 0.25, blue: 0.3) : Color(red: 0.85, green: 0.2, blue: 0.25) }
 }
 
 // MARK: - Theme Factory
