@@ -39,7 +39,7 @@ struct EmptyDayView: View {
     
     init(
         date: Date,
-        dateService: DateService = DefaultDateService()
+        dateService: DateService = DefaultDateService.shared
     ) {
         self.date = date
         self.dateService = dateService

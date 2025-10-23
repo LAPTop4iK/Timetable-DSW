@@ -65,7 +65,7 @@ struct DatePickerSheet: View {
         eventTypeForDate: @escaping (Date) -> EventDayType,
         calendar: Calendar = .current,
         hapticService: HapticFeedbackService = DefaultHapticFeedbackService(),
-        dateService: DateService = DefaultDateService()
+        dateService: DateService = DefaultDateService.shared
     ) {
         self._selectedDate = selectedDate
         self.onDateSelected = onDateSelected
