@@ -109,8 +109,33 @@ struct SettingsView: View {
     }
 
     private var themeSection: some View {
-        Section {
-            NavigationLink(destination: ThemeSettingsView()) {
+        let premiumAccess = PremiumAccess.from(appState: appStateService.state)
+
+        return Section {
+            NavigationLink(destination:
+                ThemeSettingsView()
+                    .premiumContent(
+                        feature: .themeSettings,
+                        premiumAccess: premiumAccess,
+                        coordinator: coordinator,
+                        onWatchAd: {
+                            Task {
+                                do {
+                                    try await coordinator?.loadAd(type: .rewarded)
+                                    try await coordinator?.showAd(type: .rewarded)
+                                    appStateService.grantTemporaryPremium()
+                                } catch {
+                                    print("[Premium] Failed to show rewarded ad: \(error)")
+                                }
+                            }
+                        },
+                        onPurchase: {
+                            #if DEBUG
+                            appStateService.grantPremium()
+                            #endif
+                        }
+                    )
+            ) {
                 HStack(spacing: Configuration.constants.spacing.value) {
                     iconView(icon: .paintpaletteFill, colors: gradientColors)
                     VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {

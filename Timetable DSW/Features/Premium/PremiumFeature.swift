@@ -13,17 +13,17 @@ import Foundation
 enum PremiumFeature: String, CaseIterable, Codable, Sendable {
     case teachersTab = "teachers_tab"
     case subjectsTab = "subjects_tab"
+    case themeSettings = "theme_settings"
 //    case advancedFilters = "advanced_filters"
 //    case exportSchedule = "export_schedule"
-//    case customThemes = "custom_themes"
 
     var displayName: String {
         switch self {
         case .teachersTab: return "Teachers Section"
         case .subjectsTab: return "Subjects Section"
+        case .themeSettings: return "Theme Customization"
 //        case .advancedFilters: return "Advanced Filters"
 //        case .exportSchedule: return "Export Schedule"
-//        case .customThemes: return "Custom Themes"
         }
     }
 
@@ -33,12 +33,12 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
             return "Browse and view teacher schedules"
         case .subjectsTab:
             return "Browse and view subject details"
+        case .themeSettings:
+            return "Customize app colors and appearance"
 //        case .advancedFilters:
 //            return "Advanced filtering options"
 //        case .exportSchedule:
 //            return "Export your schedule to calendar"
-//        case .customThemes:
-//            return "Customize app appearance"
         }
     }
 
@@ -46,9 +46,9 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
         switch self {
         case .teachersTab: return "person.2.fill"
         case .subjectsTab: return "book.fill"
+        case .themeSettings: return "paintpalette.fill"
 //        case .advancedFilters: return "line.3.horizontal.decrease.circle.fill"
 //        case .exportSchedule: return "square.and.arrow.up.fill"
-//        case .customThemes: return "paintbrush.fill"
         }
     }
 }
