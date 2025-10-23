@@ -7,9 +7,10 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct TimetableWidgetProvider: AppIntentTimelineProvider {
-    typealias Intent = WidgetConfigurationIntent
+    typealias Intent = ConfigurationAppIntent
     typealias Entry = TimetableWidgetEntry
 
     func placeholder(in context: Context) -> TimetableWidgetEntry {
@@ -22,7 +23,7 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
         )
     }
 
-    func snapshot(for configuration: WidgetConfigurationIntent, in context: Context) async -> TimetableWidgetEntry {
+    func snapshot(for configuration: Intent, in context: Context) async -> TimetableWidgetEntry {
         let schedule = AppGroupManager.loadSemesterSchedule()
         let themeId = AppGroupManager.loadSelectedThemeId() ?? "default"
         let appearanceMode = AppGroupManager.loadAppearanceMode() ?? "system"
@@ -36,7 +37,7 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
         )
     }
 
-    func timeline(for configuration: WidgetConfigurationIntent, in context: Context) async -> Timeline<TimetableWidgetEntry> {
+    func timeline(for configuration: Intent, in context: Context) async -> Timeline<TimetableWidgetEntry> {
         let schedule = AppGroupManager.loadSemesterSchedule()
         let themeId = AppGroupManager.loadSelectedThemeId() ?? "default"
         let appearanceMode = AppGroupManager.loadAppearanceMode() ?? "system"
@@ -110,3 +111,4 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
         return Timeline(entries: entries, policy: .after(nextUpdate))
     }
 }
+

@@ -9,7 +9,7 @@ import Foundation
 
 struct AppGroupManager {
     // ВАЖНО: Замените на свой App Group ID из Xcode
-    static let appGroupIdentifier = "group.com.yourdomain.timetable"
+    static let appGroupIdentifier = "org.laptenok.Timetable-DSW.rl"
 
     static var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupIdentifier)
