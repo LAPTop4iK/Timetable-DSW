@@ -28,6 +28,11 @@ struct DayEventsView: View {
     let topScrollInset: CGFloat
     let bottomScrollInset: CGFloat
 
+    // MARK: - Cached Data
+    /// Отфильтрованные и отсортированные события для этого дня
+    /// Вычисляются один раз в init, чтобы избежать повторного парсинга дат
+    private let filteredEvents: [ScheduleEvent]
+
     // MARK: - Time state
     @State private var now: Date = Date()
     @State private var subjectSheet: Subject? = nil
@@ -52,6 +57,18 @@ struct DayEventsView: View {
         self.topScrollInset = topScrollInset
         self.bottomScrollInset = bottomScrollInset
         self.dateService = dateService
+
+        // Вычисляем отфильтрованные события один раз в init
+        // вместо computed property, чтобы избежать повторного парсинга дат
+        self.filteredEvents = events
+            .filter { event in
+                guard let d = event.startDate else { return false }
+                return Calendar.current.isDate(d, inSameDayAs: date)
+            }
+            .sorted { a, b in
+                guard let d1 = a.startDate, let d2 = b.startDate else { return false }
+                return d1 < d2
+            }
     }
 
     // MARK: - Body
@@ -85,7 +102,7 @@ struct DayEventsView: View {
     // MARK: - Views
     private var eventsList: some View {
         LazyVStack(spacing: Configuration.constants.spacing.value) {
-            ForEach(eventsForThisDay) { event in
+            ForEach(filteredEvents) { event in
                 EventCard(
                     event: event,
                     showTeacherName: showTeacherName,
@@ -132,24 +149,11 @@ struct DayEventsView: View {
 
     // MARK: - Helpers
     private var isEmptyDay: Bool {
-        eventsForThisDay.isEmpty
+        filteredEvents.isEmpty
     }
 
     private var scrollIdentity: String {
         let key = Calendar.current.startOfDay(for: date).timeIntervalSince1970
         return (isEmptyDay ? "empty-" : "events-") + String(Int(key))
-    }
-
-    // MARK: - Filtering & Sorting
-    private var eventsForThisDay: [ScheduleEvent] {
-        events
-            .filter { event in
-                guard let d = event.startDate else { return false }
-                return Calendar.current.isDate(d, inSameDayAs: date)
-            }
-            .sorted { a, b in
-                guard let d1 = a.startDate, let d2 = b.startDate else { return false }
-                return d1 < d2
-            }
     }
 }
