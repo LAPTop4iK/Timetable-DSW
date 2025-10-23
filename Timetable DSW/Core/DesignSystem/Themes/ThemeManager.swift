@@ -88,6 +88,7 @@ class ThemeManager: ObservableObject {
     }
 
     private func applyAppearanceMode() {
+        #if !APPEXTENSION
         DispatchQueue.main.async {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                   let window = windowScene.windows.first else {
@@ -103,6 +104,7 @@ class ThemeManager: ObservableObject {
                 window.overrideUserInterfaceStyle = .dark
             }
         }
+        #endif
     }
 
     func selectTheme(_ themeId: String) {
