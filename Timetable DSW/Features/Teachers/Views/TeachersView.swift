@@ -61,7 +61,7 @@ struct TeachersView: View {
     
     @ViewBuilder
     private var contentView: some View {
-        if appViewModel.isLoading {
+        if appViewModel.isLoadingTeachers {
             loadingView
         } else if appViewModel.scheduleData == nil {
             noDataView

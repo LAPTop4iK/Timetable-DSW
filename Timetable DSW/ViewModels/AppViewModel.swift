@@ -27,6 +27,8 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
     private let eventTypeDetector: EventTypeDetector
     private var eventsDayTypeCache: [String: EventDayType] = [:]
     private var eventsCacheVersion = UUID()
+    private var currentLoadToken = UUID()
+    private var didApplyFullAggregate = false
 
     @Published var scheduleData: AggregateResponse? {
         didSet {
@@ -39,12 +41,13 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
     // MARK: - Published Properties
 
     @Published var isLoading = false
+    @Published var isLoadingTeachers = false
+    @Published var isLoadingGroups = false
     @Published var isRefreshing = false
     @Published var errorMessage: String?
     @Published var lastUpdated: Date?
     @Published var isOffline = false
     @Published var groups: [GroupInfo] = []
-    @Published var isLoadingGroups = false
 
     // MARK: - Properties
 
@@ -113,11 +116,17 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
 
         await loadCachedScheduleIfNeeded()
 
+        // 🆕 новый цикл загрузки → новый токен
+        let loadToken = UUID()
+        currentLoadToken = loadToken
+        didApplyFullAggregate = false
+
         isLoading = scheduleData == nil
+        isLoadingTeachers = (scheduleData?.teachers ?? []).isEmpty
         isRefreshing = scheduleData != nil
         errorMessage = nil
 
-        await fetchFreshSchedule()
+        await fetchFreshSchedule(loadToken: loadToken)
     }
 
     private func loadCachedScheduleIfNeeded() async {
@@ -129,47 +138,59 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
         }
     }
 
-    private func fetchFreshSchedule() async {
-        do {
-            let fresh = try await repository.getScheduleWithRace(
-                groupId: groupId,
-                from: Configuration.constants.scheduleFrom,
-                to: Configuration.constants.scheduleTo,
-                onSemesterSchedule: { [weak self] semesterSchedule in
-                    guard let self = self else { return }
-                    // Convert semester schedule to AggregateResponse for UI
-                    let partialResponse = AggregateResponse(
-                        groupId: semesterSchedule.groupId,
-                        from: semesterSchedule.from,
-                        to: semesterSchedule.to,
-                        intervalType: semesterSchedule.intervalType,
-                        groupSchedule: semesterSchedule.groupSchedule,
-                        teachers: [], // Empty until aggregate arrives
-                        fetchedAt: semesterSchedule.fetchedAt
-                    )
-                    self.scheduleData = partialResponse
-                    self.isLoading = false // Hide loading once semester schedule arrives
+    private func fetchFreshSchedule(loadToken: UUID) async {
+            do {
+                let fresh = try await repository.getScheduleWithRace(
+                    groupId: groupId,
+                    from: Configuration.constants.scheduleFrom,
+                    to: Configuration.constants.scheduleTo,
+                    onSemesterSchedule: { [weak self] semesterSchedule in
+                        guard let self = self else { return }
+                        // ✅ Применяем семестровые данные только если:
+                        //    - это актуальный запрос
+                        //    - ещё НЕ применяли полный aggregate
+                        guard self.currentLoadToken == loadToken,
+                              self.didApplyFullAggregate == false else { return }
 
-                    // Save to App Group for widget
-                    AppGroupManager.saveSemesterSchedule(semesterSchedule)
-                    AppGroupManager.saveSelectedGroupId(self.groupId)
-                    AppGroupManager.saveLastUpdated(Date())
+                        let partialResponse = AggregateResponse(
+                            groupId: semesterSchedule.groupId,
+                            from: semesterSchedule.from,
+                            to: semesterSchedule.to,
+                            intervalType: semesterSchedule.intervalType,
+                            groupSchedule: semesterSchedule.groupSchedule,
+                            // 🛡️ если вдруг уже были teachers (из кэша) — не теряем
+                            teachers: self.scheduleData?.teachers ?? [],
+                            fetchedAt: semesterSchedule.fetchedAt
+                        )
 
-                    // Reload widgets
-                    WidgetCenter.shared.reloadAllTimelines()
-                }
-            )
-            scheduleData = fresh // Update with full data including teachers
-            updateLastUpdatedTimestamp()
-            isOffline = false
-        } catch {
-            errorMessage = error.localizedDescription
-            isOffline = true
+                        self.scheduleData = partialResponse
+                        self.isLoading = false
+                        self.isLoadingTeachers = partialResponse.teachers.isEmpty
+
+                        AppGroupManager.saveSemesterSchedule(semesterSchedule)
+                        AppGroupManager.saveSelectedGroupId(self.groupId)
+                        AppGroupManager.saveLastUpdated(Date())
+                        WidgetCenter.shared.reloadAllTimelines()
+                    }
+                )
+
+                // ✅ Применяем полный aggregate только если запрос актуален
+                guard currentLoadToken == loadToken else { return }
+                didApplyFullAggregate = true
+
+                scheduleData = fresh
+                updateLastUpdatedTimestamp()
+                isOffline = false
+            } catch {
+                // Ошибка по aggregate — пробуем кэш (уже подхватывался выше), помечаем оффлайн
+                errorMessage = error.localizedDescription
+                isOffline = true
+            }
+
+            isLoading = false
+        isLoadingTeachers = false
+            isRefreshing = false
         }
-
-        isLoading = false
-        isRefreshing = false
-    }
 
     private func updateLastUpdatedTimestamp() {
         lastUpdated = Date()
