@@ -130,12 +130,27 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
 
     private func fetchFreshSchedule() async {
         do {
-            let fresh = try await repository.getSchedule(
+            let fresh = try await repository.getScheduleWithRace(
                 groupId: groupId,
                 from: Configuration.constants.scheduleFrom,
-                to: Configuration.constants.scheduleTo
+                to: Configuration.constants.scheduleTo,
+                onSemesterSchedule: { [weak self] semesterSchedule in
+                    guard let self = self else { return }
+                    // Convert semester schedule to AggregateResponse for UI
+                    let partialResponse = AggregateResponse(
+                        groupId: semesterSchedule.groupId,
+                        from: semesterSchedule.from,
+                        to: semesterSchedule.to,
+                        intervalType: semesterSchedule.intervalType,
+                        groupSchedule: semesterSchedule.groupSchedule,
+                        teachers: [], // Empty until aggregate arrives
+                        fetchedAt: semesterSchedule.fetchedAt
+                    )
+                    self.scheduleData = partialResponse
+                    self.isLoading = false // Hide loading once semester schedule arrives
+                }
             )
-            scheduleData = fresh
+            scheduleData = fresh // Update with full data including teachers
             updateLastUpdatedTimestamp()
             isOffline = false
         } catch {
