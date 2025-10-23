@@ -63,7 +63,7 @@ struct DayChip: View {
         action: @escaping () -> Void,
         size: CGSize,
         hapticService: HapticFeedbackService = DefaultHapticFeedbackService(),
-        dateService: DateService = DefaultDateService()
+        dateService: DateService = DefaultDateService.shared
     ) {
         self.date = date
         self.isSelected = isSelected

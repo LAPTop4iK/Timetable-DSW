@@ -22,7 +22,7 @@ struct ScheduleEvent: Identifiable, Codable, Hashable, Sendable {
     let teacherName: String?
     let teacherEmail: String?
 
-    private static let dateService = DefaultDateService()
+    private static let dateService = DefaultDateService.shared
 
     var id: String {
         "\(startISO)_\(title)_\(teacherId ?? 0)"

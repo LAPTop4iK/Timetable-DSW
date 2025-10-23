@@ -8,8 +8,12 @@
 import Foundation
 
 final class DefaultDateService: DateService {
+    // MARK: - Shared Instance
+
+    static let shared = DefaultDateService()
+
     // MARK: - Properties
-    
+
     private let calendar: Calendar
     
     // MARK: - Formatters

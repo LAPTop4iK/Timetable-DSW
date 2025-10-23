@@ -43,7 +43,7 @@ struct DayEventsView: View {
         onTeacherTap: ((Int) -> Void)?,
         topScrollInset: CGFloat,
         bottomScrollInset: CGFloat,
-        dateService: DateService = DefaultDateService()
+        dateService: DateService = DefaultDateService.shared
     ) {
         self.date = date
         self.events = events
