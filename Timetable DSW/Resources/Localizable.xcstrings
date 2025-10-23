@@ -780,12 +780,6 @@
         }
       }
     },
-    "Available Widgets" : {
-
-    },
-    "Configure home screen widgets" : {
-
-    },
     "contact.action.reportProblem" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2948,9 +2942,6 @@
         }
       }
     },
-    "How to Add Widget" : {
-
-    },
     "Last updated: %@ ago" : {
 
     },
@@ -3022,12 +3013,6 @@
           }
         }
       }
-    },
-    "Manage your home screen widgets and customize their appearance" : {
-
-    },
-    "Never updated" : {
-
     },
     "perfMonitor.all" : {
       "localizations" : {
@@ -4314,6 +4299,29 @@
         }
       }
     },
+    "settings.widgetsTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżety"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżety"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Віджети"
+          }
+        }
+      }
+    },
     "Status" : {
 
     },
@@ -5167,14 +5175,197 @@
         }
       }
     },
-    "Troubleshooting" : {
-
+    "widget.access" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your widgets have access to your schedule data"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje widżety mają dostęp do danych twojego harmonogramu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваші віджети мають доступ до даних вашого розкладу"
+          }
+        }
+      }
     },
-    "Widget Settings" : {
-
+    "widget.available" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available Widgets"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostępne widżety"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступні віджети"
+          }
+        }
+      }
     },
-    "Widgets" : {
-
+    "widget.configure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configure home screen widgets"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skonfiguruj widżety ekranu głównego"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштуйте віджети головного екрана"
+          }
+        }
+      }
+    },
+    "widget.enabled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widgets Enabled"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżety włączone"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Віджети увімкнено"
+          }
+        }
+      }
+    },
+    "widget.how.to.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to Add Widget"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jak dodać widżet"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Як додати віджет"
+          }
+        }
+      }
+    },
+    "widget.never.updated" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Never updated"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nigdy nieaktualizowane"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ніколи не оновлювалися"
+          }
+        }
+      }
+    },
+    "widget.settings.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget Settings"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustawienia widżetów"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування віджетів"
+          }
+        }
+      }
+    },
+    "widget.title" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżety"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Віджети"
+          }
+        }
+      }
+    },
+    "widget.troubleshooting" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Troubleshooting"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozwiązywanie problemów"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozwiązywanie problemów"
+          }
+        }
+      }
     },
     "Widgets Enabled" : {
 

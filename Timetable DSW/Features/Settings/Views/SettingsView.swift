@@ -39,14 +39,18 @@ struct SettingsView: View {
     @State private var timeRemaining = ""
     @State private var timer: Timer?
 
+    // Модальные состояния
+    @State private var showThemeSheet = false
+    @State private var showWidgetSheet = false
+
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         NavigationView {
             Form {
                 groupSection
-                themeSection
-                widgetSection
+                themeRow
+                widgetRow
                 cacheSection
                 if !(coordinator?.isAdDisabled() ?? true) {
                     awardSection
@@ -65,7 +69,14 @@ struct SettingsView: View {
             .measurePerformance(name: "SettingsView", category: .viewAppear)
             #endif
         }
-        .sheet(isPresented: $viewModel.showingGroupSelection) { groupSelectionSheet }
+        // Модалка: Тема
+        .sheet(isPresented: $showThemeSheet) {
+            ThemeSettingsContainer()
+        }
+        // Модалка: Виджеты
+        .sheet(isPresented: $showWidgetSheet) {
+            WidgetSettingsContainer()
+        }
         .sheet(isPresented: $showingMailComposer) {
             MailComposerView(
                 recipients: [Configuration.constants.supportEmail],
@@ -109,9 +120,12 @@ struct SettingsView: View {
         }
     }
 
-    private var themeSection: some View {
+    // MARK: - Тема (модально)
+    private var themeRow: some View {
         Section {
-            NavigationLink(destination: ThemeSettingsContainer()) {
+            Button {
+                showThemeSheet = true
+            } label: {
                 HStack(spacing: Configuration.constants.spacing.value) {
                     iconView(icon: .paintpaletteFill, colors: gradientColors)
                     VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
@@ -122,8 +136,14 @@ struct SettingsView: View {
                             .font(AppTypography.body.font)
                             .foregroundAppColor(.primaryText, colorScheme: colorScheme)
                     }
+                    Spacer()
+                    AppIcon.chevronRight.image()
+                        .font(AppTypography.caption.font)
+                        .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
         } header: {
             Text(LocalizedString.settingsThemeSectionHeader.localized)
         } footer: {
@@ -137,29 +157,39 @@ struct SettingsView: View {
         return "\(theme.name) • \(themeManager.appearanceMode.displayName)"
     }
 
-    private var widgetSection: some View {
+    // MARK: - Виджеты (модально)
+    private var widgetRow: some View {
         Section {
-            NavigationLink(destination: WidgetSettingsContainer()) {
+            Button {
+                showWidgetSheet = true
+            } label: {
                 HStack(spacing: Configuration.constants.spacing.value) {
                     iconView(icon: .squareGrid2x2Fill, colors: gradientColors)
                     VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
-                        Text("Widgets")
+                        Text(LocalizedString.settingsWidgetsTitle.localized)
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
-                        Text("Configure home screen widgets")
+                        Text(LocalizedString.widgetConfigure.localized)
                             .font(AppTypography.body.font)
                             .foregroundAppColor(.primaryText, colorScheme: colorScheme)
                     }
+                    Spacer()
+                    AppIcon.chevronRight.image()
+                        .font(AppTypography.caption.font)
+                        .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
         } header: {
-            Text("Widgets")
+            Text(LocalizedString.settingsWidgetsTitle.localized)
         } footer: {
-            Text("Manage your home screen widgets and customize their appearance")
+            Text(LocalizedString.widgetConfigure.localized)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
         }
     }
 
+    // MARK: - Группы
     private var groupSection: some View {
         Section {
             Button(action: { viewModel.showingGroupSelection = true }) {
@@ -184,6 +214,7 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Кэш
     private var cacheSection: some View {
         Section {
             if let data = appViewModel.scheduleData {
@@ -203,6 +234,7 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Награда/реклама
     private var awardSection: some View {
         let premiumAccess = PremiumAccess.from(appState: appStateService.state)
         let isPremium = premiumAccess.isPremium
@@ -214,12 +246,9 @@ struct SettingsView: View {
                         try await coordinator?.showAd(type: .rewardedInterstitial)
                         appStateService.grantTemporaryPremium()
 
-                        // Show confetti after successful ad view
                         withAnimation {
                             showConfetti = true
                         }
-
-                        // Update timer
                         updateTimeRemaining()
                     } catch {
                         print("Failed to show ad: \(error)")
@@ -235,8 +264,7 @@ struct SettingsView: View {
                         Text(LocalizedString.settingsDeveloperAction.localized)
                             .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
-                        // Show countdown if premium is active
-                        if case .temporaryPremium(let endDate) = premiumAccess.status {
+                        if case .temporaryPremium = premiumAccess.status {
                             Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
                                 .font(AppTypography.caption.font)
                                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
@@ -272,6 +300,7 @@ struct SettingsView: View {
         .preloadAds(.rewardedInterstitial, coordinator: coordinator)
     }
 
+    // MARK: - Контакты
     private var contactSection: some View {
         Section {
             Button {
@@ -305,6 +334,7 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - О приложении
     private var aboutSection: some View {
         Section {
             infoRow(label: LocalizedString.settingsVersion.localized, value: AppInfo.versionString)
@@ -313,8 +343,8 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Debug
     @ViewBuilder
-    // SettingsView: добавь секцию
     private var debugSection: some View {
         #if DEBUG
         let isDebug = true
@@ -344,6 +374,7 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Вспомогательные
 
     private func iconView(icon: AppIcon, colors: [Color]) -> some View {
         ZStack {
@@ -381,7 +412,8 @@ struct SettingsView: View {
                 Task {
                     try? await Task.sleep(nanoseconds: 600_000_000) // 0.6 seconds
                     try? await coordinator?.showAd(type: .interstitial)
-                }            }
+                }
+            }
         )
         .onAppear { selectionVM.setupWithAppViewModel(appViewModel) }
         .preloadAds(.interstitial, coordinator: coordinator)
