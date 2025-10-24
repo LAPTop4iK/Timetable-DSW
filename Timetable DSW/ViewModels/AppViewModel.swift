@@ -144,6 +144,7 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
                     groupId: groupId,
                     from: Configuration.constants.scheduleFrom,
                     to: Configuration.constants.scheduleTo,
+                    existingTeachers: self.scheduleData?.teachers ?? [],
                     onSemesterSchedule: { [weak self] semesterSchedule in
                         guard let self = self else { return }
                         // ✅ Применяем семестровые данные только если:

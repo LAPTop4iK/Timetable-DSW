@@ -84,12 +84,12 @@ actor ScheduleRepository {
 
     // MARK: - Parallel Loading Methods
 
-    @MainActor func getScheduleWithRace(groupId: Int, from: String, to: String, onSemesterSchedule: @escaping (GroupScheduleResponse) -> Void) async throws -> AggregateResponse {
+    @MainActor func getScheduleWithRace(groupId: Int, from: String, to: String, existingTeachers: [Teacher], onSemesterSchedule: @escaping (GroupScheduleResponse) -> Void) async throws -> AggregateResponse {
         // Launch semester schedule request in parallel task
         Task { @MainActor in
             if let semesterSchedule = try? await self.getSemesterSchedule(groupId: groupId, from: from, to: to) {
                 // Call callback immediately when semester data arrives
-                let aggregate = AggregateResponse(from: semesterSchedule)
+                let aggregate = AggregateResponse(from: semesterSchedule, teachers: existingTeachers)
                 try await cacheManager.save(aggregate, forKey: Configuration.CacheKey.schedule)
                 onSemesterSchedule(semesterSchedule)
             }
