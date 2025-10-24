@@ -69,6 +69,7 @@ struct SettingsView: View {
             .measurePerformance(name: "SettingsView", category: .viewAppear)
             #endif
         }
+        .sheet(isPresented: $viewModel.showingGroupSelection) { groupSelectionSheet }
         // Модалка: Тема
         .sheet(isPresented: $showThemeSheet) {
             ThemeSettingsContainer()
