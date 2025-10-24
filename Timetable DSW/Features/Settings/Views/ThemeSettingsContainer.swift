@@ -16,8 +16,6 @@ struct ThemeSettingsContainer: View {
         NavigationStack {
             if (coordinator?.isAdDisabled() ?? true) {
                 ThemeSettingsView()
-                    .padding(.horizontal, AppSpacing.large.value)
-                    .padding(.bottom, AppSpacing.large.value)
             } else {
                 let premiumAccess = PremiumAccess.from(appState: appStateService.state)
                 // User doesn't have premium - show paywall with back button
@@ -42,13 +40,17 @@ struct ThemeSettingsContainer: View {
                 )
             }
         }
-            .toolbar(.hidden, for: .navigationBar)
-            .safeAreaInset(edge: .top) {
-                GradientTitleBar(
-                    title: LocalizedString.settingsThemeSectionTitle.localized,
-                    onDone: { dismiss() }
-                )
-            }
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
+
+        // Наш кастомный заголовок сверху
+        .safeAreaInset(edge: .top) {
+            GradientTitleBar(
+                title: LocalizedString.settingsThemeSectionTitle.localized,
+                onDone: { dismiss() }
+            )
+        }
 
             #if DEBUG
             .measurePerformance(name: "ThemeSettingsContainer", category: .viewAppear)
