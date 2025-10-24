@@ -14,13 +14,12 @@ struct WidgetSettingsContainer: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                if (coordinator?.isAdDisabled() ?? true) {
-                    // User has premium - show widget settings
+            let premiumAccess = PremiumAccess.from(appState: appStateService.state)
+            Group {
+                if (coordinator?.isAdDisabled() ?? false) {
+                    // Внутри есть свой ScrollView — не дублируем
                     WidgetSettingsView()
                 } else {
-                    let premiumAccess = PremiumAccess.from(appState: appStateService.state)
-                    // User doesn't have premium - show paywall with back button
                     PremiumStatusScreen(
                         premiumAccess: premiumAccess,
                         onWatchAd: {
@@ -42,18 +41,19 @@ struct WidgetSettingsContainer: View {
                     )
                 }
             }
-            .scrollIndicators(.never)
-            .navigationBarBackButtonHidden(true)
+            // Полностью убираем фон системного навбара
             .toolbar(.hidden, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .navigationBarBackButtonHidden(true)
+
+            // Наш кастомный заголовок сверху
             .safeAreaInset(edge: .top) {
                 GradientTitleBar(
-                    title: LocalizedString.settingsWidgetsTitle.localized, // локализуй
+                    title: LocalizedString.settingsWidgetsTitle.localized,
                     onDone: { dismiss() }
                 )
             }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 12)
-            }
+
             #if DEBUG
             .measurePerformance(name: "WidgetSettingsContainer", category: .viewAppear)
             #endif

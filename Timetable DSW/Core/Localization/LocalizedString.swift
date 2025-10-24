@@ -82,19 +82,19 @@ enum LocalizedString {
     case settingsPleaseSelectGroup
     case settingsWidgetsTitle
 
-    // Tabs
+    // MARK: - Tabs
     case tabsSchedule
     case tabsTeachers
     case tabsSettings
     case tabsSubjects
 
-    // Error
+    // MARK: - Error
     case errorTitle
     case errorInvalidURL
     case errorInvalidResponse
     case errorServer
 
-    // Days
+    // MARK: - Days
     case daysMonday
     case daysTuesday
     case daysWednesday
@@ -103,35 +103,35 @@ enum LocalizedString {
     case daysSaturday
     case daysSunday
 
-    // MARK: - NEW: Support / Contact
+    // MARK: - Support / Contact (NEW)
     case settingsContactTitle
     case settingsSupportSectionTitle
     case settingsSupportFooter
 
-    // MARK: - NEW: Developer Support
+    // MARK: - Developer Support (NEW)
     case settingsDeveloperSectionTitle
     case settingsDeveloperAction
     case settingsDeveloperFooter
 
-    // MARK: - NEW: Contact actions
+    // MARK: - Contact actions (NEW)
     case contactActionReportProblem
     case contactActionRequestFeature
 
-    // MARK: - NEW: Mail / system
+    // MARK: - Mail / system (NEW)
     case mailUnavailableTitle
     /// uses %@ placeholder for email
     case mailUnavailableMessage
     case mailCopyAddress
 
-    // MARK: - NEW: Email subjects
+    // MARK: - Email subjects (NEW)
     case contactEmailSubjectBug
     case contactEmailSubjectFeature
 
-    // MARK: - NEW: Email body headers
+    // MARK: - Email body headers (NEW)
     case contactEmailBodyBugHeader
     case contactEmailBodyFeatureHeader
 
-    // MARK: - NEW: Email info labels
+    // MARK: - Email info labels (NEW)
     case contactEmailInfoApp
     case contactEmailInfoiOS
     case contactEmailInfoDevice
@@ -297,6 +297,7 @@ enum LocalizedString {
     case themeNameMidnight
     case themeNameMonochrome
 
+    // MARK: - Widgets (titles/sections)
     case widgetAvailable
     case widgetConfigure
     case widgetHowToAdd
@@ -306,6 +307,33 @@ enum LocalizedString {
     case widgetTitle
     case widgetEnabled
     case widgetAccess
+
+    // MARK: - Widgets (detailed keys)
+    case widgetStatusTitle
+    case widgetEnabledTitle
+    case widgetAccessDescription
+    case widgetInstructionStep1
+    case widgetInstructionStep2
+    case widgetInstructionStep3
+    case widgetInstructionStep4
+    case widgetTypeSmallTitle
+    case widgetTypeSmallDescription
+    case widgetTypeMediumTitle
+    case widgetTypeMediumDescription
+    case widgetTypeLargeTitle
+    case widgetTypeLargeDescription
+    case widgetTypeLiveTitle
+    case widgetTypeLiveDescription
+    case relativeAgo
+    case widgetTroubleNoDataTitle
+    case widgetTroubleNoDataSolution
+    case widgetTroubleNotUpdatingTitle
+    case widgetTroubleNotUpdatingSolution
+    case widgetTroubleWrongThemeTitle
+    case widgetTroubleWrongThemeSolution
+    case widgetSettingsSubtitle
+    case settingsRefresh
+    case widgetFooterReloadHint
 }
 
 extension LocalizedString {
@@ -391,7 +419,6 @@ extension LocalizedString {
         case .settingsNever: return String(localized: "settings.never")
         case .settingsPleaseSelectGroup: return String(localized: "settings.pleaseSelectGroup")
         case .settingsWidgetsTitle: return String(localized: "settings.widgetsTitle")
-
 
         // Tabs
         case .tabsSchedule: return String(localized: "tabs.schedule")
@@ -605,17 +632,42 @@ extension LocalizedString {
         case .themeNameLavender:   return String(localized: "theme.name.lavender")
         case .themeNameCherry:     return String(localized: "theme.name.cherry")
         case .themeNameMidnight:   return String(localized: "theme.name.midnight")
+        case .themeNameMonochrome: return String(localized: "theme.name.monochrome")
 
         case .widgetSettingsTitle:   return String(localized: "widget.settings.title")
-        case .widgetTitle:     return String(localized: "widget.title")
-        case .widgetEnabled:   return String(localized: "widget.enabled")
-        case .widgetAccess: return String(localized: "widget.access")
-        case .themeNameMonochrome: return String(localized: "theme.name.monochrome")
+        case .widgetTitle:           return String(localized: "widget.title")
+        case .widgetEnabled:         return String(localized: "widget.enabled")
+        case .widgetAccess:          return String(localized: "widget.access")
+        case .widgetStatusTitle:     return String(localized: "widget.status.title")
+        case .widgetEnabledTitle:    return String(localized: "widget.enabled.title")
+        case .widgetAccessDescription: return String(localized: "widget.access.description")
+        case .widgetInstructionStep1: return String(localized: "widget.instruction.step1")
+        case .widgetInstructionStep2: return String(localized: "widget.instruction.step2")
+        case .widgetInstructionStep3: return String(localized: "widget.instruction.step3")
+        case .widgetInstructionStep4: return String(localized: "widget.instruction.step4")
+        case .widgetTypeSmallTitle: return String(localized: "widget.type.small.title")
+        case .widgetTypeSmallDescription: return String(localized: "widget.type.small.description")
+        case .widgetTypeMediumTitle: return String(localized: "widget.type.medium.title")
+        case .widgetTypeMediumDescription: return String(localized: "widget.type.medium.description")
+        case .widgetTypeLargeTitle: return String(localized: "widget.type.large.title")
+        case .widgetTypeLargeDescription: return String(localized: "widget.type.large.description")
+        case .widgetTypeLiveTitle: return String(localized: "widget.type.live.title")
+        case .widgetTypeLiveDescription: return String(localized: "widget.type.live.description")
+        case .relativeAgo: return String(localized: "relative.ago")
+        case .widgetTroubleNoDataTitle: return String(localized: "widget.troubleshoot.noData.title")
+        case .widgetTroubleNoDataSolution: return String(localized: "widget.troubleshoot.noData.solution")
+        case .widgetTroubleNotUpdatingTitle: return String(localized: "widget.troubleshoot.notUpdating.title")
+        case .widgetTroubleNotUpdatingSolution: return String(localized: "widget.troubleshoot.notUpdating.solution")
+        case .widgetTroubleWrongThemeTitle: return String(localized: "widget.troubleshoot.wrongTheme.title")
+        case .widgetTroubleWrongThemeSolution: return String(localized: "widget.troubleshoot.wrongTheme.solution")
         case .widgetTroubleshooting: return String(localized: "widget.troubleshooting")
         case .widgetNeverUpdated: return String(localized: "widget.never.updated")
         case .widgetHowToAdd: return String(localized: "widget.how.to.add")
         case .widgetConfigure: return String(localized: "widget.configure")
         case .widgetAvailable: return String(localized: "widget.available")
+        case .widgetSettingsSubtitle: return String(localized: "widget.settings.subtitle")
+        case .settingsRefresh: return String(localized: "settings.refresh")
+        case .widgetFooterReloadHint: return String(localized: "widget.footer.reloadHint")
         }
     }
 

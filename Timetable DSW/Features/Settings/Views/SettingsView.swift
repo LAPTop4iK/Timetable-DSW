@@ -478,3 +478,4 @@ struct SettingsView: View {
         timer = nil
     }
 }
+

@@ -24,6 +24,16 @@
         }
       }
     },
+    "%@: %@ %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@ %3$@"
+          }
+        }
+      }
+    },
     "%lld" : {
 
     },
@@ -2942,9 +2952,6 @@
         }
       }
     },
-    "Last updated: %@ ago" : {
-
-    },
     "mail.copyAddress" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3633,6 +3640,28 @@
         }
       }
     },
+    "relative.ago" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ago"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "temu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "тому"
+          }
+        }
+      }
+    },
     "schedule.enjoyFreeTime" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4138,6 +4167,28 @@
         }
       }
     },
+    "settings.refresh" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odśwież"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оновити"
+          }
+        }
+      }
+    },
     "settings.support.footer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4321,9 +4372,6 @@
           }
         }
       }
-    },
-    "Status" : {
-
     },
     "subjects.classes" : {
       "extractionState" : "manual",
@@ -5197,6 +5245,28 @@
         }
       }
     },
+    "widget.access.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Your widgets have access to your schedule data"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje widżety mają dostęp do danych twojego planu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ваші віджети мають доступ до даних вашого розкладу"
+          }
+        }
+      }
+    },
     "widget.available" : {
       "localizations" : {
         "en" : {
@@ -5263,6 +5333,50 @@
         }
       }
     },
+    "widget.enabled.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widgets Enabled"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżety włączone"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Віджети увімкнено"
+          }
+        }
+      }
+    },
+    "widget.footer.reloadHint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If something looks off, try reloading widgets."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeśli coś wygląda niepoprawnie, spróbuj odświeżyć widżety."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Якщо щось відображається некоректно, спробуйте оновити віджети."
+          }
+        }
+      }
+    },
     "widget.how.to.add" : {
       "localizations" : {
         "en" : {
@@ -5281,6 +5395,94 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Як додати віджет"
+          }
+        }
+      }
+    },
+    "widget.instruction.step1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long press on your home screen"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przytrzymaj długo na ekranie głównym"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Довго натисніть на головному екрані"
+          }
+        }
+      }
+    },
+    "widget.instruction.step2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the \"+\" button in the top-left"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stuknij przycisk \"+\" w lewym górnym rogu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Натисніть кнопку \"+\" у верхньому лівому куті"
+          }
+        }
+      }
+    },
+    "widget.instruction.step3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search for \"Timetable\""
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyszukaj \"Timetable\""
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Знайдіть \"Timetable\""
+          }
+        }
+      }
+    },
+    "widget.instruction.step4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose widget size and add"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz rozmiar widżetu i dodaj"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виберіть розмір віджета і додайте"
           }
         }
       }
@@ -5307,6 +5509,28 @@
         }
       }
     },
+    "widget.settings.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configure home screen widgets"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skonfiguruj widżety ekranu głównego"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштуйте віджети головного екрана"
+          }
+        }
+      }
+    },
     "widget.settings.title" : {
       "localizations" : {
         "en" : {
@@ -5329,6 +5553,28 @@
         }
       }
     },
+    "widget.status.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Статус"
+          }
+        }
+      }
+    },
     "widget.title" : {
       "localizations" : {
         "pl" : {
@@ -5341,6 +5587,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Віджети"
+          }
+        }
+      }
+    },
+    "widget.troubleshoot.noData.solution" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the app at least once to load your schedule"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz aplikację przynajmniej raz, aby wczytać plan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрийте додаток хоча б один раз, щоб завантажити розклад"
+          }
+        }
+      }
+    },
+    "widget.troubleshoot.noData.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget shows \"No Data\""
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżet pokazuje \"Brak danych\""
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Віджет показує \"Немає даних\""
+          }
+        }
+      }
+    },
+    "widget.troubleshoot.notUpdating.solution" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the refresh button above to manually update"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stuknij przycisk odświeżania powyżej, aby zaktualizować ręcznie"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Натисніть кнопку оновлення вище, щоб оновити вручну"
+          }
+        }
+      }
+    },
+    "widget.troubleshoot.notUpdating.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget not updating"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżet się nie aktualizuje"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Віджет не оновлюється"
+          }
+        }
+      }
+    },
+    "widget.troubleshoot.wrongTheme.solution" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change theme in app, widgets will update automatically"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień motyw w aplikacji, widżety zaktualizują się automatycznie"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Змініть тему в додатку, віджети оновляться автоматично"
+          }
+        }
+      }
+    },
+    "widget.troubleshoot.wrongTheme.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wrong theme colors"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieprawidłowe kolory motywu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неправильні кольори теми"
           }
         }
       }
@@ -5367,11 +5745,181 @@
         }
       }
     },
-    "Widgets Enabled" : {
-
+    "widget.type.large.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly schedule overview"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przegląd planu tygodniowego"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Огляд розкладу на тиждень"
+          }
+        }
+      }
     },
-    "Your widgets have access to your schedule data" : {
-
+    "widget.type.large.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Large Widget"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duży widżet"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Великий віджет"
+          }
+        }
+      }
+    },
+    "widget.type.live.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real-time class tracking (Dynamic Island)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Śledzenie zajęć w czasie rzeczywistym (Dynamic Island)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відстеження занять у реальному часі (Dynamic Island)"
+          }
+        }
+      }
+    },
+    "widget.type.live.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
+          }
+        }
+      }
+    },
+    "widget.type.medium.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's schedule (up to 3 classes)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzisiejszy plan (do 3 zajęć)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сьогоднішній розклад (до 3 занять)"
+          }
+        }
+      }
+    },
+    "widget.type.medium.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medium Widget"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Średni widżet"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середній віджет"
+          }
+        }
+      }
+    },
+    "widget.type.small.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows current or next class"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokazuje bieżące lub następne zajęcia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показує поточне або наступне заняття"
+          }
+        }
+      }
+    },
+    "widget.type.small.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Small Widget"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mały widżet"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Малий віджет"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
