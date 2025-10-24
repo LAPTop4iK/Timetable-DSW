@@ -152,17 +152,7 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
                         guard self.currentLoadToken == loadToken,
                               self.didApplyFullAggregate == false else { return }
 
-                        let partialResponse = AggregateResponse(
-                            groupId: semesterSchedule.groupId,
-                            from: semesterSchedule.from,
-                            to: semesterSchedule.to,
-                            intervalType: semesterSchedule.intervalType,
-                            groupSchedule: semesterSchedule.groupSchedule,
-                            // 🛡️ если вдруг уже были teachers (из кэша) — не теряем
-                            teachers: self.scheduleData?.teachers ?? [],
-                            fetchedAt: semesterSchedule.fetchedAt
-                        )
-
+                        let partialResponse = AggregateResponse(from: semesterSchedule, teachers: self.scheduleData?.teachers ?? [])
                         self.scheduleData = partialResponse
                         self.isLoading = false
                         self.isLoadingTeachers = partialResponse.teachers.isEmpty

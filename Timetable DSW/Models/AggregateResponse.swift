@@ -15,4 +15,24 @@ struct AggregateResponse: Equatable, Codable, Sendable {
     let groupSchedule: [ScheduleEvent]
     let teachers: [Teacher]
     let fetchedAt: String
+
+    init(groupId: Int, from: String, to: String, intervalType: Int, groupSchedule: [ScheduleEvent], teachers: [Teacher], fetchedAt: String) {
+        self.groupId = groupId
+        self.from = from
+        self.to = to
+        self.intervalType = intervalType
+        self.groupSchedule = groupSchedule
+        self.teachers = teachers
+        self.fetchedAt = fetchedAt
+    }
+
+    init(from groupSchedule: GroupScheduleResponse, teachers: [Teacher] = []) {
+        self.groupId = groupSchedule.groupId
+        self.from = groupSchedule.from
+        self.to = groupSchedule.to
+        self.intervalType = groupSchedule.intervalType
+        self.groupSchedule = groupSchedule.groupSchedule
+        self.teachers = teachers
+        self.fetchedAt = groupSchedule.fetchedAt
+    }
 }
