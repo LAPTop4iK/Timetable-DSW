@@ -120,12 +120,12 @@ struct ScheduleHeaderView: View {
                     .foregroundAppColor(.warning, colorScheme: colorScheme)
             }
 
-            if let onPremiumTap = onPremiumTap, !(coordinator?.isAdDisabled() ?? true) {
-                PremiumStatusButton(
-                    premiumAccess: PremiumAccess.from(appState: appStateService.state),
-                    onTap: onPremiumTap
-                )
-            }
+//            if let onPremiumTap = onPremiumTap, !(coordinator?.isAdDisabled() ?? true) {
+//                PremiumStatusButton(
+//                    premiumAccess: PremiumAccess.from(appState: appStateService.state),
+//                    onTap: onPremiumTap
+//                )
+//            }
 
             // Return to today button (only show if not on today)
             if let onTodayTap = onTodayTap, !Calendar.current.isDateInToday(selectedDate) {
