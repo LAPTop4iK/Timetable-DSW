@@ -92,7 +92,7 @@ struct TeacherHeaderView: View {
     private var formattedSelectedDate: String {
         let formatter = DateFormatter()
         formatter.locale = .current
-        formatter.dateFormat = "dd.MM.yyyy, EEE"
+        formatter.dateFormat = "dd.MM.yyyy"
         return formatter.string(from: selectedDate)
     }
     
