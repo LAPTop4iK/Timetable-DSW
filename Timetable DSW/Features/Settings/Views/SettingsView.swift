@@ -50,7 +50,7 @@ struct SettingsView: View {
             Form {
                 groupSection
                 themeRow
-//                widgetRow
+                widgetRow
                 cacheSection
                 if !(coordinator?.isAdDisabled() ?? true) {
                     awardSection
