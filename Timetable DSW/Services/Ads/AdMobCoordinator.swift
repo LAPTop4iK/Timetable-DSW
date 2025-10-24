@@ -51,7 +51,7 @@ final class AdMobCoordinator: AdCoordinator {
     // MARK: - Public Methods
 
     func start(afterATT status: ATTrackingManager.AuthorizationStatus) {
-            guard !isStarted else { return }
+            guard !isAdDisabled() else { return }
             consentATT = status
         isStarted = true
             MobileAds.shared.start()
