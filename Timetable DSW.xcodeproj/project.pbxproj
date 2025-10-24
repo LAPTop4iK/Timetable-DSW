@@ -9,7 +9,20 @@
 /* Begin PBXBuildFile section */
 		EB4A63FF2EA67EA300EACBDE /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = EB4A63FE2EA67EA300EACBDE /* GoogleMobileAds */; };
 		EB6FBF7C2EA79D2D00A4740E /* LBTATools in Frameworks */ = {isa = PBXBuildFile; productRef = EB6FBF7B2EA79D2D00A4740E /* LBTATools */; };
+		EB82BC732EAAB6F0005FDC0B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */; };
+		EB82BC752EAAB6F0005FDC0B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB82BC742EAAB6F0005FDC0B /* SwiftUI.framework */; };
+		EB82BC862EAAB6F1005FDC0B /* TimetableWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EB82BC842EAAB6F1005FDC0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EBA0262C2EA1CC140010F32D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EB82BC6F2EAAB6F0005FDC0B;
+			remoteInfo = TimetableWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		EB82BC8B2EAAB6F1005FDC0B /* Embed Foundation Extensions */ = {
@@ -18,6 +31,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				EB82BC862EAAB6F1005FDC0B /* TimetableWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -25,26 +39,65 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TimetableWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		EB82BC742EAAB6F0005FDC0B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		EB82BCA32EAABC25005FDC0B /* TimetableWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimetableWidgetExtension.entitlements; sourceTree = "<group>"; };
 		EBA026342EA1CC140010F32D /* Timetable DSW.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Timetable DSW.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EB82BC872EAAB6F1005FDC0B /* Exceptions for "TimetableWidget" folder in "TimetableWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */;
+		};
+		EB82BC9B2EAAB77F005FDC0B /* Exceptions for "Timetable DSW" folder in "TimetableWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/DesignSystem/Icons/AppIcon.swift,
+				Core/DesignSystem/Themes/AppTheme.swift,
+				Core/Localization/LocalizedString.swift,
+				Models/GroupScheduleResponse.swift,
+				Models/ScheduleEvent.swift,
+				Services/DateService/DateService.swift,
+				Services/DateService/DefaultDateService.swift,
+			);
+			target = EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		EB82BC762EAAB6F0005FDC0B /* TimetableWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EB82BC872EAAB6F1005FDC0B /* Exceptions for "TimetableWidget" folder in "TimetableWidgetExtension" target */,
+			);
 			path = TimetableWidget;
 			sourceTree = "<group>";
 		};
 		EBA026362EA1CC140010F32D /* Timetable DSW */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EB82BC9B2EAAB77F005FDC0B /* Exceptions for "Timetable DSW" folder in "TimetableWidgetExtension" target */,
+			);
 			path = "Timetable DSW";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		EB82BC6D2EAAB6F0005FDC0B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB82BC752EAAB6F0005FDC0B /* SwiftUI.framework in Frameworks */,
+				EB82BC732EAAB6F0005FDC0B /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EBA026312EA1CC140010F32D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -81,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				EBA026342EA1CC140010F32D /* Timetable DSW.app */,
+				EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +142,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB82BC882EAAB6F1005FDC0B /* Build configuration list for PBXNativeTarget "TimetableWidgetExtension" */;
+			buildPhases = (
+				EB82BC6C2EAAB6F0005FDC0B /* Sources */,
+				EB82BC6D2EAAB6F0005FDC0B /* Frameworks */,
+				EB82BC6E2EAAB6F0005FDC0B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EB82BC762EAAB6F0005FDC0B /* TimetableWidget */,
+			);
+			name = TimetableWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = TimetableWidgetExtension;
+			productReference = EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		EBA026332EA1CC140010F32D /* Timetable DSW */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EBA0263F2EA1CC150010F32D /* Build configuration list for PBXNativeTarget "Timetable DSW" */;
@@ -100,6 +176,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				EB82BC852EAAB6F1005FDC0B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				EBA026362EA1CC140010F32D /* Timetable DSW */,
@@ -123,6 +200,9 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					EB82BC6F2EAAB6F0005FDC0B = {
+						CreatedOnToolsVersion = 26.0;
+					};
 					EBA026332EA1CC140010F32D = {
 						CreatedOnToolsVersion = 26.0;
 						LastSwiftMigration = 2600;
@@ -150,11 +230,19 @@
 			projectRoot = "";
 			targets = (
 				EBA026332EA1CC140010F32D /* Timetable DSW */,
+				EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		EB82BC6E2EAAB6F0005FDC0B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EBA026322EA1CC140010F32D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -165,6 +253,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		EB82BC6C2EAAB6F0005FDC0B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EBA026302EA1CC140010F32D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -174,7 +269,81 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		EB82BC852EAAB6F1005FDC0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */;
+			targetProxy = EB82BC842EAAB6F1005FDC0B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		EB82BC892EAAB6F1005FDC0B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = TimetableWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L4UDM2XTU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TimetableWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TimetableWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "-DAPPEXTENSION";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-DSW.rl.TimetableWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EB82BC8A2EAAB6F1005FDC0B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = TimetableWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L4UDM2XTU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TimetableWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TimetableWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "-DAPPEXTENSION";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-DSW.rl.TimetableWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		EBA0263D2EA1CC150010F32D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -390,6 +559,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		EB82BC882EAAB6F1005FDC0B /* Build configuration list for PBXNativeTarget "TimetableWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB82BC892EAAB6F1005FDC0B /* Debug */,
+				EB82BC8A2EAAB6F1005FDC0B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		EBA0262F2EA1CC140010F32D /* Build configuration list for PBXProject "Timetable DSW" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
