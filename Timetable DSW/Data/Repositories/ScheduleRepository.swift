@@ -89,6 +89,8 @@ actor ScheduleRepository {
         Task { @MainActor in
             if let semesterSchedule = try? await self.getSemesterSchedule(groupId: groupId, from: from, to: to) {
                 // Call callback immediately when semester data arrives
+                let aggregate = AggregateResponse(from: semesterSchedule)
+                try await cacheManager.save(aggregate, forKey: Configuration.CacheKey.schedule)
                 onSemesterSchedule(semesterSchedule)
             }
         }
