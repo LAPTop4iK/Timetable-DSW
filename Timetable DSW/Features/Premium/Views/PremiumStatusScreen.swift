@@ -13,7 +13,7 @@ struct PremiumStatusScreen: View {
 
     struct Configuration: ComponentConfiguration {
         struct Constants {
-            let iconSize: CGFloat = 120
+            let iconSize: CGFloat = 70
             let spacing: AppSpacing = .xl
             let padding: AppSpacing = .xxl
             let timerFont: Font = .system(size: 48, weight: .bold, design: .rounded)
@@ -48,9 +48,6 @@ struct PremiumStatusScreen: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: Configuration.constants.spacing.value) {
-                    Spacer()
-                        .frame(height: 40)
-
                     iconView
                     statusContent
 
@@ -239,7 +236,7 @@ struct PremiumStatusScreen: View {
         VStack(spacing: AppSpacing.medium.value) {
             // Watch ad button
             Button(action: {
-                dismiss()
+//                dismiss()
                 onWatchAd()
             }) {
                 HStack {
@@ -258,38 +255,38 @@ struct PremiumStatusScreen: View {
             .buttonStyle(ScaleButtonStyle())
 
             // Purchase button
-            Button(action: {
-                dismiss()
-                onPurchase()
-            }) {
-                HStack {
-                    Image(systemName: "cart.fill")
-                    Text(LocalizedString.premiumPurchaseButton.localized)
-                        .fontWeight(.semibold)
-                }
-                .font(AppTypography.body.font)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: gradientColors,
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .padding(Configuration.constants.buttonPadding)
-                .frame(maxWidth: .infinity)
-                .background {
-                    RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: gradientColors,
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 2
-                        )
-                }
-            }
-            .buttonStyle(ScaleButtonStyle())
+//            Button(action: {
+////                dismiss()
+//                onPurchase()
+//            }) {
+//                HStack {
+//                    Image(systemName: "cart.fill")
+//                    Text(LocalizedString.premiumPurchaseButton.localized)
+//                        .fontWeight(.semibold)
+//                }
+//                .font(AppTypography.body.font)
+//                .foregroundStyle(
+//                    LinearGradient(
+//                        colors: gradientColors,
+//                        startPoint: .leading,
+//                        endPoint: .trailing
+//                    )
+//                )
+//                .padding(Configuration.constants.buttonPadding)
+//                .frame(maxWidth: .infinity)
+//                .background {
+//                    RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
+//                        .strokeBorder(
+//                            LinearGradient(
+//                                colors: gradientColors,
+//                                startPoint: .leading,
+//                                endPoint: .trailing
+//                            ),
+//                            lineWidth: 2
+//                        )
+//                }
+//            }
+//            .buttonStyle(ScaleButtonStyle())
         }
     }
 
