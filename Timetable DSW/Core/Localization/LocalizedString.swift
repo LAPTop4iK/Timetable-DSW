@@ -334,6 +334,14 @@ enum LocalizedString {
     case widgetSettingsSubtitle
     case settingsRefresh
     case widgetFooterReloadHint
+
+    case featureTeachersTab
+    case featureTeachersTabDescription
+    case featureSubjectsTab
+    case featureSubjectsTabDescription
+    case featureThemeSettings
+    case featureThemeSettingsDescription
+    case featureWidgetSettings
 }
 
 extension LocalizedString {
@@ -668,6 +676,13 @@ extension LocalizedString {
         case .widgetSettingsSubtitle: return String(localized: "widget.settings.subtitle")
         case .settingsRefresh: return String(localized: "settings.refresh")
         case .widgetFooterReloadHint: return String(localized: "widget.footer.reloadHint")
+        case .featureTeachersTab: return String(localized: "feature.teachersTab")
+        case .featureSubjectsTab: return String(localized: "feature.subjectsTab")
+        case .featureThemeSettings: return String(localized: "feature.themeSettings")
+        case .featureTeachersTabDescription: return String(localized: "feature.teachersTab.description")
+        case .featureSubjectsTabDescription: return String(localized: "feature.subjectsTab.description")
+        case .featureThemeSettingsDescription: return String(localized: "feature.themeSettings.description")
+        case .featureWidgetSettings: return String(localized: "feature.widgetSettings")
         }
     }
 

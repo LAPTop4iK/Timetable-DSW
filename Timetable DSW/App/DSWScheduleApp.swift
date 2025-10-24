@@ -6,8 +6,8 @@
 //
 
 
-// ===== FILE: Timetable DSW/App/DSWScheduleApp.swift ===== (UPDATED)
 import SwiftUI
+import AppTrackingTransparency 
 
 @main
 struct DSWScheduleApp: App {
@@ -22,6 +22,10 @@ struct DSWScheduleApp: App {
 
     // AdCoordinator - не ObservableObject, поэтому @State
     @State private var adCoordinator: AdMobCoordinator
+
+    // ⬇️ Добавлено: следим за жизненным циклом сцены и флаг от повторных вызовов
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var didAskATTThisSession = false
 
     // MARK: - Initialization
 
@@ -40,7 +44,7 @@ struct DSWScheduleApp: App {
         let appState = DefaultAppStateService(parametersService: parameters)
         let viewModel = AppViewModel(repository: repository)
 
-        // 3️⃣ Создаем BottomInsetService с parameters
+        // 3️⃣ BottomInsetService
         let bottomInset = DefaultBottomInsetService(
             appStateService: appState,
             featureFlagService: featureFlags,
@@ -83,6 +87,24 @@ struct DSWScheduleApp: App {
                 .environment(\.bottomInsetService, bottomInsetService)
                 .environment(\.themeManager, themeManager)
                 .adCoordinator(adCoordinator)
+                .onChange(of: scenePhase) { _, phase in
+                    guard phase == .active else { return }
+                    guard !didAskATTThisSession else {
+                        Task { @MainActor in
+                            let status = ATTrackingManager.trackingAuthorizationStatus
+                            adCoordinator.start(afterATT: status)
+                        }
+                        return
+                    }
+                    didAskATTThisSession = true
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        Task { @MainActor in
+                            let status = await ATTPermissionManager.requestIfNeeded()
+                            adCoordinator.start(afterATT: status)
+                        }
+                    }
+                }
         }
     }
 }
@@ -94,7 +116,7 @@ extension EnvironmentValues {
         get { self[FeatureFlagServiceKey.self] }
         set { self[FeatureFlagServiceKey.self] = newValue }
     }
-    
+
     var appStateService: AppStateService {
         get { self[AppStateServiceKey.self] }
         set { self[AppStateServiceKey.self] = newValue }
