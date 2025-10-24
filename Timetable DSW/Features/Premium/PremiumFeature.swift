@@ -20,10 +20,10 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
 
     var displayName: String {
         switch self {
-        case .teachersTab: return "Teachers Section"
-        case .subjectsTab: return "Subjects Section"
-        case .themeSettings: return "Theme Customization"
-        case .widgetSettings: return "Widget Configuration"
+        case .teachersTab: return LocalizedString.featureTeachersTab.localized
+        case .subjectsTab: return LocalizedString.featureSubjectsTab.localized
+        case .themeSettings: return LocalizedString.featureThemeSettings.localized
+        case .widgetSettings: return LocalizedString.featureWidgetSettings.localized
 //        case .advancedFilters: return "Advanced Filters"
 //        case .exportSchedule: return "Export Schedule"
         }
@@ -32,11 +32,11 @@ enum PremiumFeature: String, CaseIterable, Codable, Sendable {
     var description: String {
         switch self {
         case .teachersTab:
-            return "Browse and view teacher schedules"
+            return LocalizedString.featureTeachersTabDescription.localized
         case .subjectsTab:
-            return "Browse and view subject details"
+            return LocalizedString.featureSubjectsTabDescription.localized
         case .themeSettings:
-            return "Customize app colors and appearance"
+            return LocalizedString.featureThemeSettingsDescription.localized
         case .widgetSettings:
             return LocalizedString.widgetConfigure.localized
 //        case .advancedFilters:

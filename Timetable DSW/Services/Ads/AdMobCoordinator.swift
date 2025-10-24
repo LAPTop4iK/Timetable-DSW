@@ -30,6 +30,9 @@ final class AdMobCoordinator: AdCoordinator {
     // State
     private var isPresenting = false
     private let rewardSubject = PassthroughSubject<Bool, Never>()
+    private var isStarted = false
+    private var consentATT: ATTrackingManager.AuthorizationStatus = .notDetermined
+
 
     var rewardPublisher: AnyPublisher<Bool, Never> {
         rewardSubject.eraseToAnyPublisher()
@@ -43,21 +46,31 @@ final class AdMobCoordinator: AdCoordinator {
         self.eligibilityService = eligibilityService
         self.viewControllerProvider = viewControllerProvider
         self.configuration = configuration
-
-        MobileAds.shared.start()
-
-        Task {
-            await ATTrackingManager.requestTrackingAuthorization()
-        }
     }
 
     // MARK: - Public Methods
 
+    func start(afterATT status: ATTrackingManager.AuthorizationStatus) {
+            guard !isStarted else { return }
+            consentATT = status
+        isStarted = true
+            MobileAds.shared.start()
+        }
+
+    private func ensureStarted() throws {
+           guard isStarted else { throw AdError.failedToPresent(NSError(
+               domain: "AdCoordinator", code: 2,
+               userInfo: [NSLocalizedDescriptionKey: "Ads SDK not started yet (wait for ATT)."]
+           )) }
+       }
+
+
     func isAdDisabled() -> Bool {
-        !eligibilityService.canShowAds
+        !isStarted || !eligibilityService.canShowAds
     }
 
     func loadAd(type: AdType) async throws {
+        try ensureStarted()
         try eligibilityService.checkEligibility()
 
         switch type {
@@ -89,6 +102,7 @@ final class AdMobCoordinator: AdCoordinator {
     }
 
     func showAd(type: AdType) async throws {
+        try ensureStarted()
         try eligibilityService.checkEligibility()
 
         guard !isPresenting else {
@@ -127,7 +141,7 @@ final class AdMobCoordinator: AdCoordinator {
     }
 
     func isAdReady(type: AdType) -> Bool {
-        guard eligibilityService.canShowAds else { return false }
+        guard isStarted, eligibilityService.canShowAds else { return false }
 
         switch type {
         case .interstitial:
