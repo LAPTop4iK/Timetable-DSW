@@ -11,8 +11,13 @@ import SwiftUI
 @main
 struct TimetableWidgetBundle: WidgetBundle {
     var body: some Widget {
+        // Main widget with different sizes
         TimetableWidget()
-        TimetableWidgetControl()
-        TimetableWidgetLiveActivity()
+        
+        // Live Activity for current class tracking
+        TimetableLiveActivity()
+        
+        // Control Center widget
+        TimetableControlWidget()
     }
 }

@@ -61,3 +61,70 @@ struct ShowNextClassIntent: AppIntent {
         return .result()
     }
 }
+
+////// MARK: - Toggle Control (Advanced)
+//
+//struct TimetableToggleControl: ControlWidget {
+//    var body: some ControlWidgetConfiguration {
+//        AppIntentControlConfiguration(
+//            kind: "com.timetable.toggle",
+//            provider: TimetableToggleProvider()
+//        ) { value in
+//            ControlWidgetToggle(
+//                isOn: value.hasClasses,
+//                action: RefreshScheduleIntent(),
+//                label: {
+//                    Label("Classes Today", systemImage: "calendar")
+//                },
+//                valueLabel: { isOn in
+//                    Text(isOn ? "Active" : "No Classes")
+//                }
+//            )
+//        }
+//        .displayName("Classes Status")
+//        .description("Shows if you have classes today")
+//    }
+//}
+//
+//struct TimetableControlValue: ControlValueProvider {
+//    var hasClasses: Bool
+//
+//    var status: ControlStatus {
+//        hasClasses ? .enabled : .disabled
+//    }
+//}
+//
+//struct TimetableToggleProvider: AppIntentControlValueProvider {
+//    func currentValue(configuration: ConfigurationIntent) async throws -> TimetableControlValue {
+//        // Load today's schedule from App Group
+//        let schedule = AppGroupManager.loadSemesterSchedule()
+//        let today = Date()
+//
+//        let hasClasses = schedule?.groupSchedule.contains { event in
+//            guard let eventDate = event.startDate else { return false }
+//            return Calendar.current.isDate(eventDate, inSameDayAs: today)
+//        } ?? false
+//
+//        return TimetableControlValue(hasClasses: hasClasses)
+//    }
+//
+//    func previewValue(configuration: ConfigurationIntent) -> TimetableControlValue {
+//        TimetableControlValue(hasClasses: true)
+//    }
+//}
+//
+//struct RefreshScheduleIntent: SetValueIntent {
+//    static var title: LocalizedStringResource = "Refresh Schedule"
+//
+//    @Parameter(title: "Enabled")
+//    var value: Bool
+//
+//    func perform() async throws -> some IntentResult {
+//        // Trigger app to refresh schedule
+//        return .result()
+//    }
+//}
+//
+//struct ConfigurationIntent: ControlConfigurationIntent {
+//    static var title: LocalizedStringResource = "Configuration"
+//}
