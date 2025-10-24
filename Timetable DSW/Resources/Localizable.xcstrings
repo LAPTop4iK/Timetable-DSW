@@ -5920,7 +5920,56 @@
           }
         }
       }
-    }
+    },
+    "feature.teachersTab": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Teachers Section" } },
+            "uk": { "stringUnit": { "state": "translated", "value": "Розділ викладачів" } },
+            "pl": { "stringUnit": { "state": "translated", "value": "Sekcja nauczycieli" } }
+          }
+        },
+        "feature.subjectsTab": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Subjects Section" } },
+            "uk": { "stringUnit": { "state": "translated", "value": "Розділ предметів" } },
+            "pl": { "stringUnit": { "state": "translated", "value": "Sekcja przedmiotów" } }
+          }
+        },
+        "feature.themeSettings": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Theme Customization" } },
+            "uk": { "stringUnit": { "state": "translated", "value": "Налаштування теми" } },
+            "pl": { "stringUnit": { "state": "translated", "value": "Dostosowanie motywu" } }
+          }
+        },
+        "feature.widgetSettings": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Widget Configuration" } },
+            "uk": { "stringUnit": { "state": "translated", "value": "Налаштування віджетів" } },
+            "pl": { "stringUnit": { "state": "translated", "value": "Konfiguracja widżetów" } }
+          }
+        },
+        "feature.teachersTab.description": {
+              "localizations": {
+                "en": { "stringUnit": { "state": "translated", "value": "Browse and view teacher schedules" } },
+                "uk": { "stringUnit": { "state": "translated", "value": "Переглядайте та знаходьте розклади викладачів" } },
+                "pl": { "stringUnit": { "state": "translated", "value": "Przeglądaj i wyświetlaj plany nauczycieli" } }
+              }
+            },
+            "feature.subjectsTab.description": {
+              "localizations": {
+                "en": { "stringUnit": { "state": "translated", "value": "Browse and view subject details" } },
+                "uk": { "stringUnit": { "state": "translated", "value": "Переглядайте та переглядайте деталі предметів" } },
+                "pl": { "stringUnit": { "state": "translated", "value": "Przeglądaj i wyświetlaj szczegóły przedmiotów" } }
+              }
+            },
+            "feature.themeSettings.description": {
+              "localizations": {
+                "en": { "stringUnit": { "state": "translated", "value": "Customize app colors and appearance" } },
+                "uk": { "stringUnit": { "state": "translated", "value": "Налаштовуйте кольори та зовнішній вигляд застосунку" } },
+                "pl": { "stringUnit": { "state": "translated", "value": "Dostosuj kolory i wygląd aplikacji" } }
+              }
+            }
   },
   "version" : "1.0"
 }
