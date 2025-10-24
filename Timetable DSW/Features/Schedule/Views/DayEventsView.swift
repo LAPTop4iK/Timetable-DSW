@@ -119,7 +119,7 @@ struct DayEventsView: View {
 
     private func eventsList(_ todaysEvents: [ScheduleEvent]) -> some View {
         // Индекс по заголовку строим один раз и только когда он нужен.
-        let titleIndex = Dictionary(grouping: todaysEvents, by: { $0.title })
+        let titleIndex = Dictionary(grouping: events, by: { $0.title })
 
         return LazyVStack(spacing: Configuration.constants.spacing.value) {
             ForEach(todaysEvents) { event in
