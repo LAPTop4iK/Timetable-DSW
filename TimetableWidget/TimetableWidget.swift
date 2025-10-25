@@ -19,8 +19,10 @@ struct TimetableWidget: Widget {
             provider: TimetableWidgetProvider()
         ) { entry in
             TimetableWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) { Color.clear }
         }
+        .contentMarginsDisabled()                // убрали системные поля
+        .containerBackgroundRemovable(true)
         .configurationDisplayName("Timetable")
         .description("View your class schedule at a glance")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])

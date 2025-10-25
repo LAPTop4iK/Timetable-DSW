@@ -14,6 +14,26 @@
         }
       }
     },
+    "%@ %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %lld" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld"
+          }
+        }
+      }
+    },
     "%@: %@" : {
       "localizations" : {
         "pl" : {
@@ -37,11 +57,44 @@
     "%lld" : {
 
     },
+    "%lld %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld %2$@"
+          }
+        }
+      }
+    },
+    "%lld%% %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld%% %2$@"
+          }
+        }
+      }
+    },
     "•" : {
 
     },
     "• %@" : {
 
+    },
+    "+%lld" : {
+
+    },
+    "+%lld %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "+%1$lld %2$@"
+          }
+        }
+      }
     },
     "⚠️ NativeAdViewModel not provided" : {
 
@@ -58,7 +111,34 @@
     "🧪 Ads Debug" : {
 
     },
+    "A an example control that runs a timer." : {
+
+    },
+    "Active" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktywne"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Активно"
+          }
+        }
+      }
+    },
     "adLoading.failed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -81,6 +161,7 @@
       }
     },
     "adLoading.retry" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -103,6 +184,7 @@
       }
     },
     "adLoading.text" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -125,6 +207,7 @@
       }
     },
     "adsDebug.adaptiveBanner" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -147,6 +230,7 @@
       }
     },
     "adsDebug.adInspectorDescription" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -169,6 +253,7 @@
       }
     },
     "adsDebug.appOpenAd" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -191,6 +276,7 @@
       }
     },
     "adsDebug.appOpenDescription" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -213,6 +299,7 @@
       }
     },
     "adsDebug.bannerAd" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -235,6 +322,7 @@
       }
     },
     "adsDebug.bannerDescription" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -257,6 +345,7 @@
       }
     },
     "adsDebug.clearLog" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -279,6 +368,7 @@
       }
     },
     "adsDebug.developerTools" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -301,6 +391,7 @@
       }
     },
     "adsDebug.eventLog" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -323,6 +414,7 @@
       }
     },
     "adsDebug.interstitialAd" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -345,6 +437,7 @@
       }
     },
     "adsDebug.interstitialDescription" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -367,6 +460,7 @@
       }
     },
     "adsDebug.launchAdInspector" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -389,6 +483,7 @@
       }
     },
     "adsDebug.load" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -411,6 +506,7 @@
       }
     },
     "adsDebug.nativeAd" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -433,6 +529,7 @@
       }
     },
     "adsDebug.nativeDescription" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -455,6 +552,7 @@
       }
     },
     "adsDebug.noEventsYet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -477,6 +575,7 @@
       }
     },
     "adsDebug.preload" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -499,6 +598,7 @@
       }
     },
     "adsDebug.readyToShow" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -521,6 +621,7 @@
       }
     },
     "adsDebug.rewardedAd" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -543,6 +644,7 @@
       }
     },
     "adsDebug.rewardedDescription" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -565,6 +667,7 @@
       }
     },
     "adsDebug.rewardedInterstitial" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -587,6 +690,7 @@
       }
     },
     "adsDebug.rewardedInterstitialDescription" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -609,6 +713,7 @@
       }
     },
     "adsDebug.show" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -631,6 +736,7 @@
       }
     },
     "adsDebug.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -654,6 +760,7 @@
     },
     "appearance.dark" : {
       "comment" : "Dark appearance mode title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -677,6 +784,7 @@
     },
     "appearance.description.dark" : {
       "comment" : "Description for dark mode",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -700,6 +808,7 @@
     },
     "appearance.description.light" : {
       "comment" : "Description for light mode",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -723,6 +832,7 @@
     },
     "appearance.description.system" : {
       "comment" : "Description for system mode",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -746,6 +856,7 @@
     },
     "appearance.light" : {
       "comment" : "Light appearance mode title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -769,6 +880,7 @@
     },
     "appearance.system" : {
       "comment" : "System appearance mode title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -789,6 +901,58 @@
           }
         }
       }
+    },
+    "Bottom %@" : {
+
+    },
+    "Classes Status" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classes Status"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status zajęć"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Статус занять"
+          }
+        }
+      }
+    },
+    "Classes today" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classes today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zajęcia dziś"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заняття сьогодні"
+          }
+        }
+      }
+    },
+    "Configure your timetable widget" : {
+
     },
     "contact.action.reportProblem" : {
       "extractionState" : "manual",
@@ -1274,6 +1438,7 @@
       }
     },
     "debug.about" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1296,6 +1461,7 @@
       }
     },
     "debug.actionResult" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1317,10 +1483,8 @@
         }
       }
     },
-    "debug.actions" : {
-
-    },
     "debug.actionsTitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1343,6 +1507,7 @@
       }
     },
     "debug.adsWatched" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1365,6 +1530,7 @@
       }
     },
     "debug.allDataCleared" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1387,6 +1553,7 @@
       }
     },
     "debug.allFlagsReset" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1409,6 +1576,7 @@
       }
     },
     "debug.areYouSure" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1431,6 +1599,7 @@
       }
     },
     "debug.build" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1452,10 +1621,8 @@
         }
       }
     },
-    "debug.cancel" : {
-
-    },
     "debug.clearAllData" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1478,6 +1645,7 @@
       }
     },
     "debug.clearAllDataQuestion" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1500,6 +1668,7 @@
       }
     },
     "debug.confirm" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1522,6 +1691,7 @@
       }
     },
     "debug.confirmActionQuestion" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1544,6 +1714,7 @@
       }
     },
     "debug.debug" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1565,10 +1736,8 @@
         }
       }
     },
-    "debug.done" : {
-
-    },
     "debug.environment" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1591,6 +1760,7 @@
       }
     },
     "debug.expires" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1612,10 +1782,8 @@
         }
       }
     },
-    "debug.featureFlags" : {
-
-    },
     "debug.featureFlagsTitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1638,6 +1806,7 @@
       }
     },
     "debug.flagResetTemplate" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1659,10 +1828,8 @@
         }
       }
     },
-    "debug.flagsFooter" : {
-
-    },
     "debug.free" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1684,13 +1851,8 @@
         }
       }
     },
-    "debug.grant1HourPremium" : {
-
-    },
-    "debug.grantPermanentPremium" : {
-
-    },
     "debug.grantPremium" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1713,6 +1875,7 @@
       }
     },
     "debug.grantTrial1h" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1734,10 +1897,8 @@
         }
       }
     },
-    "debug.hideDetails" : {
-
-    },
     "debug.lastAd" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1760,6 +1921,7 @@
       }
     },
     "debug.lastSynced" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1782,6 +1944,7 @@
       }
     },
     "debug.localOverrides" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1804,6 +1967,7 @@
       }
     },
     "debug.menu.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1826,6 +1990,7 @@
       }
     },
     "debug.ok" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1848,6 +2013,7 @@
       }
     },
     "debug.onlyInDebugBuilds" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1869,10 +2035,8 @@
         }
       }
     },
-    "debug.premiumControls" : {
-
-    },
     "debug.premiumGranted" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1895,6 +2059,7 @@
       }
     },
     "debug.premiumLabel" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1917,6 +2082,7 @@
       }
     },
     "debug.premiumManagement" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1939,6 +2105,7 @@
       }
     },
     "debug.premiumRevoked" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1961,6 +2128,7 @@
       }
     },
     "debug.premiumSince" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1982,10 +2150,8 @@
         }
       }
     },
-    "debug.premiumStatus" : {
-
-    },
     "debug.release" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2007,10 +2173,8 @@
         }
       }
     },
-    "debug.resetAllFlags" : {
-
-    },
     "debug.resetAllFlagsLabel" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2033,6 +2197,7 @@
       }
     },
     "debug.resetAllFlagsQuestion" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2054,13 +2219,8 @@
         }
       }
     },
-    "debug.resetConfirm" : {
-
-    },
-    "debug.resetToDefault" : {
-
-    },
     "debug.resetToDefaultLabel" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2082,10 +2242,8 @@
         }
       }
     },
-    "debug.revokePremium" : {
-
-    },
     "debug.revokePremiumLabel" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2108,6 +2266,7 @@
       }
     },
     "debug.revokePremiumQuestion" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2129,10 +2288,8 @@
         }
       }
     },
-    "debug.showDetails" : {
-
-    },
     "debug.statistics" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2155,6 +2312,7 @@
       }
     },
     "debug.status" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2177,6 +2335,7 @@
       }
     },
     "debug.syncFailedTemplate" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2198,10 +2357,8 @@
         }
       }
     },
-    "debug.syncFromRemote" : {
-
-    },
     "debug.syncFromServer" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2224,6 +2381,7 @@
       }
     },
     "debug.temporaryPremiumGranted" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2246,6 +2404,7 @@
       }
     },
     "debug.tools" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2268,6 +2427,7 @@
       }
     },
     "debug.trial" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2290,6 +2450,7 @@
       }
     },
     "debug.willRemovePremium" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2312,6 +2473,7 @@
       }
     },
     "debug.willResetAllFlags" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2334,6 +2496,7 @@
       }
     },
     "debug.willResetEverything" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2354,6 +2517,9 @@
           }
         }
       }
+    },
+    "Enabled" : {
+
     },
     "error.invalidResponse" : {
       "extractionState" : "manual",
@@ -2447,6 +2613,167 @@
         }
       }
     },
+    "feature.subjectsTab" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subjects Section"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sekcja przedmiotów"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розділ предметів"
+          }
+        }
+      }
+    },
+    "feature.subjectsTab.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Browse and view subject details"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przeglądaj i wyświetlaj szczegóły przedmiotów"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переглядайте та переглядайте деталі предметів"
+          }
+        }
+      }
+    },
+    "feature.teachersTab" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teachers Section"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sekcja nauczycieli"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розділ викладачів"
+          }
+        }
+      }
+    },
+    "feature.teachersTab.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Browse and view teacher schedules"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przeglądaj i wyświetlaj plany nauczycieli"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переглядайте та знаходьте розклади викладачів"
+          }
+        }
+      }
+    },
+    "feature.themeSettings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theme Customization"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostosowanie motywu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування теми"
+          }
+        }
+      }
+    },
+    "feature.themeSettings.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customize app colors and appearance"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostosuj kolory i wygląd aplikacji"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштовуйте кольори та зовнішній вигляд застосунку"
+          }
+        }
+      }
+    },
+    "feature.widgetSettings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget Configuration"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konfiguracja widżetów"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування віджетів"
+          }
+        }
+      }
+    },
     "general.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2471,6 +2798,7 @@
       }
     },
     "general.cancelled" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2952,6 +3280,15 @@
         }
       }
     },
+    "Hello %@" : {
+
+    },
+    "L" : {
+
+    },
+    "Leading" : {
+
+    },
     "mail.copyAddress" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3021,7 +3358,72 @@
         }
       }
     },
+    "No classes" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No classes"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak zajęć"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нема занять"
+          }
+        }
+      }
+    },
+    "Off" : {
+
+    },
+    "On" : {
+
+    },
+    "Open the next class" : {
+
+    },
+    "Open the timetable" : {
+
+    },
+    "Open Timetable" : {
+
+    },
+    "Open timetable fast" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open timetable fast"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szybkie otwarcie planu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Швидке відкриття розкладу"
+          }
+        }
+      }
+    },
+    "Open today's schedule" : {
+
+    },
     "perfMonitor.all" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3044,6 +3446,7 @@
       }
     },
     "perfMonitor.averageDuration" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3066,6 +3469,7 @@
       }
     },
     "perfMonitor.category" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3088,6 +3492,7 @@
       }
     },
     "perfMonitor.clear" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3110,6 +3515,7 @@
       }
     },
     "perfMonitor.events" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3132,6 +3538,7 @@
       }
     },
     "perfMonitor.export" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3154,6 +3561,7 @@
       }
     },
     "perfMonitor.exportedEvents" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3176,6 +3584,7 @@
       }
     },
     "perfMonitor.fastestEvent" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3198,6 +3607,7 @@
       }
     },
     "perfMonitor.filterByCategory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3220,6 +3630,7 @@
       }
     },
     "perfMonitor.metrics" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3242,6 +3653,7 @@
       }
     },
     "perfMonitor.noEventsRecorded" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3264,6 +3676,7 @@
       }
     },
     "perfMonitor.slowestEvent" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3286,6 +3699,7 @@
       }
     },
     "perfMonitor.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3308,6 +3722,7 @@
       }
     },
     "perfMonitor.totalEvents" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3330,6 +3745,7 @@
       }
     },
     "premium.active" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3352,6 +3768,7 @@
       }
     },
     "premium.calculating" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3374,6 +3791,7 @@
       }
     },
     "premium.enjoyFeatures" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3396,6 +3814,7 @@
       }
     },
     "premium.feature.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3418,6 +3837,7 @@
       }
     },
     "premium.getAccess" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3440,6 +3860,7 @@
       }
     },
     "premium.maybeLater" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3462,6 +3883,7 @@
       }
     },
     "premium.purchase.button" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3483,10 +3905,8 @@
         }
       }
     },
-    "premium.remaining" : {
-
-    },
     "premium.tapToUnlock" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3509,6 +3929,7 @@
       }
     },
     "premium.thankYou" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3531,6 +3952,7 @@
       }
     },
     "premium.timeRemaining" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3553,6 +3975,7 @@
       }
     },
     "premium.unlock.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3575,6 +3998,7 @@
       }
     },
     "premium.unlocked" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3597,6 +4021,7 @@
       }
     },
     "premium.watchAd.button" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3619,6 +4044,7 @@
       }
     },
     "premium.watchOrPurchase" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3640,7 +4066,34 @@
         }
       }
     },
+    "Quick Schedule" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Schedule"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szybki plan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Швидкий розклад"
+          }
+        }
+      }
+    },
+    "Refresh Schedule" : {
+
+    },
     "relative.ago" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4146,6 +4599,7 @@
       }
     },
     "settings.premium.active" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4168,6 +4622,7 @@
       }
     },
     "settings.refresh" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4237,6 +4692,7 @@
     },
     "settings.themeSection.footer" : {
       "comment" : "Footer description under the Theme section in Settings",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4260,6 +4716,7 @@
     },
     "settings.themeSection.header" : {
       "comment" : "Header title above the Theme section in Settings",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4283,6 +4740,7 @@
     },
     "settings.themeSection.title" : {
       "comment" : "Title of the Theme row in Settings list",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4373,6 +4831,44 @@
         }
       }
     },
+    "Show Next Class" : {
+
+    },
+    "Show online status" : {
+
+    },
+    "Show Today's Schedule" : {
+
+    },
+    "Shows if you have classes today" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows if you have classes today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokazuje, czy dziś są zajęcia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показує, чи є заняття сьогодні"
+          }
+        }
+      }
+    },
+    "Start a timer" : {
+
+    },
+    "Start Timer" : {
+
+    },
     "subjects.classes" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4420,6 +4916,7 @@
       }
     },
     "subjects.gradingType" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4717,6 +5214,9 @@
         }
       }
     },
+    "T %@" : {
+
+    },
     "tabs.schedule" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4972,6 +5472,7 @@
     },
     "theme.name.cherry" : {
       "comment" : "Theme name: Cherry Blossom",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4995,6 +5496,7 @@
     },
     "theme.name.default" : {
       "comment" : "Theme name: Default",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5018,6 +5520,7 @@
     },
     "theme.name.forest" : {
       "comment" : "Theme name: Forest",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5041,6 +5544,7 @@
     },
     "theme.name.lavender" : {
       "comment" : "Theme name: Lavender",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5064,6 +5568,7 @@
     },
     "theme.name.midnight" : {
       "comment" : "Theme name: Midnight",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5087,6 +5592,7 @@
     },
     "theme.name.monochrome" : {
       "comment" : "Theme name: Monochrome",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5110,6 +5616,7 @@
     },
     "theme.name.ocean" : {
       "comment" : "Theme name: Ocean",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5133,6 +5640,7 @@
     },
     "theme.name.sunset" : {
       "comment" : "Theme name: Sunset",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5156,6 +5664,7 @@
     },
     "themeSettings.appearance.title" : {
       "comment" : "Section title for appearance mode selection",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5179,6 +5688,7 @@
     },
     "themeSettings.colorTheme.title" : {
       "comment" : "Section title for color theme selection",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5202,6 +5712,7 @@
     },
     "themeSettings.title" : {
       "comment" : "Navigation title for Theme Settings screen",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5223,7 +5734,41 @@
         }
       }
     },
+    "Timer" : {
+
+    },
+    "Timer is running" : {
+
+    },
+    "Timer Name" : {
+
+    },
+    "Timer Name Configuration" : {
+
+    },
+    "Timetable" : {
+
+    },
+    "Timetable Controls" : {
+
+    },
+    "Today" : {
+
+    },
+    "Trailing" : {
+
+    },
+    "View" : {
+
+    },
+    "View your class schedule at a glance" : {
+
+    },
+    "Week" : {
+
+    },
     "widget.access" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5246,6 +5791,7 @@
       }
     },
     "widget.access.description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5268,6 +5814,7 @@
       }
     },
     "widget.available" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5289,7 +5836,399 @@
         }
       }
     },
+    "widget.common.classes" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "classes"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zajęcia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "занять"
+          }
+        }
+      }
+    },
+    "widget.common.enjoyFreeDay" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enjoy your day!"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miłego dnia!"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Гарного дня!"
+          }
+        }
+      }
+    },
+    "widget.common.moreSuffix" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "more"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "więcej"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ще"
+          }
+        }
+      }
+    },
+    "widget.common.next" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NEXT"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NAST."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ДАЛІ"
+          }
+        }
+      }
+    },
+    "widget.common.noClasses" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No classes"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak zajęć"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нема занять"
+          }
+        }
+      }
+    },
+    "widget.common.noClassesToday" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No classes today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś brak zajęć"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сьогодні без занять"
+          }
+        }
+      }
+    },
+    "widget.common.now" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOW"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TERAZ"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ЗАРАЗ"
+          }
+        }
+      }
+    },
+    "widget.common.thisWeek" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten tydzień"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цього тижня"
+          }
+        }
+      }
+    },
+    "widget.common.today" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сьогодні"
+          }
+        }
+      }
+    },
+    "widget.common.until" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Until"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "До"
+          }
+        }
+      }
+    },
+    "widget.common.week" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tydz."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тиж."
+          }
+        }
+      }
+    },
+    "widget.config.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget display options"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcje widoku widżetu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Параметри вигляду віджета"
+          }
+        }
+      }
+    },
+    "widget.config.showOnlineStatus.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show online"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż online"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати онлайн"
+          }
+        }
+      }
+    },
+    "widget.config.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget settings"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustawienia widżetu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування віджета"
+          }
+        }
+      }
+    },
+    "widget.config.viewType.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widok"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вигляд"
+          }
+        }
+      }
+    },
+    "widget.config.viewType.today" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сьогодні"
+          }
+        }
+      }
+    },
+    "widget.config.viewType.week" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tydzień"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тиждень"
+          }
+        }
+      }
+    },
     "widget.configure" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5311,7 +6250,169 @@
         }
       }
     },
+    "widget.control.openSchedule.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open timetable fast"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szybkie otwarcie planu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Швидке відкриття розкладу"
+          }
+        }
+      }
+    },
+    "widget.control.openSchedule.displayName" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Schedule"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szybki plan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Швидкий розклад"
+          }
+        }
+      }
+    },
+    "widget.control.openSchedule.label" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розклад"
+          }
+        }
+      }
+    },
+    "widget.control.toggle.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows if you have classes today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokazuje, czy dziś są zajęcia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показує, чи є заняття сьогодні"
+          }
+        }
+      }
+    },
+    "widget.control.toggle.displayName" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classes Status"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status zajęć"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Статус занять"
+          }
+        }
+      }
+    },
+    "widget.control.toggle.label" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classes today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zajęcia dziś"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заняття сьогодні"
+          }
+        }
+      }
+    },
+    "widget.description.timetable" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your schedule at a glance"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan w skrócie"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розклад одним поглядом"
+          }
+        }
+      }
+    },
     "widget.enabled" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5334,6 +6435,7 @@
       }
     },
     "widget.enabled.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5356,6 +6458,7 @@
       }
     },
     "widget.footer.reloadHint" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5378,6 +6481,7 @@
       }
     },
     "widget.how.to.add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5400,6 +6504,7 @@
       }
     },
     "widget.instruction.step1" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5422,6 +6527,7 @@
       }
     },
     "widget.instruction.step2" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5444,6 +6550,7 @@
       }
     },
     "widget.instruction.step3" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5466,6 +6573,7 @@
       }
     },
     "widget.instruction.step4" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5487,7 +6595,284 @@
         }
       }
     },
+    "widget.intent.configuration.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configuration"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konfiguracja"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування"
+          }
+        }
+      }
+    },
+    "widget.intent.nextClass.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show next class"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż następne zajęcia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати наступне заняття"
+          }
+        }
+      }
+    },
+    "widget.intent.nextClass.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next class"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następne zajęcia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Наступне заняття"
+          }
+        }
+      }
+    },
+    "widget.intent.openTimetable.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the app"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwiera aplikację"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкриває застосунок"
+          }
+        }
+      }
+    },
+    "widget.intent.openTimetable.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open timetable"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz plan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити розклад"
+          }
+        }
+      }
+    },
+    "widget.intent.refreshSchedule.parameter.enabled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabled"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Włączone"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Увімкнено"
+          }
+        }
+      }
+    },
+    "widget.intent.refreshSchedule.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh schedule"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odśwież plan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оновити розклад"
+          }
+        }
+      }
+    },
+    "widget.intent.todaySchedule.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show today's classes"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż dzisiejsze zajęcia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати сьогоднішні заняття"
+          }
+        }
+      }
+    },
+    "widget.intent.todaySchedule.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today’s schedule"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzisiejszy plan"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сьогоднішній розклад"
+          }
+        }
+      }
+    },
+    "widget.live.ends" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ends"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koniec"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кінець"
+          }
+        }
+      }
+    },
+    "widget.live.percentCompleteSuffix" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "complete"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ukończone"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "завершено"
+          }
+        }
+      }
+    },
+    "widget.name.timetable" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timetable"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan zajęć"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розклад"
+          }
+        }
+      }
+    },
     "widget.never.updated" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5510,6 +6895,7 @@
       }
     },
     "widget.settings.subtitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5532,6 +6918,7 @@
       }
     },
     "widget.settings.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5553,7 +6940,54 @@
         }
       }
     },
+    "widget.status.active" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktywne"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Активно"
+          }
+        }
+      }
+    },
+    "widget.status.noClasses" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No classes"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak zajęć"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нема занять"
+          }
+        }
+      }
+    },
     "widget.status.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5576,6 +7010,7 @@
       }
     },
     "widget.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -5592,6 +7027,7 @@
       }
     },
     "widget.troubleshoot.noData.solution" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5614,6 +7050,7 @@
       }
     },
     "widget.troubleshoot.noData.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5636,6 +7073,7 @@
       }
     },
     "widget.troubleshoot.notUpdating.solution" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5658,6 +7096,7 @@
       }
     },
     "widget.troubleshoot.notUpdating.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5680,6 +7119,7 @@
       }
     },
     "widget.troubleshoot.wrongTheme.solution" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5702,6 +7142,7 @@
       }
     },
     "widget.troubleshoot.wrongTheme.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5724,6 +7165,7 @@
       }
     },
     "widget.troubleshooting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5746,6 +7188,7 @@
       }
     },
     "widget.type.large.description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5768,6 +7211,7 @@
       }
     },
     "widget.type.large.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5790,6 +7234,7 @@
       }
     },
     "widget.type.live.description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5812,6 +7257,7 @@
       }
     },
     "widget.type.live.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5834,6 +7280,7 @@
       }
     },
     "widget.type.medium.description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5856,6 +7303,7 @@
       }
     },
     "widget.type.medium.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5878,6 +7326,7 @@
       }
     },
     "widget.type.small.description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5900,6 +7349,7 @@
       }
     },
     "widget.type.small.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5920,56 +7370,7 @@
           }
         }
       }
-    },
-    "feature.teachersTab": {
-          "localizations": {
-            "en": { "stringUnit": { "state": "translated", "value": "Teachers Section" } },
-            "uk": { "stringUnit": { "state": "translated", "value": "Розділ викладачів" } },
-            "pl": { "stringUnit": { "state": "translated", "value": "Sekcja nauczycieli" } }
-          }
-        },
-        "feature.subjectsTab": {
-          "localizations": {
-            "en": { "stringUnit": { "state": "translated", "value": "Subjects Section" } },
-            "uk": { "stringUnit": { "state": "translated", "value": "Розділ предметів" } },
-            "pl": { "stringUnit": { "state": "translated", "value": "Sekcja przedmiotów" } }
-          }
-        },
-        "feature.themeSettings": {
-          "localizations": {
-            "en": { "stringUnit": { "state": "translated", "value": "Theme Customization" } },
-            "uk": { "stringUnit": { "state": "translated", "value": "Налаштування теми" } },
-            "pl": { "stringUnit": { "state": "translated", "value": "Dostosowanie motywu" } }
-          }
-        },
-        "feature.widgetSettings": {
-          "localizations": {
-            "en": { "stringUnit": { "state": "translated", "value": "Widget Configuration" } },
-            "uk": { "stringUnit": { "state": "translated", "value": "Налаштування віджетів" } },
-            "pl": { "stringUnit": { "state": "translated", "value": "Konfiguracja widżetów" } }
-          }
-        },
-        "feature.teachersTab.description": {
-              "localizations": {
-                "en": { "stringUnit": { "state": "translated", "value": "Browse and view teacher schedules" } },
-                "uk": { "stringUnit": { "state": "translated", "value": "Переглядайте та знаходьте розклади викладачів" } },
-                "pl": { "stringUnit": { "state": "translated", "value": "Przeglądaj i wyświetlaj plany nauczycieli" } }
-              }
-            },
-            "feature.subjectsTab.description": {
-              "localizations": {
-                "en": { "stringUnit": { "state": "translated", "value": "Browse and view subject details" } },
-                "uk": { "stringUnit": { "state": "translated", "value": "Переглядайте та переглядайте деталі предметів" } },
-                "pl": { "stringUnit": { "state": "translated", "value": "Przeglądaj i wyświetlaj szczegóły przedmiotów" } }
-              }
-            },
-            "feature.themeSettings.description": {
-              "localizations": {
-                "en": { "stringUnit": { "state": "translated", "value": "Customize app colors and appearance" } },
-                "uk": { "stringUnit": { "state": "translated", "value": "Налаштовуйте кольори та зовнішній вигляд застосунку" } },
-                "pl": { "stringUnit": { "state": "translated", "value": "Dostosuj kolory i wygląd aplikacji" } }
-              }
-            }
+    }
   },
   "version" : "1.0"
 }
