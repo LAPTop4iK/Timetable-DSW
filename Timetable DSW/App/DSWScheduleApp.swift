@@ -11,6 +11,8 @@ import AppTrackingTransparency
 
 @main
 struct DSWScheduleApp: App {
+
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     // MARK: - Properties
 
     @StateObject private var appViewModel: AppViewModel

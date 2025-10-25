@@ -69,6 +69,7 @@ enum DebugAction {
     case resetAllFlags
     case syncFlags
     case clearAllData
+    case crashApp
 }
 
 // MARK: - View State
@@ -163,6 +164,9 @@ final class DebugMenuViewModel: ObservableObject {
         case .clearAllData:
             confirmationAction = action
             showConfirmation = true
+        case .crashApp:
+            let numbers = [0]
+            let _ = numbers[1]
         }
     }
 
@@ -482,6 +486,12 @@ struct DebugMenuScreen: View {
                 viewModel.handle(.clearAllData)
             } label: {
                 Label(LocalizedString.debugClearAllData.localized, systemImage: "trash.fill")
+            }
+
+            Button(role: .destructive) {
+                viewModel.handle(.crashApp)
+            } label: {
+                Label("💥", systemImage: "ladybug.fill")
             }
         } header: {
             Label(LocalizedString.debugActionsTitle.localized, systemImage: "gearshape.fill")

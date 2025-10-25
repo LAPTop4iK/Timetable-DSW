@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EB4161722EAD895900BC4B50 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB4161712EAD895900BC4B50 /* GoogleService-Info.plist */; };
+		EB4161742EAD8A4200BC4B50 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = EB4161732EAD8A4200BC4B50 /* FirebaseCore */; };
+		EB4161762EAD8A4200BC4B50 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = EB4161752EAD8A4200BC4B50 /* FirebaseCrashlytics */; };
+		EB4161792EAD8A9000BC4B50 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = EB4161782EAD8A9000BC4B50 /* FirebaseAnalytics */; };
+		EB41617B2EAD8A9000BC4B50 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = EB41617A2EAD8A9000BC4B50 /* FirebaseAnalyticsCore */; };
+		EB41617D2EAD8A9000BC4B50 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = EB41617C2EAD8A9000BC4B50 /* FirebaseCore */; };
+		EB41617F2EAD8A9000BC4B50 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = EB41617E2EAD8A9000BC4B50 /* FirebaseCrashlytics */; };
 		EB4A63FF2EA67EA300EACBDE /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = EB4A63FE2EA67EA300EACBDE /* GoogleMobileAds */; };
 		EB6FBF7C2EA79D2D00A4740E /* LBTATools in Frameworks */ = {isa = PBXBuildFile; productRef = EB6FBF7B2EA79D2D00A4740E /* LBTATools */; };
 		EB82BC732EAAB6F0005FDC0B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */; };
@@ -39,6 +46,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EB4161712EAD895900BC4B50 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TimetableWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		EB82BC742EAAB6F0005FDC0B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -106,7 +114,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB4A63FF2EA67EA300EACBDE /* GoogleMobileAds in Frameworks */,
+				EB41617B2EAD8A9000BC4B50 /* FirebaseAnalyticsCore in Frameworks */,
 				EB6FBF7C2EA79D2D00A4740E /* LBTATools in Frameworks */,
+				EB4161762EAD8A4200BC4B50 /* FirebaseCrashlytics in Frameworks */,
+				EB41617D2EAD8A9000BC4B50 /* FirebaseCore in Frameworks */,
+				EB41617F2EAD8A9000BC4B50 /* FirebaseCrashlytics in Frameworks */,
+				EB4161792EAD8A9000BC4B50 /* FirebaseAnalytics in Frameworks */,
+				EB4161742EAD8A4200BC4B50 /* FirebaseCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +139,7 @@
 		EBA0262B2EA1CC140010F32D = {
 			isa = PBXGroup;
 			children = (
+				EB4161712EAD895900BC4B50 /* GoogleService-Info.plist */,
 				EB82BCA32EAABC25005FDC0B /* TimetableWidgetExtension.entitlements */,
 				EBA026362EA1CC140010F32D /* Timetable DSW */,
 				EB82BC762EAAB6F0005FDC0B /* TimetableWidget */,
@@ -175,6 +190,7 @@
 				EBA026312EA1CC140010F32D /* Frameworks */,
 				EBA026322EA1CC140010F32D /* Resources */,
 				EB82BC8B2EAAB6F1005FDC0B /* Embed Foundation Extensions */,
+				EB4161802EAD8CDC00BC4B50 /* Firebase DSYM */,
 			);
 			buildRules = (
 			);
@@ -188,6 +204,12 @@
 			packageProductDependencies = (
 				EB4A63FE2EA67EA300EACBDE /* GoogleMobileAds */,
 				EB6FBF7B2EA79D2D00A4740E /* LBTATools */,
+				EB4161732EAD8A4200BC4B50 /* FirebaseCore */,
+				EB4161752EAD8A4200BC4B50 /* FirebaseCrashlytics */,
+				EB4161782EAD8A9000BC4B50 /* FirebaseAnalytics */,
+				EB41617A2EAD8A9000BC4B50 /* FirebaseAnalyticsCore */,
+				EB41617C2EAD8A9000BC4B50 /* FirebaseCore */,
+				EB41617E2EAD8A9000BC4B50 /* FirebaseCrashlytics */,
 			);
 			productName = "Timetable DSW";
 			productReference = EBA026342EA1CC140010F32D /* Timetable DSW.app */;
@@ -226,6 +248,7 @@
 			packageReferences = (
 				EB4A63FD2EA67EA300EACBDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				EB6FBF7A2EA79D2D00A4740E /* XCRemoteSwiftPackageReference "LBTATools" */,
+				EB4161772EAD8A9000BC4B50 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EBA026352EA1CC140010F32D /* Products */;
@@ -250,10 +273,38 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB4161722EAD895900BC4B50 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		EB4161802EAD8CDC00BC4B50 /* Firebase DSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+			);
+			name = "Firebase DSYM";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		EB82BC6C2EAAB6F0005FDC0B /* Sources */ = {
@@ -479,6 +530,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Timetable DSW/Timetable DSW.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4L4UDM2XTU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -498,6 +550,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-DSW.rl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -543,6 +596,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-DSW.rl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -592,6 +646,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		EB4161772EAD8A9000BC4B50 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.4.0;
+			};
+		};
 		EB4A63FD2EA67EA300EACBDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
@@ -611,6 +673,34 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		EB4161732EAD8A4200BC4B50 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseCore;
+		};
+		EB4161752EAD8A4200BC4B50 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseCrashlytics;
+		};
+		EB4161782EAD8A9000BC4B50 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB4161772EAD8A9000BC4B50 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		EB41617A2EAD8A9000BC4B50 /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB4161772EAD8A9000BC4B50 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
+		};
+		EB41617C2EAD8A9000BC4B50 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB4161772EAD8A9000BC4B50 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		EB41617E2EAD8A9000BC4B50 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB4161772EAD8A9000BC4B50 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
 		EB4A63FE2EA67EA300EACBDE /* GoogleMobileAds */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EB4A63FD2EA67EA300EACBDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
