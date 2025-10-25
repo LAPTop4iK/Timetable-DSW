@@ -44,8 +44,8 @@ private func colorForType(_ type: String?, fallback: Color) -> Color {
 }
 
 private func isOnline(_ event: ScheduleEvent) -> Bool {
-    let t = event.remarks?.lowercased() ?? ""
-    return t.contains("distance") || t.contains("онлайн") || t.contains("zdal") || t.contains("remote")
+    let t = (event.remarks ?? "").lowercased()
+    return t.contains("online") || t.contains("distance") || t.contains("онлайн") || t.contains("zdal") || t.contains("remote")
 }
 
 // Порядок дней: Пн..Вс
@@ -61,15 +61,17 @@ struct SmallWidgetView: View {
     @Environment(\.colorScheme) var colorScheme
     private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
 
+    private let maxRowsTotal = 5
+
     var body: some View {
         let now = entry.date
         let events = entry.todayEvents
-        let focus = entry.currentEvent ?? events.first { ($0.startDate ?? .distantPast) >= now }
-        let others: [ScheduleEvent] = {
-            guard let f = focus,
-                  let idx = events.firstIndex(where: { $0.title == f.title && $0.startDate == f.startDate }) else { return [] }
-            return Array(events.suffix(from: events.index(after: idx)))
-        }()
+
+        // активные пары (их может быть несколько)
+        let activeIdxs: [Int] = events.enumerated().compactMap { idx, ev in
+            guard let s = ev.startDate, let e = ev.endDate else { return nil }
+            return (now >= s && now <= e) ? idx : nil
+        }
 
         return VStack(alignment: .leading, spacing: 5) {
             Text(LocalizedString.commonToday.localized.uppercased())
@@ -80,23 +82,64 @@ struct SmallWidgetView: View {
                 )
                 .lineLimit(1)
 
-            if let f = focus { FocusEventRow(event: f, theme: theme) }
-            else {
-                HStack(spacing: 6) {
-                    Image(systemName: "zzz").font(.system(size: 14, weight: .semibold)).foregroundColor(.secondary)
-                    Text(LocalizedString.commonNoClassesToday.localized)
-                        .font(.system(size: 11.5, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .lineLimit(2).minimumScaleFactor(0.7)
+            if !activeIdxs.isEmpty {
+                // показать все активные (в разумных пределах макс. 5 строк)
+                let activeToShow = Array(activeIdxs.prefix(maxRowsTotal))
+                ForEach(activeToShow, id: \.self) { idx in
+                    FocusEventRow(event: events[idx], theme: theme)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
 
-            ForEach(others.prefix(4)) { CompactEventRow(event: $0, theme: theme) }
+                // будущие после последней активной
+                let lastActive = activeIdxs.max()!
+                let future = Array(events.suffix(from: lastActive + 1))
+                let remainingSlots = max(0, maxRowsTotal - activeToShow.count)
+                let futureToShow = Array(future.prefix(remainingSlots))
+                ForEach(futureToShow) { ev in
+                    CompactEventRow(event: ev, theme: theme)
+                }
 
-            let rest = max(0, others.count - 4)
-            if rest > 0 {
-                Text("+\(rest)").font(.system(size: 10.5, weight: .semibold)).foregroundColor(.secondary).padding(.top, 1)
+                // +N (непоместившиеся активные + непоместившиеся будущие)
+                let hiddenActive = max(0, activeIdxs.count - activeToShow.count)
+                let hiddenFuture = max(0, future.count - futureToShow.count)
+                let hidden = hiddenActive + hiddenFuture
+                if hidden > 0 {
+                    Text("+\(hidden)")
+                        .font(.system(size: 10.5, weight: .semibold))
+                        .foregroundColor(.secondary)
+                        .padding(.top, 1)
+                }
+            } else {
+                // как раньше: фокус = текущая или ближайшая будущая, иначе nil
+                let focus = entry.currentEvent ?? events.first { ($0.startDate ?? .distantPast) >= now }
+                if let f = focus {
+                    FocusEventRow(event: f, theme: theme)
+
+                    // остальные будущие после фокуса (до 4 строк всего)
+                    if let idx = events.firstIndex(where: { $0.id == f.id }) {
+                        let future = Array(events.suffix(from: idx + 1))
+                        let othersToShow = Array(future.prefix(maxRowsTotal - 1))
+                        ForEach(othersToShow) { ev in
+                            CompactEventRow(event: ev, theme: theme)
+                        }
+                        let hidden = max(0, future.count - othersToShow.count)
+                        if hidden > 0 {
+                            Text("+\(hidden)")
+                                .font(.system(size: 10.5, weight: .semibold))
+                                .foregroundColor(.secondary)
+                                .padding(.top, 1)
+                        }
+                    }
+                } else {
+                    // нет пар
+                    HStack(spacing: 6) {
+                        Image(systemName: "zzz").font(.system(size: 14, weight: .semibold)).foregroundColor(.secondary)
+                        Text(LocalizedString.commonNoClassesToday.localized)
+                            .font(.system(size: 11.5, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .lineLimit(2).minimumScaleFactor(0.7)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
         }
         .padding(.vertical, 8).padding(.horizontal, 10)
@@ -117,9 +160,7 @@ private struct FocusEventRow: View {
                     .lineLimit(1).minimumScaleFactor(0.6).allowsTightening(true)
 
                 if isOnline(event) {
-                    // ↓ поменьше, чтобы не давило на аббревиатуру
-                    Image(systemName: "wifi").font(.system(size: 8))
-                        .foregroundColor(theme.online)
+                    Image(systemName: "wifi").font(.system(size: 8)).foregroundColor(theme.online)
                 } else if !event.displayRoom.isEmpty {
                     Text(event.displayRoom)
                         .font(.system(size: 10)).foregroundColor(.secondary)
@@ -181,7 +222,7 @@ private struct CompactEventRow: View {
     }
 }
 
-// MARK: - MEDIUM (окно из 5 пар, подсветка только текущей, скользящее окно дня)
+// MARK: - MEDIUM (окно из 5 пар, подсветка всех активных, скользящее окно дня)
 
 struct MediumWidgetView: View {
     let entry: TimetableWidgetEntry
@@ -196,44 +237,33 @@ struct MediumWidgetView: View {
         let events = entry.todayEvents
         let now = entry.date
 
-        // 1. фокусная пара:
-        //    - если сейчас идёт -> она
-        //    - иначе ближайшая будущая
-        //    - иначе последняя в дне
+        // активные индексы (все, кто идут прямо сейчас)
+        let activeIdxs: [Int] = events.enumerated().compactMap { idx, ev in
+            guard let s = ev.startDate, let e = ev.endDate else { return nil }
+            return (now >= s && now <= e) ? idx : nil
+        }
+        let activeSet = Set(activeIdxs)
+
+        // fallback focus (если активных нет): ближайшая будущая или последняя
         let focusIdx: Int? = {
-            if let idxNow = events.firstIndex(where: { ev in
-                if let s = ev.startDate, let e = ev.endDate {
-                    return now >= s && now <= e
-                }
-                return false
-            }) {
-                return idxNow
-            }
+            if !activeIdxs.isEmpty { return activeIdxs.min() }
             if let idxNext = events.firstIndex(where: { ev in
-                if let s = ev.startDate {
-                    return s > now
-                }
+                if let s = ev.startDate { return s > now }
                 return false
-            }) {
-                return idxNext
-            }
-            if !events.isEmpty {
-                return events.count - 1
-            }
+            }) { return idxNext }
+            if !events.isEmpty { return events.count - 1 }
             return nil
         }()
 
-        // 2. окно максимум из 5 строк, с логикой "оставь предыдущую, но не держи весь день"
-        let windowInfo = computeWindow(
+        let window = computeWindowMultiActive(
             events: events,
+            activeIdxs: activeIdxs,
             focusIdx: focusIdx,
             maxVisible: 5
         )
 
-        let visibleEvents     = windowInfo.visible
-        let startIndex        = windowInfo.startIndex
-        let hiddenBeforeCount = windowInfo.hiddenBefore
-        let hiddenAfterCount  = windowInfo.hiddenAfter
+        let visible = window.visible
+        let startIndex = window.startIndex
 
         return VStack(alignment: .leading, spacing: 5) {
             // HEADER
@@ -260,26 +290,21 @@ struct MediumWidgetView: View {
             if events.isEmpty {
                 noEventsView
             } else {
-                // 3. список видимых пар + "+N" сверху/снизу
                 VStack(alignment: .leading, spacing: 2.5) {
-
-                    // +N СВЕРХУ, если мы уже срезали старые пары сверху
-                    if hiddenBeforeCount > 0 {
-                        Text("+\(hiddenBeforeCount) \(LocalizedString.commonMoreSuffix.localized)")
+                    if window.hiddenBefore > 0 {
+                        Text("+\(window.hiddenBefore) \(LocalizedString.commonMoreSuffix.localized)")
                             .font(.system(size: 9.5))
                             .foregroundColor(.secondary)
                     }
 
-                    // сами пары
-                    ForEach(Array(visibleEvents.enumerated()), id: \.offset) { offset, ev in
+                    ForEach(Array(visible.enumerated()), id: \.offset) { offset, ev in
                         let globalIndex = startIndex + offset
-                        let isFocused = (globalIndex == focusIdx)
-                        eventRow(ev, highlight: isFocused)
+                        let isHighlighted = activeSet.contains(globalIndex)
+                        eventRow(ev, highlight: isHighlighted)
                     }
 
-                    // +N СНИЗУ, если мы ещё не показали хвост (будущие пары)
-                    if hiddenAfterCount > 0 {
-                        Text("+\(hiddenAfterCount) \(LocalizedString.commonMoreSuffix.localized)")
+                    if window.hiddenAfter > 0 {
+                        Text("+\(window.hiddenAfter) \(LocalizedString.commonMoreSuffix.localized)")
                             .font(.system(size: 9.5))
                             .foregroundColor(.secondary)
                     }
@@ -290,9 +315,7 @@ struct MediumWidgetView: View {
         .padding(.horizontal, 10)
     }
 
-    /// Одна строка расписания.
-    /// highlight == true → рисуем цветную палку слева
-    /// highlight == false → прозрачный placeholder той же ширины, чтобы текст не прыгал
+    /// Одна строка расписания
     private func eventRow(_ event: ScheduleEvent, highlight: Bool) -> some View {
         HStack(alignment: .center, spacing: 5) {
             if highlight {
@@ -301,14 +324,10 @@ struct MediumWidgetView: View {
                     .frame(width: barWidth, height: barHeight)
                     .fixedSize()
             } else {
-                // выравнивание слева (та же ширина/высота, но невидимо)
-                Color.clear
-                    .frame(width: barWidth, height: barHeight)
-                    .fixedSize()
+                Color.clear.frame(width: barWidth, height: barHeight).fixedSize()
             }
 
             HStack(spacing: 4) {
-                // Время (start-end, через короткий дефис)
                 Text(timeRange(event.startDate, event.endDate))
                     .font(.system(size: 11.5, weight: .semibold))
                     .monospacedDigit()
@@ -316,14 +335,12 @@ struct MediumWidgetView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.9)
 
-                // Аббревиатура предмета
                 Text(eventAbbreviation(from: event.title))
                     .font(.system(size: 11.5, weight: .medium))
                     .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
-                // Аудитория / кабинет (если не онлайн)
                 if !event.displayRoom.isEmpty {
                     Text(event.displayRoom)
                         .font(.system(size: 10))
@@ -334,7 +351,6 @@ struct MediumWidgetView: View {
 
                 Spacer(minLength: 0)
 
-                // Значок Wi-Fi для онлайна
                 if isOnline(event) {
                     Image(systemName: "wifi")
                         .font(.system(size: 9.5))
@@ -352,8 +368,7 @@ struct MediumWidgetView: View {
                 .foregroundStyle(
                     LinearGradient(
                         colors: [theme.primary, theme.secondary],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+                        startPoint: .topLeading, endPoint: .bottomTrailing
                     )
                 )
             VStack(alignment: .leading, spacing: 1) {
@@ -373,63 +388,71 @@ struct MediumWidgetView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: - Sliding window logic
+    // MARK: - Sliding window logic (multi-active aware)
 
-    /// Возвращает окно максимум из maxVisible событий плюс метаданные:
-    ///  - visible: какие пары реально показываем
-    ///  - startIndex: индекс первой пары в общем массиве
-    ///  - hiddenBefore: сколько пар мы скрыли СВЕРХУ (уже прошли)
-    ///  - hiddenAfter: сколько пар мы скрыли СНИЗУ (ещё будут)
-    ///
-    /// Алгоритм:
-    ///  - хотим держать текущую/ближайшую пару (focusIdx) и одну предыдущую, если она есть
-    ///  - но не больше 5 строк
-    ///  - ближе к концу дня окно сдвигается вниз, поэтому верх уже урезан → тут hiddenBefore > 0
-    ///  - ближе к началу дня наоборот урезан хвост → hiddenAfter > 0
-    private func computeWindow(
+    /// Окно максимум из maxVisible строк.
+    /// Если есть активные — стараемся уместить **все активные**.
+    /// Если спан активных длиннее окна — берём первые maxVisible из спана.
+    private func computeWindowMultiActive(
         events: [ScheduleEvent],
+        activeIdxs: [Int],
         focusIdx: Int?,
         maxVisible: Int
-    ) -> (
-        visible: [ScheduleEvent],
-        startIndex: Int,
-        hiddenBefore: Int,
-        hiddenAfter: Int
-    ) {
-        guard !events.isEmpty else {
-            return ([], 0, 0, 0)
-        }
-
+    ) -> (visible: [ScheduleEvent], startIndex: Int, hiddenBefore: Int, hiddenAfter: Int) {
+        guard !events.isEmpty else { return ([], 0, 0, 0) }
         let total = events.count
-        let focus = focusIdx ?? 0
 
-        // шаг 1: пробуем показать "фокусную" + одну предыдущую
-        var startIndex = max(0, focus - 1)
+        if !activeIdxs.isEmpty {
+            let minA = activeIdxs.min()!
+            let maxA = activeIdxs.max()!
+            let spanCount = maxA - minA + 1
 
-        // сколько останется от startIndex до конца
-        var remainingFromStart = total - startIndex
+            var start: Int
+            var endExclusive: Int
 
-        // если до конца меньше чем maxVisible → двигаем окно в самый низ,
-        // так чтобы последние maxVisible пар тоже влезли
-        if remainingFromStart < maxVisible {
-            startIndex = max(0, total - maxVisible)
-            remainingFromStart = total - startIndex
+            if spanCount >= maxVisible {
+                // активных больше окна — показываем первые maxVisible из спана
+                start = minA
+                endExclusive = min(total, start + maxVisible)
+            } else {
+                // хотим: [одна прошедшая] + [все активные] + [добить будущими]
+                start = max(0, minA - 1)
+                endExclusive = start + maxVisible
+
+                // если активные не помещаются справа, сдвигаем окно влево
+                if endExclusive < maxA + 1 {
+                    start = max(0, (maxA + 1) - maxVisible)
+                    endExclusive = min(total, start + maxVisible)
+                }
+
+                // если мы в самом конце дня — подтянуть окно вниз
+                if endExclusive > total {
+                    endExclusive = total
+                    start = max(0, endExclusive - maxVisible)
+                }
+            }
+
+            let vis = Array(events[start..<endExclusive])
+            let hiddenBefore = max(0, start)
+            let hiddenAfter = max(0, total - endExclusive)
+            return (vis, start, hiddenBefore, hiddenAfter)
+        } else {
+            // нет активных: прежняя логика — фокус + одна прошедшая
+            let focus = focusIdx ?? 0
+            var start = max(0, focus - 1)
+            var endExclusive = min(total, start + maxVisible)
+
+            // если не хватает до конца — сдвигаем вниз
+            if endExclusive - start < maxVisible && endExclusive < total {
+                start = max(0, min(total - maxVisible, start))
+                endExclusive = min(total, start + maxVisible)
+            }
+
+            let vis = Array(events[start..<endExclusive])
+            let hiddenBefore = max(0, start)
+            let hiddenAfter = max(0, total - endExclusive)
+            return (vis, start, hiddenBefore, hiddenAfter)
         }
-
-        // сколько реально показываем в окне
-        let countToShow = min(maxVisible, remainingFromStart)
-        let endExclusive = startIndex + countToShow
-
-        // видимые пары
-        let slice = Array(events[startIndex..<endExclusive])
-
-        // сколько мы скрыли СВЕРХУ (прошедшие пары, которые выпали за окно)
-        let hiddenBefore = max(0, startIndex)
-
-        // сколько мы скрыли СНИЗУ (будущие пары, которые не влезли после окна)
-        let hiddenAfter = max(0, total - endExclusive)
-
-        return (slice, startIndex, hiddenBefore, hiddenAfter)
     }
 }
 
@@ -479,7 +502,7 @@ struct LargeWidgetView: View {
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 6) {
                     ForEach(0..<rows, id: \.self) { i in
                         if i < leftDays.count, let evs = entry.weekEvents[leftDays[i]] {
-                            DaySectionCompactView(date: leftDays[i], events: evs, theme: theme) // ↓ компактный режим
+                            DaySectionCompactView(date: leftDays[i], events: evs, theme: theme)
                         } else { Color.clear.frame(height: 0) }
 
                         if i < rightDays.count, let evs = entry.weekEvents[rightDays[i]] {
@@ -501,18 +524,17 @@ struct LargeWidgetView: View {
 
 private func gridSplitIndex(for daysCount: Int) -> Int {
     switch daysCount {
-    case 6: return 3      // 3+3  (Пн-Ср | Чт-Сб)
+    case 6: return 3      // 3+3
     case 5: return 3      // 3+2
     case 4: return 2      // 2+2
-    case 3: return 2      // 2+1 (новое правило для плотного дня)
+    case 3: return 2      // 2+1
     case 2: return 1      // 1+1
     default:
-        // 7 или иные — балансно: ceil(n/2)
-        return Int(ceil(Double(daysCount) / 2.0))
+        return Int(ceil(Double(daysCount) / 2.0)) // 7+: балансно
     }
 }
 
-// Компактная секция дня для сетки — ЕЩЁ меньше
+// Компактная секция дня для сетки
 private struct DaySectionCompactView: View {
     let date: Date
     let events: [ScheduleEvent]
@@ -630,140 +652,3 @@ private struct DaySectionView: View {
         }
     }
 }
-
-
-//// MARK: - Превью (Large, 3×5 и 3×6)
-//
-//#if DEBUG
-//#Preview("Large – 3 days × 5", as: .systemLarge) {
-//    TimetableWidget()
-//} timeline: {
-//    TestData.makeEntry(days: 4, perDay: 5)
-//}
-//
-//#Preview("Large – 3 days × 6", as: .systemLarge) {
-//    TimetableWidget()
-//} timeline: {
-//    TestData.makeEntry(days: 4, perDay: 6)
-//}
-//
-//// MARK: - Preview Mocks (type-checker friendly)
-//
-//enum TestData {
-//    // Календарь/временные константы вынесены и типизированы
-//    private static let cal: Calendar = {
-//        var c = Calendar(identifier: .gregorian)
-//        c.locale = Locale(identifier: "en_US_POSIX")
-//        c.timeZone = .current
-//        return c
-//    }()
-//
-//    private static let slot: TimeInterval = 75 * 60 // 75 минут пара
-//
-//    // Один форматтер на все
-//    private static let iso: ISO8601DateFormatter = {
-//        let f = ISO8601DateFormatter()
-//        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-//        f.timeZone = .current
-//        return f
-//    }()
-//
-//    // Разбиваем большие литералы на батчи — так превью не «подменяет» одну огромную строку
-//    private static let titles: [String] = {
-//        var out: [String] = []
-//        out += ["PGD", "HMWIA", "WDGS"]
-//        out += ["PPP", "KP1", "UED"]
-//        out += ["PR", "PPG", "PJFIP"]
-//        out += ["ALG", "DB"]
-//        return out
-//    }()
-//
-//    private static let rooms: [String] = {
-//        var out: [String] = []
-//        out += ["S55 106", "S55 107", "S47 119"]
-//        out += ["S47 216", "S47 314", "S55 308"]
-//        return out
-//    }()
-//
-//    // Понедельник текущей недели
-//    private static func mondayOfCurrentWeek(_ date: Date = .now) -> Date {
-//        let comps = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
-//        return cal.date(from: comps) ?? date
-//    }
-//
-//    // MARK: - Schedule factory (под твою модель)
-//
-//    static func buildPreviewSchedule(
-//        days: Int,
-//        perDay: Int,
-//        startHour: Int = 8,
-//        includeOnline: Bool = true
-//    ) -> GroupScheduleResponse {
-//        var events: [ScheduleEvent] = []
-//        events.reserveCapacity(max(0, min(days, 7) * perDay))
-//
-//        let weekStart: Date = mondayOfCurrentWeek()
-//
-//        for d in 0..<min(days, 7) {
-//            guard
-//                let day = cal.date(byAdding: .day, value: d, to: weekStart),
-//                let dayStart = cal.date(bySettingHour: startHour, minute: 0, second: 0, of: day)
-//            else { continue }
-//
-//            for i in 0..<perDay {
-//                let start: Date = dayStart.addingTimeInterval(TimeInterval(i) * slot)
-//                let end: Date   = start.addingTimeInterval(slot)
-//
-//                let title: String = titles[(d + i) % titles.count]
-//                let room: String  = rooms[(d * 2 + i) % rooms.count]
-//                let type: String  = (i % 3 == 0) ? "lecture" : ((i % 3 == 1) ? "exercise" : "laboratory")
-//                let online: Bool  = includeOnline && (i % 4 == 3)
-//
-//                // Конструктор строго под твою модель ScheduleEvent
-//                let ev = ScheduleEvent(
-//                    title: title,
-//                    type: type,
-//                    startISO: iso.string(from: start),
-//                    endISO: iso.string(from: end),
-//                    room: online ? "" : room,          // если online, комнаты нет
-//                    grading: nil,
-//                    remarks: online ? "online" : nil,  // помечаем online для иконки Wi-Fi
-//                    studyTrack: nil,
-//                    groups: nil,
-//                    teacherId: 1,
-//                    teacherName: "Dr. Novak",
-//                    teacherEmail: nil,
-//                    startDate: start,
-//                    endDate: end
-//                )
-//                events.append(ev)
-//            }
-//        }
-//
-//        // Оставь ровно тот init, который есть у тебя в проекте.
-//        // Если у тебя именно такой — будет работать из коробки:
-//        return GroupScheduleResponse(
-//            groupId: 2345,
-//            from: "2025-09-01",
-//            to: "2026-01-31",
-//            intervalType: 1,
-//            groupSchedule: events,
-//            fetchedAt: "2025-10-25T00:00:00Z"
-//        )
-//        // Если у тебя другой init, замени на свой, но оставь events как есть.
-//    }
-//
-//    // MARK: - Entry builder
-//
-//    static func makeEntry(days: Int, perDay: Int) -> TimetableWidgetEntry {
-//        let schedule: GroupScheduleResponse = buildPreviewSchedule(days: days, perDay: perDay)
-//        return TimetableWidgetEntry(
-//            date: .now,
-//            schedule: schedule,
-//            selectedThemeId: "default",
-//            appearanceMode: "system",
-//            configuration: nil
-//        )
-//    }
-//}
-//#endif
