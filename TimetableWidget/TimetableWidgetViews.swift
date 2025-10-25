@@ -181,23 +181,71 @@ private struct CompactEventRow: View {
     }
 }
 
+// MARK: - MEDIUM (окно из 5 пар, подсветка только текущей, скользящее окно дня)
+
 struct MediumWidgetView: View {
     let entry: TimetableWidgetEntry
     @Environment(\.colorScheme) var colorScheme
     private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
 
-    // высота «палочки» ~ высоте строки (чтобы не тянуть ячейку по высоте)
-    private let barHeight: CGFloat = 13
+    // компактная палка слева у активной пары
+    private let barHeight: CGFloat = 12
     private let barWidth: CGFloat = 2
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) { // было 5–6
+        let events = entry.todayEvents
+        let now = entry.date
+
+        // 1. фокусная пара:
+        //    - если сейчас идёт -> она
+        //    - иначе ближайшая будущая
+        //    - иначе последняя в дне
+        let focusIdx: Int? = {
+            if let idxNow = events.firstIndex(where: { ev in
+                if let s = ev.startDate, let e = ev.endDate {
+                    return now >= s && now <= e
+                }
+                return false
+            }) {
+                return idxNow
+            }
+            if let idxNext = events.firstIndex(where: { ev in
+                if let s = ev.startDate {
+                    return s > now
+                }
+                return false
+            }) {
+                return idxNext
+            }
+            if !events.isEmpty {
+                return events.count - 1
+            }
+            return nil
+        }()
+
+        // 2. окно максимум из 5 строк, с логикой "оставь предыдущую, но не держи весь день"
+        let windowInfo = computeWindow(
+            events: events,
+            focusIdx: focusIdx,
+            maxVisible: 5
+        )
+
+        let visibleEvents     = windowInfo.visible
+        let startIndex        = windowInfo.startIndex
+        let hiddenBeforeCount = windowInfo.hiddenBefore
+        let hiddenAfterCount  = windowInfo.hiddenAfter
+
+        return VStack(alignment: .leading, spacing: 5) {
+            // HEADER
             HStack(spacing: 6) {
                 Text(LocalizedString.commonToday.localized)
                     .font(.system(size: 14.5, weight: .bold))
                     .foregroundStyle(
-                        LinearGradient(colors: [theme.primary, theme.secondary],
-                                       startPoint: .leading, endPoint: .trailing)
+                        LinearGradient(
+                            colors: [theme.primary, theme.secondary],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
                     .lineLimit(1)
 
@@ -209,61 +257,73 @@ struct MediumWidgetView: View {
                     .lineLimit(1)
             }
 
-            if entry.todayEvents.isEmpty {
+            if events.isEmpty {
                 noEventsView
             } else {
-                let maxRows = 5
-                // список строк — шаг уменьшен
-                VStack(alignment: .leading, spacing: 2.5) { // было 3–4
-                    ForEach(entry.todayEvents.prefix(maxRows)) { event in
-                        eventRow(event)
-                    }
-                }
+                // 3. список видимых пар + "+N" сверху/снизу
+                VStack(alignment: .leading, spacing: 2.5) {
 
-                let remaining = entry.todayEvents.count - maxRows
-                if remaining > 0 {
-                    Text("+\(remaining) \(LocalizedString.commonMoreSuffix.localized)")
-                        .font(.system(size: 9.5))
-                        .foregroundColor(.secondary)
+                    // +N СВЕРХУ, если мы уже срезали старые пары сверху
+                    if hiddenBeforeCount > 0 {
+                        Text("+\(hiddenBeforeCount) \(LocalizedString.commonMoreSuffix.localized)")
+                            .font(.system(size: 9.5))
+                            .foregroundColor(.secondary)
+                    }
+
+                    // сами пары
+                    ForEach(Array(visibleEvents.enumerated()), id: \.offset) { offset, ev in
+                        let globalIndex = startIndex + offset
+                        let isFocused = (globalIndex == focusIdx)
+                        eventRow(ev, highlight: isFocused)
+                    }
+
+                    // +N СНИЗУ, если мы ещё не показали хвост (будущие пары)
+                    if hiddenAfterCount > 0 {
+                        Text("+\(hiddenAfterCount) \(LocalizedString.commonMoreSuffix.localized)")
+                            .font(.system(size: 9.5))
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
         }
-        .padding(.vertical, 6.5) // было 7
+        .padding(.vertical, 6.5)
         .padding(.horizontal, 10)
     }
 
-    private func eventRow(_ event: ScheduleEvent) -> some View {
+    /// Одна строка расписания.
+    /// highlight == true → рисуем цветную палку слева
+    /// highlight == false → прозрачный placeholder той же ширины, чтобы текст не прыгал
+    private func eventRow(_ event: ScheduleEvent, highlight: Bool) -> some View {
         HStack(alignment: .center, spacing: 5) {
-            // компактная «палка» той же высоты, что строка
-            Capsule()
-                .fill(colorForType(event.type, fallback: theme.primary))
-                .frame(width: barWidth, height: barHeight) // ← фиксированная короткая
-                .fixedSize() // не раздувать по высоте
+            if highlight {
+                Capsule()
+                    .fill(colorForType(event.type, fallback: theme.primary))
+                    .frame(width: barWidth, height: barHeight)
+                    .fixedSize()
+            } else {
+                // выравнивание слева (та же ширина/высота, но невидимо)
+                Color.clear
+                    .frame(width: barWidth, height: barHeight)
+                    .fixedSize()
+            }
 
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 4) {
-                    Text(timeRange(event.startDate, event.endDate))
-                        .font(.system(size: 11.5, weight: .semibold)) // было 12
-                        .monospacedDigit()
-                        .foregroundColor(.primary) // единый цвет как в остальных
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.9)
+            HStack(spacing: 4) {
+                // Время (start-end, через короткий дефис)
+                Text(timeRange(event.startDate, event.endDate))
+                    .font(.system(size: 11.5, weight: .semibold))
+                    .monospacedDigit()
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.9)
 
-                    Text(eventAbbreviation(from: event.title))
-                        .font(.system(size: 11.5, weight: .medium))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.85)
+                // Аббревиатура предмета
+                Text(eventAbbreviation(from: event.title))
+                    .font(.system(size: 11.5, weight: .medium))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
 
-                    Spacer(minLength: 0)
-
-                    if isOnline(event) {
-                        Image(systemName: "wifi")
-                            .font(.system(size: 9.5))
-                            .foregroundColor(theme.online)
-                    }
-                }
-
+                // Аудитория / кабинет (если не онлайн)
                 if !event.displayRoom.isEmpty {
                     Text(event.displayRoom)
                         .font(.system(size: 10))
@@ -271,17 +331,30 @@ struct MediumWidgetView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.85)
                 }
+
+                Spacer(minLength: 0)
+
+                // Значок Wi-Fi для онлайна
+                if isOnline(event) {
+                    Image(systemName: "wifi")
+                        .font(.system(size: 9.5))
+                        .foregroundColor(theme.online)
+                }
             }
         }
     }
 
+    /// Плашка "нет занятий"
     private var noEventsView: some View {
         HStack(spacing: 7) {
             Image(systemName: "calendar.badge.checkmark")
                 .font(.system(size: 19))
                 .foregroundStyle(
-                    LinearGradient(colors: [theme.primary, theme.secondary],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                    LinearGradient(
+                        colors: [theme.primary, theme.secondary],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
             VStack(alignment: .leading, spacing: 1) {
                 Text(LocalizedString.commonNoClassesToday.localized)
@@ -298,6 +371,65 @@ struct MediumWidgetView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // MARK: - Sliding window logic
+
+    /// Возвращает окно максимум из maxVisible событий плюс метаданные:
+    ///  - visible: какие пары реально показываем
+    ///  - startIndex: индекс первой пары в общем массиве
+    ///  - hiddenBefore: сколько пар мы скрыли СВЕРХУ (уже прошли)
+    ///  - hiddenAfter: сколько пар мы скрыли СНИЗУ (ещё будут)
+    ///
+    /// Алгоритм:
+    ///  - хотим держать текущую/ближайшую пару (focusIdx) и одну предыдущую, если она есть
+    ///  - но не больше 5 строк
+    ///  - ближе к концу дня окно сдвигается вниз, поэтому верх уже урезан → тут hiddenBefore > 0
+    ///  - ближе к началу дня наоборот урезан хвост → hiddenAfter > 0
+    private func computeWindow(
+        events: [ScheduleEvent],
+        focusIdx: Int?,
+        maxVisible: Int
+    ) -> (
+        visible: [ScheduleEvent],
+        startIndex: Int,
+        hiddenBefore: Int,
+        hiddenAfter: Int
+    ) {
+        guard !events.isEmpty else {
+            return ([], 0, 0, 0)
+        }
+
+        let total = events.count
+        let focus = focusIdx ?? 0
+
+        // шаг 1: пробуем показать "фокусную" + одну предыдущую
+        var startIndex = max(0, focus - 1)
+
+        // сколько останется от startIndex до конца
+        var remainingFromStart = total - startIndex
+
+        // если до конца меньше чем maxVisible → двигаем окно в самый низ,
+        // так чтобы последние maxVisible пар тоже влезли
+        if remainingFromStart < maxVisible {
+            startIndex = max(0, total - maxVisible)
+            remainingFromStart = total - startIndex
+        }
+
+        // сколько реально показываем в окне
+        let countToShow = min(maxVisible, remainingFromStart)
+        let endExclusive = startIndex + countToShow
+
+        // видимые пары
+        let slice = Array(events[startIndex..<endExclusive])
+
+        // сколько мы скрыли СВЕРХУ (прошедшие пары, которые выпали за окно)
+        let hiddenBefore = max(0, startIndex)
+
+        // сколько мы скрыли СНИЗУ (будущие пары, которые не влезли после окна)
+        let hiddenAfter = max(0, total - endExclusive)
+
+        return (slice, startIndex, hiddenBefore, hiddenAfter)
     }
 }
 
