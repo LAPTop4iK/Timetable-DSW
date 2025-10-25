@@ -110,7 +110,8 @@ struct SmallWidgetView: View {
                 ForEach(activeToShow, id: \.self) { idx in
                     FocusEventRow(
                         event: events[idx],
-                        theme: theme
+                        theme: theme,
+                        showOnline: entry.shouldShowOnline
                     )
                 }
 
@@ -126,7 +127,8 @@ struct SmallWidgetView: View {
                         ForEach(futureToShow) { ev in
                             CompactEventRow(
                                 event: ev,
-                                theme: theme
+                                theme: theme,
+                                showOnline: entry.shouldShowOnline
                             )
                         }
                     }
@@ -156,7 +158,8 @@ struct SmallWidgetView: View {
                 if let f = focus {
                     FocusEventRow(
                         event: f,
-                        theme: theme
+                        theme: theme,
+                        showOnline: entry.shouldShowOnline
                     )
 
                     // остальные будущие после фокуса
@@ -169,7 +172,8 @@ struct SmallWidgetView: View {
                                 ForEach(othersToShow) { ev in
                                     CompactEventRow(
                                         event: ev,
-                                        theme: theme
+                                        theme: theme,
+                                        showOnline: entry.shouldShowOnline
                                     )
                                 }
                             }
@@ -211,6 +215,7 @@ struct SmallWidgetView: View {
 private struct FocusEventRow: View {
     let event: ScheduleEvent
     let theme: any Theme
+    let showOnline: Bool
 
     var body: some View {
         let barColor = eventAccentColor(for: event, theme: theme)
@@ -231,7 +236,7 @@ private struct FocusEventRow: View {
                     .minimumScaleFactor(0.6)
                     .allowsTightening(true)
 
-                if event.isOnline() {
+                if showOnline && event.isOnline() {
                     Image(systemName: "wifi")
                         .font(.system(size: 8))
                         .foregroundColor(theme.online)
@@ -277,12 +282,13 @@ private struct FocusEventRow: View {
 private struct CompactEventRow: View {
     let event: ScheduleEvent
     let theme: any Theme
+    let showOnline: Bool
 
     var body: some View {
         let dotColor = eventAccentColor(for: event, theme: theme)
 
         HStack(spacing: 4) {
-            if event.isOnline() {
+            if showOnline && event.isOnline() {
                 Image(systemName: "wifi")
                     .font(.system(size: 8))
                     .foregroundColor(theme.online)
@@ -329,43 +335,86 @@ struct MediumWidgetView: View {
         ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
     }
 
-    // компактная палка слева у активных пар
+    // компактная палка слева у выделенных пар
     private let barHeight: CGFloat = 12
     private let barWidth: CGFloat = 2
 
     var body: some View {
-        // заранее убираем отменённые
+        // 1. убираем отменённые пары
         let eventsAll = entry.todayEvents.filter { !$0.isCancelled() }
         let now = entry.date
 
-        // активные индексы — все пары, которые идут сейчас
-        let activeIdxs: [Int] = eventsAll.enumerated().compactMap { idx, ev in
+        // 2. пары, которые ИДУТ прямо сейчас (now внутри [start,end])
+        let activeNowIdxs: [Int] = eventsAll.enumerated().compactMap { idx, ev in
             guard let s = ev.startDate, let e = ev.endDate else { return nil }
             return (now >= s && now <= e) ? idx : nil
         }
-        let activeSet = Set(activeIdxs)
 
-        // fallback, если активных нет
-        let focusIdx: Int? = {
-            if !activeIdxs.isEmpty { return activeIdxs.min() }
-            if let idxNext = eventsAll.firstIndex(where: { ev in
-                if let s = ev.startDate { return s > now }
-                return false
-            }) { return idxNext }
-            if !eventsAll.isEmpty { return eventsAll.count - 1 }
-            return nil
+        // 3. пары, которые ЕЩЁ НЕ начались (start > now)
+        //    найдём ближайшее будущее start и возьмём все пары с таким же start
+        let futureIdxsByStart: [Int] = {
+            // соберём (idx, start) только для будущих
+            let futurePairs: [(Int, Date)] = eventsAll.enumerated().compactMap { idx, ev in
+                guard let s = ev.startDate else { return nil }
+                return (s > now) ? (idx, s) : nil
+            }
+
+            guard !futurePairs.isEmpty else { return [] }
+
+            // самое раннее будущее время старта
+            let earliestStart = futurePairs.map { $0.1 }.min()!
+
+            // все пары, которые стартуют ровно в earliestStart
+            let sameSlotIdxs = futurePairs
+                .filter { $0.1 == earliestStart }
+                .map { $0.0 }
+
+            return sameSlotIdxs.sorted()
         }()
 
-        // считаем окно
+        // 4. кого будем ПОДСВЕЧИВАТЬ (activeSet):
+        //    - если прямо сейчас есть пары -> их
+        //    - иначе если сейчас перемена, но есть будущие пары -> ближайший слот (все пары с earliestStart)
+        //    - иначе (день кончился) -> никого
+        let highlightedIdxs: [Int] = {
+            if !activeNowIdxs.isEmpty {
+                return activeNowIdxs.sorted()
+            } else if !futureIdxsByStart.isEmpty {
+                return futureIdxsByStart
+            } else {
+                return []
+            }
+        }()
+        let activeSet = Set(highlightedIdxs)
+
+        // 5. какой индекс считать "фокусом" для окна:
+        //    - если кого-то подсвечиваем → минимальный из них
+        //    - иначе день уже прошёл → последняя пара дня (если есть)
+        let focusIdx: Int? = {
+            if let firstHighlighted = highlightedIdxs.min() {
+                return firstHighlighted
+            } else if !eventsAll.isEmpty {
+                // день закончился, подсветки не будет,
+                // но окно хотим прижать к концу дня
+                return eventsAll.count - 1
+            } else {
+                return nil
+            }
+        }()
+
+        // 6. рассчитываем "окно" (макс 5 строк) вокруг фокуса / выделенных
+        //    важно: в computeWindowMultiActive мы передаём highlightedIdxs,
+        //    НЕ activeNowIdxs, чтобы во время перемены окно центрировалось
+        //    вокруг ближайшего будущего слота.
         let window = computeWindowMultiActive(
             events: eventsAll,
-            activeIdxs: activeIdxs,
+            activeIdxs: highlightedIdxs,
             focusIdx: focusIdx,
             maxVisible: 5
         )
 
         let visibleEvents = window.visible
-        let startIndex = window.startIndex
+        let startIndex    = window.startIndex
 
         return VStack(alignment: .leading, spacing: 5) {
 
@@ -395,14 +444,14 @@ struct MediumWidgetView: View {
             } else {
                 VStack(alignment: .leading, spacing: 2.5) {
 
-                    // +N сверху, если урезали прошедшие пары
+                    // +N сверху, если мы порезали прошедшие пары
                     if window.hiddenBefore > 0 {
                         Text("+\(window.hiddenBefore) \(LocalizedString.commonMoreSuffix.localized)")
                             .font(.system(size: 9.5))
                             .foregroundColor(.secondary)
                     }
 
-                    // пары
+                    // сами пары
                     ForEach(Array(visibleEvents.enumerated()), id: \.offset) { offset, ev in
                         let globalIndex = startIndex + offset
                         let isHighlighted = activeSet.contains(globalIndex)
@@ -410,7 +459,7 @@ struct MediumWidgetView: View {
                         eventRow(ev, highlight: isHighlighted)
                     }
 
-                    // +N снизу, если урезали будущие пары
+                    // +N снизу, если мы порезали хвост
                     if window.hiddenAfter > 0 {
                         Text("+\(window.hiddenAfter) \(LocalizedString.commonMoreSuffix.localized)")
                             .font(.system(size: 9.5))
@@ -423,12 +472,13 @@ struct MediumWidgetView: View {
         .padding(.horizontal, 10)
     }
 
-    /// Одна строка расписания в Medium
+    // MARK: - Рендер строки пары
+
     private func eventRow(_ event: ScheduleEvent, highlight: Bool) -> some View {
         let barColor = eventAccentColor(for: event, theme: theme)
 
         return HStack(alignment: .center, spacing: 5) {
-            // левая палка, только если highlight == true
+            // палка слева, если выделено (активно сейчас или ближайший слот в перемене)
             if highlight {
                 Capsule()
                     .fill(barColor)
@@ -441,7 +491,7 @@ struct MediumWidgetView: View {
             }
 
             HStack(spacing: 4) {
-                // Время (start-end)
+                // время (start-end)
                 Text(timeRange(event.startDate, event.endDate))
                     .font(.system(size: 11.5, weight: .semibold))
                     .monospacedDigit()
@@ -449,14 +499,14 @@ struct MediumWidgetView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.9)
 
-                // Аббревиатура предмета
+                // аббревиатура дисциплины
                 Text(eventAbbreviation(from: event.title))
                     .font(.system(size: 11.5, weight: .medium))
                     .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
-                // Аудитория если оффлайн
+                // аудитория, если оффлайн
                 if !event.displayRoom.isEmpty {
                     Text(event.displayRoom)
                         .font(.system(size: 10))
@@ -467,8 +517,8 @@ struct MediumWidgetView: View {
 
                 Spacer(minLength: 0)
 
-                // Значок Wi-Fi если онлайн
-                if event.isOnline() {
+                // Wi-Fi если пара онлайн и пользователь не выключил
+                if entry.shouldShowOnline && event.isOnline() {
                     Image(systemName: "wifi")
                         .font(.system(size: 9.5))
                         .foregroundColor(theme.online)
@@ -477,7 +527,7 @@ struct MediumWidgetView: View {
         }
     }
 
-    /// Плашка "нет занятий"
+    // MARK: - "Нет занятий"
     private var noEventsView: some View {
         HStack(spacing: 7) {
             Image(systemName: "calendar.badge.checkmark")
@@ -507,12 +557,8 @@ struct MediumWidgetView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: - Sliding window logic (multi-active aware)
+    // MARK: - Окно показа (как и раньше)
 
-    /// Возвращает окно максимум из maxVisible событий.
-    /// Если есть активные — стараемся уместить все активные подряд.
-    /// Дальше добиваем предыдущей/следующей, но не больше 5 строк.
-    /// hiddenBefore/hiddenAfter идут в "+N".
     private func computeWindowMultiActive(
         events: [ScheduleEvent],
         activeIdxs: [Int],
@@ -531,7 +577,7 @@ struct MediumWidgetView: View {
         let total = events.count
 
         if !activeIdxs.isEmpty {
-            // диапазон активных
+            // у нас есть набор индексов, которые хотим держать в кадре (либо реально активные, либо ближайший слот после перемены)
             let minA = activeIdxs.min()!
             let maxA = activeIdxs.max()!
             let spanCount = maxA - minA + 1
@@ -540,21 +586,21 @@ struct MediumWidgetView: View {
             var endExclusive: Int
 
             if spanCount >= maxVisible {
-                // активных столько, что они сами заполняют окно
+                // сам диапазон не влезает целиком → обрезаем его с головы
                 start = minA
                 endExclusive = min(total, start + maxVisible)
             } else {
-                // хотим захватить одну прошедшую перед minA и добить будущими
+                // пробуем показать одну предыдущую пару (если есть) + наш диапазон + добить будущими
                 start = max(0, minA - 1)
                 endExclusive = start + maxVisible
 
-                // если окно не покрывает весь активный диапазон — двигаем
+                // если в это окно не помещается весь span → сдвигаем старт так, чтобы поместился хвост
                 if endExclusive < maxA + 1 {
                     start = max(0, (maxA + 1) - maxVisible)
                     endExclusive = min(total, start + maxVisible)
                 }
 
-                // если ушли в самый конец дня — корректируем
+                // если уехали слишком вниз, корректируем
                 if endExclusive > total {
                     endExclusive = total
                     start = max(0, endExclusive - maxVisible)
@@ -567,12 +613,12 @@ struct MediumWidgetView: View {
             return (vis, start, hiddenBefore, hiddenAfter)
 
         } else {
-            // нет активных: берём focusIdx (текущая/ближайшая/последняя)
+            // день уже закончился: нет активных сейчас и нет будущих
+            // просто показываем хвост дня вокруг focusIdx (который = последняя пара)
             let focus = focusIdx ?? 0
             var start = max(0, focus - 1)
             var endExclusive = min(total, start + maxVisible)
 
-            // если осталось мало снизу — сдвинем окно в конец дня
             if (endExclusive - start) < maxVisible && endExclusive < total {
                 start = max(0, total - maxVisible)
                 endExclusive = min(total, start + maxVisible)
@@ -671,7 +717,8 @@ struct LargeWidgetView: View {
                                 DaySectionCompactView(
                                     date: leftDays[i],
                                     events: evs,
-                                    theme: theme
+                                    theme: theme,
+                                    showOnline: entry.shouldShowOnline
                                 )
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             } else {
@@ -685,7 +732,8 @@ struct LargeWidgetView: View {
                                 DaySectionCompactView(
                                     date: rightDays[i],
                                     events: evs,
-                                    theme: theme
+                                    theme: theme,
+                                    showOnline: entry.shouldShowOnline
                                 )
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             } else {
@@ -703,7 +751,8 @@ struct LargeWidgetView: View {
                         DaySectionView(
                             date: day,
                             events: events,
-                            theme: theme
+                            theme: theme,
+                            showOnline: entry.shouldShowOnline
                         )
                     }
                 }
@@ -732,6 +781,7 @@ private struct DaySectionCompactView: View {
     let date: Date
     let events: [ScheduleEvent]
     let theme: any Theme
+    let showOnline: Bool
 
     var body: some View {
         // не показываем отменённые пары
@@ -797,7 +847,7 @@ private struct DaySectionCompactView: View {
                     Spacer(minLength: 0)
 
                     // Wi-Fi если онлайн
-                    if ev.isOnline() {
+                    if showOnline && ev.isOnline() {
                         Image(systemName: "wifi")
                             .font(.system(size: 8.5))
                             .foregroundColor(theme.online)
@@ -819,6 +869,7 @@ private struct DaySectionView: View {
     let date: Date
     let events: [ScheduleEvent]
     let theme: any Theme
+    let showOnline: Bool
 
     var body: some View {
         let filtered = events.filter { !$0.isCancelled() }
