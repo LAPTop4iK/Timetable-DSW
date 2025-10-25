@@ -557,27 +557,42 @@ struct LargeWidgetView: View {
                 Spacer()
             } else if useGrid {
                 let splitIndex = gridSplitIndex(for: dayCount)
-                let leftDays = Array(orderedDays.prefix(splitIndex))
-                let rightDays = Array(orderedDays.dropFirst(splitIndex))
+                let leftDays  = Array(orderedDays.prefix(splitIndex))      // например Пн / Вт / Ср
+                let rightDays = Array(orderedDays.dropFirst(splitIndex))   // например Чт / Пт / Сб
                 let rows = max(leftDays.count, rightDays.count)
 
-                let columns = [
-                    GridItem(.flexible(), spacing: 8),
-                    GridItem(.flexible(), spacing: 8)
-                ]
-
-                LazyVGrid(columns: columns, alignment: .leading, spacing: 6) {
+                // рендерим ПО СТРОКАМ:
+                // каждая строка — пара дней (левый + правый)
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(0..<rows, id: \.self) { i in
-                        if i < leftDays.count, let evs = entry.weekEvents[leftDays[i]] {
-                            DaySectionCompactView(date: leftDays[i], events: evs, theme: theme)
-                        } else {
-                            Color.clear.frame(height: 0)
-                        }
+                        HStack(alignment: .top, spacing: 8) {
+                            // левая половина строки
+                            if i < leftDays.count, let evs = entry.weekEvents[leftDays[i]] {
+                                DaySectionCompactView(
+                                    date: leftDays[i],
+                                    events: evs,
+                                    theme: theme
+                                )
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            } else {
+                                // если дня нет (например правая колонка длиннее),
+                                // кладём пустой блок, чтобы правая колонка не прыгала влево
+                                Color.clear
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
 
-                        if i < rightDays.count, let evs = entry.weekEvents[rightDays[i]] {
-                            DaySectionCompactView(date: rightDays[i], events: evs, theme: theme)
-                        } else {
-                            Color.clear.frame(height: 0)
+                            // правая половина строки
+                            if i < rightDays.count, let evs = entry.weekEvents[rightDays[i]] {
+                                DaySectionCompactView(
+                                    date: rightDays[i],
+                                    events: evs,
+                                    theme: theme
+                                )
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            } else {
+                                Color.clear
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                         }
                     }
                 }
