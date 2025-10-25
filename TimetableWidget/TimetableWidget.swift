@@ -16,11 +16,12 @@ struct TimetableWidget: Widget {
         AppIntentConfiguration(
             kind: kind,
             intent: TimetableWidgetProvider.Intent.self,
-            provider: TimetableWidgetProvider()
-        ) { entry in
-            TimetableWidgetEntryView(entry: entry)
-                .containerBackground(for: .widget) { Color.clear }
-        }
+            provider: TimetableWidgetProvider(),
+            content: { entry in
+                TimetableWidgetEntryView(entry: entry)
+                    .containerBackground(for: .widget) { Color.clear }
+            }
+        )
         .contentMarginsDisabled()                // убрали системные поля
         .containerBackgroundRemovable(true)
         .configurationDisplayName("Timetable")

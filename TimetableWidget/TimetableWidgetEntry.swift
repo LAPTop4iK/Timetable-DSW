@@ -16,6 +16,10 @@ struct TimetableWidgetEntry: TimelineEntry {
     let appearanceMode: String
     let configuration: (any WidgetConfigurationIntent)?
 
+    var shouldShowOnline: Bool {
+        (configuration as? ConfigurationAppIntent)?.showOnlineStatus ?? true
+    }
+
     // события только за сегодня (и не отменённые)
     var todayEvents: [ScheduleEvent] {
         guard let schedule = schedule else { return [] }

@@ -9,17 +9,6 @@ import WidgetKit
 import SwiftUI
 import AppIntents
 
-fileprivate extension ScheduleEvent {
-    var isCancelled: Bool {
-        let t = (remarks ?? "").lowercased()
-        return t.contains("zajęcia odwołane")
-            || t.contains("odwołane")
-            || t.contains("cancelled")
-            || t.contains("canceled")
-            || t.contains("отмен")
-    }
-}
-
 struct TimetableWidgetProvider: AppIntentTimelineProvider {
     typealias Intent = ConfigurationAppIntent
     typealias Entry = TimetableWidgetEntry
@@ -44,7 +33,7 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
             schedule: schedule,
             selectedThemeId: themeId,
             appearanceMode: appearanceMode,
-            configuration: configuration
+            configuration: configuration   // <—
         )
     }
 
@@ -53,68 +42,50 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
         let themeId = AppGroupManager.loadSelectedThemeId() ?? "default"
         let appearanceMode = AppGroupManager.loadAppearanceMode() ?? "system"
         let currentDate = Date()
-
         var entries: [TimetableWidgetEntry] = []
 
-        // Текущая точка
-        let currentEntry = TimetableWidgetEntry(
-            date: currentDate,
-            schedule: schedule,
-            selectedThemeId: themeId,
-            appearanceMode: appearanceMode,
-            configuration: configuration
-        )
-        entries.append(currentEntry)
+        let baseEntry = { (date: Date) in
+            TimetableWidgetEntry(
+                date: date,
+                schedule: schedule,
+                selectedThemeId: themeId,
+                appearanceMode: appearanceMode,
+                configuration: configuration    // <—
+            )
+        }
 
+        // точка "сейчас"
+        entries.append(baseEntry(currentDate))
+
+        // добавить апдейты на старты/концы занятий:
         let calendar = Calendar.current
-
-        // События сегодня (без отменённых)
-        if let events = schedule?.groupSchedule
-            .filter({ event in
-                guard !event.isCancelled, let eventDate = event.startDate else { return false }
-                return calendar.isDate(eventDate, inSameDayAs: currentDate)
+        if let eventsToday = schedule?.groupSchedule
+            .filter({ e in
+                guard !e.isCancelled(), let d = e.startDate else { return false }
+                return calendar.isDate(d, inSameDayAs: currentDate)
             })
             .sorted(by: { ($0.startDate ?? .distantPast) < ($1.startDate ?? .distantPast) })
         {
-            // Обновления на старты/финиши
-            for event in events {
-                if let startDate = event.startDate, startDate > currentDate {
-                    entries.append(TimetableWidgetEntry(
-                        date: startDate,
-                        schedule: schedule,
-                        selectedThemeId: themeId,
-                        appearanceMode: appearanceMode,
-                        configuration: configuration
-                    ))
+            for ev in eventsToday {
+                if let st = ev.startDate, st > currentDate {
+                    entries.append(baseEntry(st))
                 }
-                if let endDate = event.endDate, endDate > currentDate {
-                    entries.append(TimetableWidgetEntry(
-                        date: endDate,
-                        schedule: schedule,
-                        selectedThemeId: themeId,
-                        appearanceMode: appearanceMode,
-                        configuration: configuration
-                    ))
+                if let en = ev.endDate, en > currentDate {
+                    entries.append(baseEntry(en))
                 }
             }
         }
 
-        // Резервная точка — завтра 6:00
-        if entries.count == 1 {
-            if let tomorrow = calendar.date(byAdding: .day, value: 1, to: currentDate),
-               let tomorrowMorning = calendar.date(bySettingHour: 6, minute: 0, second: 0, of: tomorrow) {
-                entries.append(TimetableWidgetEntry(
-                    date: tomorrowMorning,
-                    schedule: schedule,
-                    selectedThemeId: themeId,
-                    appearanceMode: appearanceMode,
-                    configuration: configuration
-                ))
-            }
+        // резерв: завтра утром
+        if entries.count == 1,
+           let tomorrow = calendar.date(byAdding: .day, value: 1, to: currentDate),
+           let tMorning = calendar.date(bySettingHour: 6, minute: 0, second: 0, of: tomorrow) {
+            entries.append(baseEntry(tMorning))
         }
 
         entries.sort { $0.date < $1.date }
         let nextUpdate = entries.last?.date.addingTimeInterval(3600) ?? currentDate.addingTimeInterval(3600)
+
         return Timeline(entries: entries, policy: .after(nextUpdate))
     }
 }
