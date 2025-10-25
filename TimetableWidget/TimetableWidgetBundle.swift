@@ -15,9 +15,9 @@ struct TimetableWidgetBundle: WidgetBundle {
         TimetableWidget()
         
         // Live Activity for current class tracking
-        TimetableLiveActivity()
+//        TimetableLiveActivity()
         
         // Control Center widget
-        TimetableControlWidget()
+//        TimetableControlWidget()
     }
 }
