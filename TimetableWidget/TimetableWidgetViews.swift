@@ -67,104 +67,145 @@ struct SmallWidgetView: View {
         let now = entry.date
         let events = entry.todayEvents
 
-        // активные пары (их может быть несколько)
+        // активные пары (их может быть несколько одновременно)
         let activeIdxs: [Int] = events.enumerated().compactMap { idx, ev in
             guard let s = ev.startDate, let e = ev.endDate else { return nil }
             return (now >= s && now <= e) ? idx : nil
         }
 
         return VStack(alignment: .leading, spacing: 5) {
-            Text(LocalizedString.commonToday.localized.uppercased())
-                .font(.system(size: 10.5, weight: .semibold))
+            // HEADER "TODAY"
+            Text(LocalizedString.commonToday.localized)
+                .font(.system(size: 11.5, weight: .bold))
                 .foregroundStyle(
-                    LinearGradient(colors: [theme.primary, theme.secondary],
-                                   startPoint: .leading, endPoint: .trailing)
+                    LinearGradient(
+                        colors: [theme.primary, theme.secondary],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
                 )
                 .lineLimit(1)
 
             if !activeIdxs.isEmpty {
-                // показать все активные (в разумных пределах макс. 5 строк)
+                // 1. показываем все активные (до лимита)
                 let activeToShow = Array(activeIdxs.prefix(maxRowsTotal))
                 ForEach(activeToShow, id: \.self) { idx in
                     FocusEventRow(event: events[idx], theme: theme)
                 }
 
-                // будущие после последней активной
+                // 2. будущие пары после последней активной
                 let lastActive = activeIdxs.max()!
                 let future = Array(events.suffix(from: lastActive + 1))
+
                 let remainingSlots = max(0, maxRowsTotal - activeToShow.count)
                 let futureToShow = Array(future.prefix(remainingSlots))
-                ForEach(futureToShow) { ev in
-                    CompactEventRow(event: ev, theme: theme)
+
+                if !futureToShow.isEmpty {
+                    // добавляем чуть больше воздуха между активным блоком и будущими
+                    VStack(alignment: .leading, spacing: 3) {
+                        ForEach(futureToShow) { ev in
+                            CompactEventRow(event: ev, theme: theme)
+                        }
+                    }
+                    .padding(.top, 3)
                 }
 
-                // +N (непоместившиеся активные + непоместившиеся будущие)
+                // 3. +N (непоместившиеся активные + непоместившиеся будущие)
                 let hiddenActive = max(0, activeIdxs.count - activeToShow.count)
                 let hiddenFuture = max(0, future.count - futureToShow.count)
                 let hidden = hiddenActive + hiddenFuture
+
                 if hidden > 0 {
                     Text("+\(hidden)")
                         .font(.system(size: 10.5, weight: .semibold))
                         .foregroundColor(.secondary)
-                        .padding(.top, 1)
+                        .padding(.top, 2)
+                        .padding(.bottom, 4)// <- увеличили паддинг сверху, чтобы не висело прямо под последней строкой
                 }
+
             } else {
-                // как раньше: фокус = текущая или ближайшая будущая, иначе nil
+                // нет активных прямо сейчас:
+                // берём текущую (если идёт) или ближайшую будущую
                 let focus = entry.currentEvent ?? events.first { ($0.startDate ?? .distantPast) >= now }
+
                 if let f = focus {
                     FocusEventRow(event: f, theme: theme)
 
-                    // остальные будущие после фокуса (до 4 строк всего)
+                    // остальные будущие после фокуса
                     if let idx = events.firstIndex(where: { $0.id == f.id }) {
                         let future = Array(events.suffix(from: idx + 1))
                         let othersToShow = Array(future.prefix(maxRowsTotal - 1))
-                        ForEach(othersToShow) { ev in
-                            CompactEventRow(event: ev, theme: theme)
+
+                        if !othersToShow.isEmpty {
+                            VStack(alignment: .leading, spacing: 3) {
+                                ForEach(othersToShow) { ev in
+                                    CompactEventRow(event: ev, theme: theme)
+                                }
+                            }
+                            .padding(.top, 3)
                         }
+
                         let hidden = max(0, future.count - othersToShow.count)
                         if hidden > 0 {
                             Text("+\(hidden)")
                                 .font(.system(size: 10.5, weight: .semibold))
                                 .foregroundColor(.secondary)
-                                .padding(.top, 1)
+                                .padding(.top, 3)
                         }
                     }
+
                 } else {
-                    // нет пар
+                    // вообще нет пар
                     HStack(spacing: 6) {
-                        Image(systemName: "zzz").font(.system(size: 14, weight: .semibold)).foregroundColor(.secondary)
+                        Image(systemName: "zzz")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.secondary)
+
                         Text(LocalizedString.commonNoClassesToday.localized)
                             .font(.system(size: 11.5, weight: .medium))
                             .foregroundColor(.secondary)
-                            .lineLimit(2).minimumScaleFactor(0.7)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.7)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
-        .padding(.vertical, 8).padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
     }
 }
 
 private struct FocusEventRow: View {
     let event: ScheduleEvent
     let theme: any Theme
+
     var body: some View {
         HStack(alignment: .top, spacing: 6) {
-            Capsule().fill(colorForType(event.type, fallback: theme.primary)).frame(width: 3, height: 22).padding(.top, 2)
+            Capsule()
+                .fill(colorForType(event.type, fallback: theme.primary))
+                .frame(width: 3, height: 25)
+                .padding(.top, 2)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(eventAbbreviation(from: event.title))
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundColor(.primary)
-                    .lineLimit(1).minimumScaleFactor(0.6).allowsTightening(true)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .allowsTightening(true)
 
                 if isOnline(event) {
-                    Image(systemName: "wifi").font(.system(size: 8)).foregroundColor(theme.online)
+                    Image(systemName: "wifi")
+                        .font(.system(size: 8))
+                        .foregroundColor(theme.online)
                 } else if !event.displayRoom.isEmpty {
                     Text(event.displayRoom)
-                        .font(.system(size: 10)).foregroundColor(.secondary)
-                        .lineLimit(1).minimumScaleFactor(0.6).allowsTightening(true)
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .allowsTightening(true)
                 }
             }
 
@@ -176,14 +217,18 @@ private struct FocusEventRow: View {
                         .font(.system(size: 13, weight: .semibold))
                         .monospacedDigit()
                         .foregroundColor(.primary)
-                        .lineLimit(1).minimumScaleFactor(0.7).allowsTightening(true)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .allowsTightening(true)
                 }
                 if let e = event.endDate {
                     Text(e, style: .time)
                         .font(.system(size: 10))
                         .monospacedDigit()
                         .foregroundColor(.secondary)
-                        .lineLimit(1).minimumScaleFactor(0.7).allowsTightening(true)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .allowsTightening(true)
                 }
             }
             .frame(minWidth: 46, idealWidth: 52, maxWidth: 60, alignment: .trailing)
@@ -194,18 +239,25 @@ private struct FocusEventRow: View {
 private struct CompactEventRow: View {
     let event: ScheduleEvent
     let theme: any Theme
+
     var body: some View {
         HStack(spacing: 4) {
             if isOnline(event) {
-                Image(systemName: "wifi").font(.system(size: 8)).foregroundColor(theme.online)
+                Image(systemName: "wifi")
+                    .font(.system(size: 8))
+                    .foregroundColor(theme.online)
             } else {
-                Circle().fill(colorForType(event.type, fallback: theme.secondary)).frame(width: 4, height: 4)
+                Circle()
+                    .fill(colorForType(event.type, fallback: theme.secondary))
+                    .frame(width: 4, height: 4)
             }
 
             Text(eventAbbreviation(from: event.title))
                 .font(.system(size: 11.5, weight: .semibold))
                 .foregroundColor(.primary)
-                .lineLimit(1).minimumScaleFactor(0.6).allowsTightening(true)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+                .allowsTightening(true)
                 .layoutPriority(1)
 
             Spacer(minLength: 2)
@@ -215,7 +267,9 @@ private struct CompactEventRow: View {
                     .font(.system(size: 11, weight: .medium))
                     .monospacedDigit()
                     .foregroundColor(.primary)
-                    .lineLimit(1).minimumScaleFactor(0.7).allowsTightening(true)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .allowsTightening(true)
                     .frame(minWidth: 38, alignment: .trailing)
             }
         }
