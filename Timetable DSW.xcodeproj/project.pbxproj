@@ -65,6 +65,8 @@
 				Resources/Localizable.xcstrings,
 				Services/DateService/DateService.swift,
 				Services/DateService/DefaultDateService.swift,
+				Services/EventTypeDetector/DefaultEventTypeDetector.swift,
+				Services/EventTypeDetector/EventType.swift,
 			);
 			target = EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */;
 		};

@@ -87,3 +87,21 @@ extension ScheduleEvent: Codable {
         // startDate и endDate не кодируются - они вычисляются из ISO строк
     }
 }
+
+extension ScheduleEvent {
+    func presentationInfo(detector: EventTypeDetector = DefaultEventTypeDetector()) -> EventPresentationInfo {
+        EventPresentationInfo(event: self, detector: detector)
+    }
+
+    func isOnline(detector: EventTypeDetector = DefaultEventTypeDetector()) -> Bool {
+        presentationInfo(detector: detector).isOnline
+    }
+
+    func isCancelled(detector: EventTypeDetector = DefaultEventTypeDetector()) -> Bool {
+        presentationInfo(detector: detector).isCancelled
+    }
+
+    func eventType(detector: EventTypeDetector = DefaultEventTypeDetector()) -> EventType {
+        presentationInfo(detector: detector).kind
+    }
+}

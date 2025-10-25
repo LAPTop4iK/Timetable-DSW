@@ -10,6 +10,7 @@ import WidgetKit
 
 // MARK: - Helpers
 
+/// Создаёт короткую аббревиатуру дисциплины (до 5 символов)
 private func eventAbbreviation(from title: String) -> String {
     let words = title
         .replacingOccurrences(of: "·", with: " ")
@@ -19,36 +20,47 @@ private func eventAbbreviation(from title: String) -> String {
 
     var result = words.compactMap { $0.first?.uppercased() }.joined()
     if result.count < 2 {
-        result = title.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        result = title
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
     }
     return String(result.prefix(5))
 }
 
-// маленький дефис везде
+/// Время в формате "HH:mm-HH:mm" с коротким дефисом
 private func timeRange(_ start: Date?, _ end: Date?) -> String {
     switch (start, end) {
-    case let (s?, e?): return "\(s.formatted(date: .omitted, time: .shortened))-\(e.formatted(date: .omitted, time: .shortened))"
-    case let (s?, nil): return s.formatted(date: .omitted, time: .shortened)
-    case let (nil, e?): return e.formatted(date: .omitted, time: .shortened)
-    default: return ""
+    case let (s?, e?):
+        return "\(s.formatted(date: .omitted, time: .shortened))-\(e.formatted(date: .omitted, time: .shortened))"
+    case let (s?, nil):
+        return s.formatted(date: .omitted, time: .shortened)
+    case let (nil, e?):
+        return e.formatted(date: .omitted, time: .shortened)
+    default:
+        return ""
     }
 }
 
-private func colorForType(_ type: String?, fallback: Color) -> Color {
-    switch type?.lowercased() {
-    case "lecture", "лекция": return Color(red: 1.0, green: 0.5, blue: 0.0)
-    case "exercise", "упражнение": return Color(red: 0.1, green: 0.6, blue: 1.0)
-    case "laboratory", "лабораторная": return Color(red: 0.7, green: 0.2, blue: 0.9)
-    default: return fallback
+/// Цвет акцента для пары.
+/// Вместо хардкода используем цвета текущей темы:
+///  - lecture  → theme.lectureStart
+///  - exercise → theme.exerciseStart
+///  - lab      → theme.laboratoryStart
+///  - other    → theme.primary (фоллбэк)
+private func eventAccentColor(for event: ScheduleEvent, theme: any Theme) -> Color {
+    switch event.eventType() {
+    case .lecture:
+        return theme.lectureStart
+    case .exercise:
+        return theme.exerciseStart
+    case .laboratory:
+        return theme.laboratoryStart
+    case .other:
+        return theme.primary
     }
 }
 
-private func isOnline(_ event: ScheduleEvent) -> Bool {
-    let t = (event.remarks ?? "").lowercased()
-    return t.contains("online") || t.contains("distance") || t.contains("онлайн") || t.contains("zdal") || t.contains("remote")
-}
-
-// Порядок дней: Пн..Вс
+/// Для упорядочивания дней недели (Пн=1 ... Вс=7)
 private func weekdayRank(_ date: Date, calendar: Calendar = .current) -> Int {
     let wd = calendar.component(.weekday, from: date) // 1=Sun..7=Sat
     return wd == 1 ? 7 : wd - 1
@@ -58,22 +70,28 @@ private func weekdayRank(_ date: Date, calendar: Calendar = .current) -> Int {
 
 struct SmallWidgetView: View {
     let entry: TimetableWidgetEntry
+
     @Environment(\.colorScheme) var colorScheme
-    private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
+    private var theme: any Theme {
+        ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
+    }
 
     private let maxRowsTotal = 5
 
     var body: some View {
         let now = entry.date
-        let events = entry.todayEvents
 
-        // активные пары (их может быть несколько одновременно)
+        // фильтруем отменённые пары через общую логику
+        let events = entry.todayEvents.filter { !$0.isCancelled() }
+
+        // индексы всех активных пар (могут идти одновременно)
         let activeIdxs: [Int] = events.enumerated().compactMap { idx, ev in
             guard let s = ev.startDate, let e = ev.endDate else { return nil }
             return (now >= s && now <= e) ? idx : nil
         }
 
         return VStack(alignment: .leading, spacing: 5) {
+
             // HEADER "TODAY"
             Text(LocalizedString.commonToday.localized)
                 .font(.system(size: 11.5, weight: .bold))
@@ -90,7 +108,10 @@ struct SmallWidgetView: View {
                 // 1. показываем все активные (до лимита)
                 let activeToShow = Array(activeIdxs.prefix(maxRowsTotal))
                 ForEach(activeToShow, id: \.self) { idx in
-                    FocusEventRow(event: events[idx], theme: theme)
+                    FocusEventRow(
+                        event: events[idx],
+                        theme: theme
+                    )
                 }
 
                 // 2. будущие пары после последней активной
@@ -101,10 +122,12 @@ struct SmallWidgetView: View {
                 let futureToShow = Array(future.prefix(remainingSlots))
 
                 if !futureToShow.isEmpty {
-                    // добавляем чуть больше воздуха между активным блоком и будущими
                     VStack(alignment: .leading, spacing: 3) {
                         ForEach(futureToShow) { ev in
-                            CompactEventRow(event: ev, theme: theme)
+                            CompactEventRow(
+                                event: ev,
+                                theme: theme
+                            )
                         }
                     }
                     .padding(.top, 3)
@@ -120,16 +143,21 @@ struct SmallWidgetView: View {
                         .font(.system(size: 10.5, weight: .semibold))
                         .foregroundColor(.secondary)
                         .padding(.top, 2)
-                        .padding(.bottom, 4)// <- увеличили паддинг сверху, чтобы не висело прямо под последней строкой
+                        .padding(.bottom, 4)
                 }
 
             } else {
                 // нет активных прямо сейчас:
                 // берём текущую (если идёт) или ближайшую будущую
-                let focus = entry.currentEvent ?? events.first { ($0.startDate ?? .distantPast) >= now }
+                let focus = entry.currentEvent ?? events.first { ev in
+                    (ev.startDate ?? .distantPast) >= now
+                }
 
                 if let f = focus {
-                    FocusEventRow(event: f, theme: theme)
+                    FocusEventRow(
+                        event: f,
+                        theme: theme
+                    )
 
                     // остальные будущие после фокуса
                     if let idx = events.firstIndex(where: { $0.id == f.id }) {
@@ -139,7 +167,10 @@ struct SmallWidgetView: View {
                         if !othersToShow.isEmpty {
                             VStack(alignment: .leading, spacing: 3) {
                                 ForEach(othersToShow) { ev in
-                                    CompactEventRow(event: ev, theme: theme)
+                                    CompactEventRow(
+                                        event: ev,
+                                        theme: theme
+                                    )
                                 }
                             }
                             .padding(.top, 3)
@@ -176,17 +207,22 @@ struct SmallWidgetView: View {
     }
 }
 
+/// Активная пара (подсветка слева вертикальной палкой цвета типа пары)
 private struct FocusEventRow: View {
     let event: ScheduleEvent
     let theme: any Theme
 
     var body: some View {
+        let barColor = eventAccentColor(for: event, theme: theme)
+
         HStack(alignment: .top, spacing: 6) {
+            // палка слева
             Capsule()
-                .fill(colorForType(event.type, fallback: theme.primary))
+                .fill(barColor)
                 .frame(width: 3, height: 25)
                 .padding(.top, 2)
 
+            // инфо слева (аббревиатура + аудитория или wifi)
             VStack(alignment: .leading, spacing: 1) {
                 Text(eventAbbreviation(from: event.title))
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
@@ -195,7 +231,7 @@ private struct FocusEventRow: View {
                     .minimumScaleFactor(0.6)
                     .allowsTightening(true)
 
-                if isOnline(event) {
+                if event.isOnline() {
                     Image(systemName: "wifi")
                         .font(.system(size: 8))
                         .foregroundColor(theme.online)
@@ -211,6 +247,7 @@ private struct FocusEventRow: View {
 
             Spacer(minLength: 4)
 
+            // время справа
             VStack(alignment: .trailing, spacing: 0) {
                 if let s = event.startDate {
                     Text(s, style: .time)
@@ -236,19 +273,22 @@ private struct FocusEventRow: View {
     }
 }
 
+/// Небольшая строка будущей пары
 private struct CompactEventRow: View {
     let event: ScheduleEvent
     let theme: any Theme
 
     var body: some View {
+        let dotColor = eventAccentColor(for: event, theme: theme)
+
         HStack(spacing: 4) {
-            if isOnline(event) {
+            if event.isOnline() {
                 Image(systemName: "wifi")
                     .font(.system(size: 8))
                     .foregroundColor(theme.online)
             } else {
                 Circle()
-                    .fill(colorForType(event.type, fallback: theme.secondary))
+                    .fill(dotColor)
                     .frame(width: 4, height: 4)
             }
 
@@ -276,50 +316,59 @@ private struct CompactEventRow: View {
     }
 }
 
-// MARK: - MEDIUM (окно из 5 пар, подсветка всех активных, скользящее окно дня)
+// MARK: - MEDIUM
 
+/// Medium: окно из максимум 5 строк.
+/// Если есть несколько активных пар → все активные подсвечиваются.
+/// Старые пары схлопываются вверх в "+N", будущие хвосты — вниз в "+N".
 struct MediumWidgetView: View {
     let entry: TimetableWidgetEntry
-    @Environment(\.colorScheme) var colorScheme
-    private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
 
-    // компактная палка слева у активной пары
+    @Environment(\.colorScheme) var colorScheme
+    private var theme: any Theme {
+        ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
+    }
+
+    // компактная палка слева у активных пар
     private let barHeight: CGFloat = 12
     private let barWidth: CGFloat = 2
 
     var body: some View {
-        let events = entry.todayEvents
+        // заранее убираем отменённые
+        let eventsAll = entry.todayEvents.filter { !$0.isCancelled() }
         let now = entry.date
 
-        // активные индексы (все, кто идут прямо сейчас)
-        let activeIdxs: [Int] = events.enumerated().compactMap { idx, ev in
+        // активные индексы — все пары, которые идут сейчас
+        let activeIdxs: [Int] = eventsAll.enumerated().compactMap { idx, ev in
             guard let s = ev.startDate, let e = ev.endDate else { return nil }
             return (now >= s && now <= e) ? idx : nil
         }
         let activeSet = Set(activeIdxs)
 
-        // fallback focus (если активных нет): ближайшая будущая или последняя
+        // fallback, если активных нет
         let focusIdx: Int? = {
             if !activeIdxs.isEmpty { return activeIdxs.min() }
-            if let idxNext = events.firstIndex(where: { ev in
+            if let idxNext = eventsAll.firstIndex(where: { ev in
                 if let s = ev.startDate { return s > now }
                 return false
             }) { return idxNext }
-            if !events.isEmpty { return events.count - 1 }
+            if !eventsAll.isEmpty { return eventsAll.count - 1 }
             return nil
         }()
 
+        // считаем окно
         let window = computeWindowMultiActive(
-            events: events,
+            events: eventsAll,
             activeIdxs: activeIdxs,
             focusIdx: focusIdx,
             maxVisible: 5
         )
 
-        let visible = window.visible
+        let visibleEvents = window.visible
         let startIndex = window.startIndex
 
         return VStack(alignment: .leading, spacing: 5) {
+
             // HEADER
             HStack(spacing: 6) {
                 Text(LocalizedString.commonToday.localized)
@@ -341,22 +390,27 @@ struct MediumWidgetView: View {
                     .lineLimit(1)
             }
 
-            if events.isEmpty {
+            if eventsAll.isEmpty {
                 noEventsView
             } else {
                 VStack(alignment: .leading, spacing: 2.5) {
+
+                    // +N сверху, если урезали прошедшие пары
                     if window.hiddenBefore > 0 {
                         Text("+\(window.hiddenBefore) \(LocalizedString.commonMoreSuffix.localized)")
                             .font(.system(size: 9.5))
                             .foregroundColor(.secondary)
                     }
 
-                    ForEach(Array(visible.enumerated()), id: \.offset) { offset, ev in
+                    // пары
+                    ForEach(Array(visibleEvents.enumerated()), id: \.offset) { offset, ev in
                         let globalIndex = startIndex + offset
                         let isHighlighted = activeSet.contains(globalIndex)
+
                         eventRow(ev, highlight: isHighlighted)
                     }
 
+                    // +N снизу, если урезали будущие пары
                     if window.hiddenAfter > 0 {
                         Text("+\(window.hiddenAfter) \(LocalizedString.commonMoreSuffix.localized)")
                             .font(.system(size: 9.5))
@@ -369,19 +423,25 @@ struct MediumWidgetView: View {
         .padding(.horizontal, 10)
     }
 
-    /// Одна строка расписания
+    /// Одна строка расписания в Medium
     private func eventRow(_ event: ScheduleEvent, highlight: Bool) -> some View {
-        HStack(alignment: .center, spacing: 5) {
+        let barColor = eventAccentColor(for: event, theme: theme)
+
+        return HStack(alignment: .center, spacing: 5) {
+            // левая палка, только если highlight == true
             if highlight {
                 Capsule()
-                    .fill(colorForType(event.type, fallback: theme.primary))
+                    .fill(barColor)
                     .frame(width: barWidth, height: barHeight)
                     .fixedSize()
             } else {
-                Color.clear.frame(width: barWidth, height: barHeight).fixedSize()
+                Color.clear
+                    .frame(width: barWidth, height: barHeight)
+                    .fixedSize()
             }
 
             HStack(spacing: 4) {
+                // Время (start-end)
                 Text(timeRange(event.startDate, event.endDate))
                     .font(.system(size: 11.5, weight: .semibold))
                     .monospacedDigit()
@@ -389,12 +449,14 @@ struct MediumWidgetView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.9)
 
+                // Аббревиатура предмета
                 Text(eventAbbreviation(from: event.title))
                     .font(.system(size: 11.5, weight: .medium))
                     .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
+                // Аудитория если оффлайн
                 if !event.displayRoom.isEmpty {
                     Text(event.displayRoom)
                         .font(.system(size: 10))
@@ -405,7 +467,8 @@ struct MediumWidgetView: View {
 
                 Spacer(minLength: 0)
 
-                if isOnline(event) {
+                // Значок Wi-Fi если онлайн
+                if event.isOnline() {
                     Image(systemName: "wifi")
                         .font(.system(size: 9.5))
                         .foregroundColor(theme.online)
@@ -422,9 +485,11 @@ struct MediumWidgetView: View {
                 .foregroundStyle(
                     LinearGradient(
                         colors: [theme.primary, theme.secondary],
-                        startPoint: .topLeading, endPoint: .bottomTrailing
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     )
                 )
+
             VStack(alignment: .leading, spacing: 1) {
                 Text(LocalizedString.commonNoClassesToday.localized)
                     .font(.system(size: 12.5, weight: .medium))
@@ -444,19 +509,29 @@ struct MediumWidgetView: View {
 
     // MARK: - Sliding window logic (multi-active aware)
 
-    /// Окно максимум из maxVisible строк.
-    /// Если есть активные — стараемся уместить **все активные**.
-    /// Если спан активных длиннее окна — берём первые maxVisible из спана.
+    /// Возвращает окно максимум из maxVisible событий.
+    /// Если есть активные — стараемся уместить все активные подряд.
+    /// Дальше добиваем предыдущей/следующей, но не больше 5 строк.
+    /// hiddenBefore/hiddenAfter идут в "+N".
     private func computeWindowMultiActive(
         events: [ScheduleEvent],
         activeIdxs: [Int],
         focusIdx: Int?,
         maxVisible: Int
-    ) -> (visible: [ScheduleEvent], startIndex: Int, hiddenBefore: Int, hiddenAfter: Int) {
-        guard !events.isEmpty else { return ([], 0, 0, 0) }
+    ) -> (
+        visible: [ScheduleEvent],
+        startIndex: Int,
+        hiddenBefore: Int,
+        hiddenAfter: Int
+    ) {
+        guard !events.isEmpty else {
+            return ([], 0, 0, 0)
+        }
+
         let total = events.count
 
         if !activeIdxs.isEmpty {
+            // диапазон активных
             let minA = activeIdxs.min()!
             let maxA = activeIdxs.max()!
             let spanCount = maxA - minA + 1
@@ -465,21 +540,21 @@ struct MediumWidgetView: View {
             var endExclusive: Int
 
             if spanCount >= maxVisible {
-                // активных больше окна — показываем первые maxVisible из спана
+                // активных столько, что они сами заполняют окно
                 start = minA
                 endExclusive = min(total, start + maxVisible)
             } else {
-                // хотим: [одна прошедшая] + [все активные] + [добить будущими]
+                // хотим захватить одну прошедшую перед minA и добить будущими
                 start = max(0, minA - 1)
                 endExclusive = start + maxVisible
 
-                // если активные не помещаются справа, сдвигаем окно влево
+                // если окно не покрывает весь активный диапазон — двигаем
                 if endExclusive < maxA + 1 {
                     start = max(0, (maxA + 1) - maxVisible)
                     endExclusive = min(total, start + maxVisible)
                 }
 
-                // если мы в самом конце дня — подтянуть окно вниз
+                // если ушли в самый конец дня — корректируем
                 if endExclusive > total {
                     endExclusive = total
                     start = max(0, endExclusive - maxVisible)
@@ -490,15 +565,16 @@ struct MediumWidgetView: View {
             let hiddenBefore = max(0, start)
             let hiddenAfter = max(0, total - endExclusive)
             return (vis, start, hiddenBefore, hiddenAfter)
+
         } else {
-            // нет активных: прежняя логика — фокус + одна прошедшая
+            // нет активных: берём focusIdx (текущая/ближайшая/последняя)
             let focus = focusIdx ?? 0
             var start = max(0, focus - 1)
             var endExclusive = min(total, start + maxVisible)
 
-            // если не хватает до конца — сдвигаем вниз
-            if endExclusive - start < maxVisible && endExclusive < total {
-                start = max(0, min(total - maxVisible, start))
+            // если осталось мало снизу — сдвинем окно в конец дня
+            if (endExclusive - start) < maxVisible && endExclusive < total {
+                start = max(0, total - maxVisible)
                 endExclusive = min(total, start + maxVisible)
             }
 
@@ -510,27 +586,47 @@ struct MediumWidgetView: View {
     }
 }
 
+// MARK: - LARGE (неделя)
 
-// MARK: - LARGE — неделя: 2×3, ещё компактнее шрифты/отступы в колоночном режиме
-
-// MARK: - LARGE — неделя: 2×3, ещё компактнее шрифты/отступы в колоночном режиме
-
+/// Large: неделя.
+/// Если дней >=4 (или 3 дня, но перегружены) — рисуем двухколоночную сетку:
+/// каждая строка = два дня слева/справа, выравниваем по верху.
+/// Внутри дня:
+///  - время не сжимается,
+///  - название может сжаться,
+///  - аудитория может сжаться сильнее,
+///  - Wi-Fi для онлайна.
+/// Пары с isCancelled() вообще не показываем.
 struct LargeWidgetView: View {
     let entry: TimetableWidgetEntry
+
     @Environment(\.colorScheme) var colorScheme
-    private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
+    private var theme: any Theme {
+        ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
+    }
 
     var body: some View {
         let calendar = Calendar.current
+
+        // сортируем дни недели
         let orderedDays = entry.weekEvents.keys.sorted {
             weekdayRank($0, calendar: calendar) < weekdayRank($1, calendar: calendar)
         }
+
         let dayCount = orderedDays.count
         let eventsByDay = entry.weekEvents
-        let maxPerDay = orderedDays.map { eventsByDay[$0]?.count ?? 0 }.max() ?? 0
+
+        // максимум пар в дне
+        let maxPerDay = orderedDays
+            .map { (eventsByDay[$0]?.count ?? 0) }
+            .max() ?? 0
+
+        // решаем, нужен ли двухколоночный режим
         let useGrid = (dayCount >= 4) || (dayCount == 3 && maxPerDay >= 5)
 
         return VStack(alignment: .leading, spacing: 6) {
+
+            // HEADER недели
             HStack {
                 Text(LocalizedString.commonThisWeek.localized)
                     .font(.system(size: 17, weight: .bold))
@@ -541,7 +637,9 @@ struct LargeWidgetView: View {
                             endPoint: .trailing
                         )
                     )
+
                 Spacer()
+
                 let weekNum = calendar.component(.weekOfYear, from: entry.date)
                 Text("\(LocalizedString.commonWeek.localized) \(weekNum)")
                     .font(.system(size: 11))
@@ -549,25 +647,27 @@ struct LargeWidgetView: View {
             }
 
             if dayCount == 0 {
+                // Неделя пустая
                 Spacer()
                 Text("\(LocalizedString.commonNoClasses.localized) \(LocalizedString.commonThisWeek.localized.lowercased())")
                     .font(.system(size: 13.5))
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                 Spacer()
+
             } else if useGrid {
+                // Двухколоночный режим
                 let splitIndex = gridSplitIndex(for: dayCount)
-                let leftDays  = Array(orderedDays.prefix(splitIndex))      // например Пн / Вт / Ср
-                let rightDays = Array(orderedDays.dropFirst(splitIndex))   // например Чт / Пт / Сб
+                let leftDays  = Array(orderedDays.prefix(splitIndex))
+                let rightDays = Array(orderedDays.dropFirst(splitIndex))
                 let rows = max(leftDays.count, rightDays.count)
 
-                // рендерим ПО СТРОКАМ:
-                // каждая строка — пара дней (левый + правый)
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(0..<rows, id: \.self) { i in
                         HStack(alignment: .top, spacing: 8) {
-                            // левая половина строки
-                            if i < leftDays.count, let evs = entry.weekEvents[leftDays[i]] {
+                            // левая колонка
+                            if i < leftDays.count,
+                               let evs = entry.weekEvents[leftDays[i]] {
                                 DaySectionCompactView(
                                     date: leftDays[i],
                                     events: evs,
@@ -575,14 +675,13 @@ struct LargeWidgetView: View {
                                 )
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             } else {
-                                // если дня нет (например правая колонка длиннее),
-                                // кладём пустой блок, чтобы правая колонка не прыгала влево
                                 Color.clear
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
 
-                            // правая половина строки
-                            if i < rightDays.count, let evs = entry.weekEvents[rightDays[i]] {
+                            // правая колонка
+                            if i < rightDays.count,
+                               let evs = entry.weekEvents[rightDays[i]] {
                                 DaySectionCompactView(
                                     date: rightDays[i],
                                     events: evs,
@@ -596,10 +695,16 @@ struct LargeWidgetView: View {
                         }
                     }
                 }
+
             } else {
+                // Вертикальный режим (мало учебных дней)
                 ForEach(orderedDays, id: \.self) { day in
                     if let events = entry.weekEvents[day] {
-                        DaySectionView(date: day, events: events, theme: theme)
+                        DaySectionView(
+                            date: day,
+                            events: events,
+                            theme: theme
+                        )
                     }
                 }
             }
@@ -609,6 +714,7 @@ struct LargeWidgetView: View {
     }
 }
 
+/// как разделить дни на левую/правую колонну
 private func gridSplitIndex(for daysCount: Int) -> Int {
     switch daysCount {
     case 6: return 3      // 3+3
@@ -621,40 +727,54 @@ private func gridSplitIndex(for daysCount: Int) -> Int {
     }
 }
 
-// Компактная секция дня для сетки
+/// Компактный блок дня для сетки (2 колонки)
 private struct DaySectionCompactView: View {
     let date: Date
     let events: [ScheduleEvent]
     let theme: any Theme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2.5) {
+        // не показываем отменённые пары
+        let filtered = events.filter { !$0.isCancelled() }
+
+        return VStack(alignment: .leading, spacing: 2.5) {
+            // заголовок дня
             HStack(spacing: 4) {
                 Text(date, format: .dateTime.weekday(.abbreviated))
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundColor(Calendar.current.isDateInToday(date) ? theme.accent : .primary)
+                    .foregroundColor(
+                        Calendar.current.isDateInToday(date)
+                        ? theme.accent
+                        : .primary
+                    )
+
                 Text(date, format: .dateTime.day())
                     .font(.system(size: 9.5))
                     .foregroundColor(.secondary)
+
                 Spacer(minLength: 0)
             }
 
-            ForEach(events.prefix(5)) { ev in
+            // максимум 5 пар
+            ForEach(filtered.prefix(5)) { ev in
+                let color = eventAccentColor(for: ev, theme: theme)
+
                 HStack(spacing: 3.5) {
+                    // точка по цвету типа пары
                     Circle()
-                        .fill(colorForType(ev.type, fallback: theme.primary))
+                        .fill(color)
                         .frame(width: 3, height: 3)
 
-                    // ВРЕМЯ — нельзя сжимать, всегда читабельное
+                    // ВРЕМЯ — не сжимать
                     Text(timeRange(ev.startDate, ev.endDate))
                         .font(.system(size: 10, weight: .semibold))
                         .monospacedDigit()
                         .foregroundColor(.primary)
                         .lineLimit(1)
-                        .minimumScaleFactor(1.0)   // не сжимать
-                        .layoutPriority(2)         // самый высокий приоритет
+                        .minimumScaleFactor(1.0)
+                        .layoutPriority(2)
 
-                    // НАЗВАНИЕ — может немного ужаться
+                    // НАЗВАНИЕ — можно ужать
                     Text(eventAbbreviation(from: ev.title))
                         .font(.system(size: 10))
                         .foregroundColor(.primary)
@@ -663,8 +783,7 @@ private struct DaySectionCompactView: View {
                         .allowsTightening(true)
                         .layoutPriority(1)
 
-                    // АУДИТОРИЯ — самая низкая важность:
-                    // маленький шрифт, может сильно ужаться
+                    // АУДИТОРИЯ — самая низкая важность (сжимается сильнее)
                     if !ev.displayRoom.isEmpty {
                         Text(ev.displayRoom)
                             .font(.system(size: 9))
@@ -677,7 +796,8 @@ private struct DaySectionCompactView: View {
 
                     Spacer(minLength: 0)
 
-                    if isOnline(ev) {
+                    // Wi-Fi если онлайн
+                    if ev.isOnline() {
                         Image(systemName: "wifi")
                             .font(.system(size: 8.5))
                             .foregroundColor(theme.online)
@@ -685,8 +805,8 @@ private struct DaySectionCompactView: View {
                 }
             }
 
-            if events.count > 5 {
-                Text("+\(events.count - 5)")
+            if filtered.count > 5 {
+                Text("+\(filtered.count - 5)")
                     .font(.system(size: 9.5, weight: .semibold))
                     .foregroundColor(.secondary)
             }
@@ -694,41 +814,55 @@ private struct DaySectionCompactView: View {
     }
 }
 
-// Вертикальная секция дня (≤3 дней)
+/// Вертикальная секция дня, если дней <=3 (не сетка)
 private struct DaySectionView: View {
     let date: Date
     let events: [ScheduleEvent]
     let theme: any Theme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        let filtered = events.filter { !$0.isCancelled() }
+
+        return VStack(alignment: .leading, spacing: 4) {
+
+            // заголовок дня
             HStack(spacing: 5) {
                 Text(date, format: .dateTime.weekday(.abbreviated))
                     .font(.system(size: 11.5, weight: .semibold))
-                    .foregroundColor(Calendar.current.isDateInToday(date) ? theme.accent : .primary)
+                    .foregroundColor(
+                        Calendar.current.isDateInToday(date)
+                        ? theme.accent
+                        : .primary
+                    )
+
                 Text(date, format: .dateTime.day())
                     .font(.system(size: 10.5))
                     .foregroundColor(.secondary)
+
                 Spacer()
-                Text("\(events.count) \(LocalizedString.commonClasses.localized)")
+
+                Text("\(filtered.count) \(LocalizedString.commonClasses.localized)")
                     .font(.system(size: 9.5))
                     .foregroundColor(.secondary)
             }
 
-            ForEach(events.prefix(5)) { ev in
+            // максимум 5 пар
+            ForEach(filtered.prefix(5)) { ev in
+                let color = eventAccentColor(for: ev, theme: theme)
+
                 HStack(spacing: 5) {
                     Circle()
-                        .fill(colorForType(ev.type, fallback: theme.primary))
+                        .fill(color)
                         .frame(width: 4, height: 4)
 
-                    // ВРЕМЯ — фиксировано читабельное
+                    // ВРЕМЯ — фиксировано читаемое, не сжимать
                     Text(timeRange(ev.startDate, ev.endDate))
                         .font(.system(size: 11, weight: .semibold))
                         .monospacedDigit()
                         .foregroundColor(.primary)
                         .lineLimit(1)
-                        .minimumScaleFactor(1.0)   // не уменьшаем цифры
-                        .layoutPriority(2)         // важнее всего
+                        .minimumScaleFactor(1.0)
+                        .layoutPriority(2)
 
                     // НАЗВАНИЕ — средний приоритет
                     Text(eventAbbreviation(from: ev.title))
@@ -752,7 +886,7 @@ private struct DaySectionView: View {
 
                     Spacer(minLength: 0)
 
-                    if isOnline(ev) {
+                    if ev.isOnline() {
                         Image(systemName: "wifi")
                             .font(.system(size: 9.5))
                             .foregroundColor(theme.online)
@@ -760,8 +894,8 @@ private struct DaySectionView: View {
                 }
             }
 
-            if events.count > 5 {
-                Text("+\(events.count - 5)")
+            if filtered.count > 5 {
+                Text("+\(filtered.count - 5)")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.secondary)
             }
