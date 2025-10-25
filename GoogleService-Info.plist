@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAHQZuAc2v_o3KtE3gwfGocNh5N3zdB4jY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>573907115251</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.laptenok.Timetable-DSW.rl</string>
+	<key>PROJECT_ID</key>
+	<string>timetable-dsw</string>
+	<key>STORAGE_BUCKET</key>
+	<string>timetable-dsw.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:573907115251:ios:a3de658e68a8a2d1276b86</string>
+</dict>
+</plist>
