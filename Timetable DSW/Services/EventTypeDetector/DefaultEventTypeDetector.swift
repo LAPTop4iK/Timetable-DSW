@@ -57,3 +57,16 @@ final class DefaultEventTypeDetector: EventTypeDetector {
         }
     }
 }
+
+struct EventPresentationInfo {
+    let kind: EventType        // lecture / exercise / lab / other
+    let isOnline: Bool         // пара онлайн?
+    let isCancelled: Bool      // пара отменена?
+
+    init(event: ScheduleEvent,
+                detector: EventTypeDetector = DefaultEventTypeDetector()) {
+        self.kind = detector.detectEventType(from: event.type)
+        self.isOnline = detector.isOnline(remarks: event.remarks)
+        self.isCancelled = detector.isCancelled(remarks: event.remarks)
+    }
+}
