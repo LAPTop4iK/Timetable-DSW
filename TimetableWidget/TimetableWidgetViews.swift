@@ -459,6 +459,8 @@ struct MediumWidgetView: View {
 
 // MARK: - LARGE — неделя: 2×3, ещё компактнее шрифты/отступы в колоночном режиме
 
+// MARK: - LARGE — неделя: 2×3, ещё компактнее шрифты/отступы в колоночном режиме
+
 struct LargeWidgetView: View {
     let entry: TimetableWidgetEntry
     @Environment(\.colorScheme) var colorScheme
@@ -478,36 +480,51 @@ struct LargeWidgetView: View {
             HStack {
                 Text(LocalizedString.commonThisWeek.localized)
                     .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(LinearGradient(colors: [theme.primary, theme.secondary], startPoint: .leading, endPoint: .trailing))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [theme.primary, theme.secondary],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                 Spacer()
                 let weekNum = calendar.component(.weekOfYear, from: entry.date)
                 Text("\(LocalizedString.commonWeek.localized) \(weekNum)")
-                    .font(.system(size: 11)).foregroundColor(.secondary)
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
             }
 
             if dayCount == 0 {
                 Spacer()
                 Text("\(LocalizedString.commonNoClasses.localized) \(LocalizedString.commonThisWeek.localized.lowercased())")
-                    .font(.system(size: 13.5)).foregroundColor(.secondary)
+                    .font(.system(size: 13.5))
+                    .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                 Spacer()
             } else if useGrid {
-                // пары строк: [Пн,Вт,Ср] / [Чт,Пт,Сб]
                 let splitIndex = gridSplitIndex(for: dayCount)
                 let leftDays = Array(orderedDays.prefix(splitIndex))
                 let rightDays = Array(orderedDays.dropFirst(splitIndex))
                 let rows = max(leftDays.count, rightDays.count)
 
-                let columns = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
+                let columns = [
+                    GridItem(.flexible(), spacing: 8),
+                    GridItem(.flexible(), spacing: 8)
+                ]
+
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 6) {
                     ForEach(0..<rows, id: \.self) { i in
                         if i < leftDays.count, let evs = entry.weekEvents[leftDays[i]] {
                             DaySectionCompactView(date: leftDays[i], events: evs, theme: theme)
-                        } else { Color.clear.frame(height: 0) }
+                        } else {
+                            Color.clear.frame(height: 0)
+                        }
 
                         if i < rightDays.count, let evs = entry.weekEvents[rightDays[i]] {
                             DaySectionCompactView(date: rightDays[i], events: evs, theme: theme)
-                        } else { Color.clear.frame(height: 0) }
+                        } else {
+                            Color.clear.frame(height: 0)
+                        }
                     }
                 }
             } else {
@@ -518,7 +535,8 @@ struct LargeWidgetView: View {
                 }
             }
         }
-        .padding(.vertical, 8).padding(.horizontal, 9)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 9)
     }
 }
 
@@ -530,7 +548,7 @@ private func gridSplitIndex(for daysCount: Int) -> Int {
     case 3: return 2      // 2+1
     case 2: return 1      // 1+1
     default:
-        return Int(ceil(Double(daysCount) / 2.0)) // 7+: балансно
+        return Int(ceil(Double(daysCount) / 2.0))
     }
 }
 
@@ -547,39 +565,53 @@ private struct DaySectionCompactView: View {
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(Calendar.current.isDateInToday(date) ? theme.accent : .primary)
                 Text(date, format: .dateTime.day())
-                    .font(.system(size: 9.5)).foregroundColor(.secondary)
+                    .font(.system(size: 9.5))
+                    .foregroundColor(.secondary)
                 Spacer(minLength: 0)
             }
 
             ForEach(events.prefix(5)) { ev in
                 HStack(spacing: 3.5) {
-                    Circle().fill(colorForType(ev.type, fallback: theme.primary)).frame(width: 3, height: 3)
+                    Circle()
+                        .fill(colorForType(ev.type, fallback: theme.primary))
+                        .frame(width: 3, height: 3)
 
+                    // ВРЕМЯ — нельзя сжимать, всегда читабельное
                     Text(timeRange(ev.startDate, ev.endDate))
                         .font(.system(size: 10, weight: .semibold))
                         .monospacedDigit()
                         .foregroundColor(.primary)
                         .lineLimit(1)
+                        .minimumScaleFactor(1.0)   // не сжимать
+                        .layoutPriority(2)         // самый высокий приоритет
 
+                    // НАЗВАНИЕ — может немного ужаться
                     Text(eventAbbreviation(from: ev.title))
                         .font(.system(size: 10))
                         .foregroundColor(.primary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                         .allowsTightening(true)
+                        .layoutPriority(1)
 
+                    // АУДИТОРИЯ — самая низкая важность:
+                    // маленький шрифт, может сильно ужаться
                     if !ev.displayRoom.isEmpty {
                         Text(ev.displayRoom)
                             .font(.system(size: 9))
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                            .minimumScaleFactor(0.78)
+                            .minimumScaleFactor(0.5)
+                            .allowsTightening(true)
+                            .layoutPriority(0)
                     }
 
                     Spacer(minLength: 0)
 
                     if isOnline(ev) {
-                        Image(systemName: "wifi").font(.system(size: 8.5)).foregroundColor(theme.online)
+                        Image(systemName: "wifi")
+                            .font(.system(size: 8.5))
+                            .foregroundColor(theme.online)
                     }
                 }
             }
@@ -606,40 +638,55 @@ private struct DaySectionView: View {
                     .font(.system(size: 11.5, weight: .semibold))
                     .foregroundColor(Calendar.current.isDateInToday(date) ? theme.accent : .primary)
                 Text(date, format: .dateTime.day())
-                    .font(.system(size: 10.5)).foregroundColor(.secondary)
+                    .font(.system(size: 10.5))
+                    .foregroundColor(.secondary)
                 Spacer()
                 Text("\(events.count) \(LocalizedString.commonClasses.localized)")
-                    .font(.system(size: 9.5)).foregroundColor(.secondary)
+                    .font(.system(size: 9.5))
+                    .foregroundColor(.secondary)
             }
 
             ForEach(events.prefix(5)) { ev in
                 HStack(spacing: 5) {
-                    Circle().fill(colorForType(ev.type, fallback: theme.primary)).frame(width: 4, height: 4)
+                    Circle()
+                        .fill(colorForType(ev.type, fallback: theme.primary))
+                        .frame(width: 4, height: 4)
 
+                    // ВРЕМЯ — фиксировано читабельное
                     Text(timeRange(ev.startDate, ev.endDate))
                         .font(.system(size: 11, weight: .semibold))
                         .monospacedDigit()
                         .foregroundColor(.primary)
                         .lineLimit(1)
+                        .minimumScaleFactor(1.0)   // не уменьшаем цифры
+                        .layoutPriority(2)         // важнее всего
 
+                    // НАЗВАНИЕ — средний приоритет
                     Text(eventAbbreviation(from: ev.title))
                         .font(.system(size: 11))
                         .foregroundColor(.primary)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.85)
+                        .minimumScaleFactor(0.8)
+                        .allowsTightening(true)
+                        .layoutPriority(1)
 
+                    // АУДИТОРИЯ — можно ужать
                     if !ev.displayRoom.isEmpty {
                         Text(ev.displayRoom)
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                            .minimumScaleFactor(0.85)
+                            .minimumScaleFactor(0.5)
+                            .allowsTightening(true)
+                            .layoutPriority(0)
                     }
 
                     Spacer(minLength: 0)
 
                     if isOnline(ev) {
-                        Image(systemName: "wifi").font(.system(size: 9.5)).foregroundColor(theme.online)
+                        Image(systemName: "wifi")
+                            .font(.system(size: 9.5))
+                            .foregroundColor(theme.online)
                     }
                 }
             }
@@ -652,3 +699,140 @@ private struct DaySectionView: View {
         }
     }
 }
+
+
+//// MARK: - Превью (Large, 3×5 и 3×6)
+//
+//#if DEBUG
+//#Preview("Large – 3 days × 5", as: .systemLarge) {
+//    TimetableWidget()
+//} timeline: {
+//    TestData.makeEntry(days: 4, perDay: 5)
+//}
+//
+//#Preview("Large – 3 days × 6", as: .systemLarge) {
+//    TimetableWidget()
+//} timeline: {
+//    TestData.makeEntry(days: 4, perDay: 6)
+//}
+//
+//// MARK: - Preview Mocks (type-checker friendly)
+//
+//enum TestData {
+//    // Календарь/временные константы вынесены и типизированы
+//    private static let cal: Calendar = {
+//        var c = Calendar(identifier: .gregorian)
+//        c.locale = Locale(identifier: "en_US_POSIX")
+//        c.timeZone = .current
+//        return c
+//    }()
+//
+//    private static let slot: TimeInterval = 75 * 60 // 75 минут пара
+//
+//    // Один форматтер на все
+//    private static let iso: ISO8601DateFormatter = {
+//        let f = ISO8601DateFormatter()
+//        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+//        f.timeZone = .current
+//        return f
+//    }()
+//
+//    // Разбиваем большие литералы на батчи — так превью не «подменяет» одну огромную строку
+//    private static let titles: [String] = {
+//        var out: [String] = []
+//        out += ["PGD", "HMWIA", "WDGS"]
+//        out += ["PPP", "KP1", "UED"]
+//        out += ["PR", "PPG", "PJFIP"]
+//        out += ["ALG", "DB"]
+//        return out
+//    }()
+//
+//    private static let rooms: [String] = {
+//        var out: [String] = []
+//        out += ["S55 106", "S55 107", "S47 119"]
+//        out += ["S47 216", "S47 314", "S55 308"]
+//        return out
+//    }()
+//
+//    // Понедельник текущей недели
+//    private static func mondayOfCurrentWeek(_ date: Date = .now) -> Date {
+//        let comps = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+//        return cal.date(from: comps) ?? date
+//    }
+//
+//    // MARK: - Schedule factory (под твою модель)
+//
+//    static func buildPreviewSchedule(
+//        days: Int,
+//        perDay: Int,
+//        startHour: Int = 8,
+//        includeOnline: Bool = true
+//    ) -> GroupScheduleResponse {
+//        var events: [ScheduleEvent] = []
+//        events.reserveCapacity(max(0, min(days, 7) * perDay))
+//
+//        let weekStart: Date = mondayOfCurrentWeek()
+//
+//        for d in 0..<min(days, 7) {
+//            guard
+//                let day = cal.date(byAdding: .day, value: d, to: weekStart),
+//                let dayStart = cal.date(bySettingHour: startHour, minute: 0, second: 0, of: day)
+//            else { continue }
+//
+//            for i in 0..<perDay {
+//                let start: Date = dayStart.addingTimeInterval(TimeInterval(i) * slot)
+//                let end: Date   = start.addingTimeInterval(slot)
+//
+//                let title: String = titles[(d + i) % titles.count]
+//                let room: String  = rooms[(d * 2 + i) % rooms.count]
+//                let type: String  = (i % 3 == 0) ? "lecture" : ((i % 3 == 1) ? "exercise" : "laboratory")
+//                let online: Bool  = includeOnline && (i % 4 == 3)
+//
+//                // Конструктор строго под твою модель ScheduleEvent
+//                let ev = ScheduleEvent(
+//                    title: title,
+//                    type: type,
+//                    startISO: iso.string(from: start),
+//                    endISO: iso.string(from: end),
+//                    room: online ? "" : room,          // если online, комнаты нет
+//                    grading: nil,
+//                    remarks: online ? "online" : nil,  // помечаем online для иконки Wi-Fi
+//                    studyTrack: nil,
+//                    groups: nil,
+//                    teacherId: 1,
+//                    teacherName: "Dr. Novak",
+//                    teacherEmail: nil,
+//                    startDate: start,
+//                    endDate: end
+//                )
+//                events.append(ev)
+//            }
+//        }
+//
+//        // Оставь ровно тот init, который есть у тебя в проекте.
+//        // Если у тебя именно такой — будет работать из коробки:
+//        return GroupScheduleResponse(
+//            groupId: 2345,
+//            from: "2025-09-01",
+//            to: "2026-01-31",
+//            intervalType: 1,
+//            groupSchedule: events,
+//            fetchedAt: "2025-10-25T00:00:00Z"
+//        )
+//        // Если у тебя другой init, замени на свой, но оставь events как есть.
+//    }
+//
+//    // MARK: - Entry builder
+//
+//    static func makeEntry(days: Int, perDay: Int) -> TimetableWidgetEntry {
+//        let schedule: GroupScheduleResponse = buildPreviewSchedule(days: days, perDay: perDay)
+//        return TimetableWidgetEntry(
+//            date: .now,
+//            schedule: schedule,
+//            selectedThemeId: "default",
+//            appearanceMode: "system",
+//            configuration: nil
+//        )
+//    }
+//}
+//#endif
