@@ -1,467 +1,637 @@
 //
 //  TimetableWidgetViews.swift
-//  TimetableWidget
 //
-//  Created by Claude on 23/10/2025.
+//  TimetableWidgetViews.swift
+//  TimetableWidget
 //
 
 import SwiftUI
 import WidgetKit
 
-// MARK: - Small Widget (Compact)
+// MARK: - Helpers
+
+private func eventAbbreviation(from title: String) -> String {
+    let words = title
+        .replacingOccurrences(of: "·", with: " ")
+        .replacingOccurrences(of: "—", with: " ")
+        .split { $0.isWhitespace || $0.isNewline || $0.isPunctuation }
+        .map(String.init)
+
+    var result = words.compactMap { $0.first?.uppercased() }.joined()
+    if result.count < 2 {
+        result = title.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+    }
+    return String(result.prefix(5))
+}
+
+// маленький дефис везде
+private func timeRange(_ start: Date?, _ end: Date?) -> String {
+    switch (start, end) {
+    case let (s?, e?): return "\(s.formatted(date: .omitted, time: .shortened))-\(e.formatted(date: .omitted, time: .shortened))"
+    case let (s?, nil): return s.formatted(date: .omitted, time: .shortened)
+    case let (nil, e?): return e.formatted(date: .omitted, time: .shortened)
+    default: return ""
+    }
+}
+
+private func colorForType(_ type: String?, fallback: Color) -> Color {
+    switch type?.lowercased() {
+    case "lecture", "лекция": return Color(red: 1.0, green: 0.5, blue: 0.0)
+    case "exercise", "упражнение": return Color(red: 0.1, green: 0.6, blue: 1.0)
+    case "laboratory", "лабораторная": return Color(red: 0.7, green: 0.2, blue: 0.9)
+    default: return fallback
+    }
+}
+
+private func isOnline(_ event: ScheduleEvent) -> Bool {
+    let t = event.remarks?.lowercased() ?? ""
+    return t.contains("distance") || t.contains("онлайн") || t.contains("zdal") || t.contains("remote")
+}
+
+// Порядок дней: Пн..Вс
+private func weekdayRank(_ date: Date, calendar: Calendar = .current) -> Int {
+    let wd = calendar.component(.weekday, from: date) // 1=Sun..7=Sat
+    return wd == 1 ? 7 : wd - 1
+}
+
+// MARK: - SMALL
 
 struct SmallWidgetView: View {
     let entry: TimetableWidgetEntry
     @Environment(\.colorScheme) var colorScheme
-
-    private var theme: any Theme {
-        ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
-    }
+    private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
 
     var body: some View {
-        ZStack {
-            // Liquid glass background
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    LinearGradient(
-                        colors: [
-                            theme.primary.opacity(0.3),
-                            theme.secondary.opacity(0.2)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    .blur(radius: 10)
-                }
-                .overlay {
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.5),
-                                    Color.white.opacity(0.1)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                }
+        let now = entry.date
+        let events = entry.todayEvents
+        let focus = entry.currentEvent ?? events.first { ($0.startDate ?? .distantPast) >= now }
+        let others: [ScheduleEvent] = {
+            guard let f = focus,
+                  let idx = events.firstIndex(where: { $0.title == f.title && $0.startDate == f.startDate }) else { return [] }
+            return Array(events.suffix(from: events.index(after: idx)))
+        }()
 
-            if let currentEvent = entry.currentEvent {
-                currentEventView(currentEvent)
-            } else if let nextEvent = entry.nextEvent {
-                nextEventView(nextEvent)
-            } else {
-                noEventsView
-            }
-        }
-    }
-
-    private func currentEventView(_ event: ScheduleEvent) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Circle()
-                    .fill(theme.online)
-                    .frame(width: 8, height: 8)
-                Text("NOW")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(theme.online)
-            }
-
-            Text(event.title)
-                .font(.system(size: 14, weight: .semibold))
-                .lineLimit(2)
-                .foregroundColor(.primary)
-
-            if !event.displayRoom.isEmpty {
-                let room = event.displayRoom
-                Label(room, systemImage: "location.fill")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
-            }
-
-            if let end = event.endDate {
-                Text("Until \(end, style: .time)")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding()
-    }
-
-    private func nextEventView(_ event: ScheduleEvent) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("NEXT")
-                .font(.system(size: 10, weight: .bold))
-                .foregroundColor(theme.accent)
-
-            Text(event.title)
-                .font(.system(size: 14, weight: .semibold))
-                .lineLimit(2)
-                .foregroundColor(.primary)
-
-            if let start = event.startDate {
-                Text(start, style: .time)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(theme.primary)
-            }
-
-            if !event.displayRoom.isEmpty {
-                let room = event.displayRoom
-                Label(room, systemImage: "location.fill")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding()
-    }
-
-    private var noEventsView: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "calendar.badge.checkmark")
-                .font(.system(size: 30))
+        return VStack(alignment: .leading, spacing: 5) {
+            Text(LocalizedString.commonToday.localized.uppercased())
+                .font(.system(size: 10.5, weight: .semibold))
                 .foregroundStyle(
-                    LinearGradient(
-                        colors: [theme.primary, theme.secondary],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+                    LinearGradient(colors: [theme.primary, theme.secondary],
+                                   startPoint: .leading, endPoint: .trailing)
                 )
+                .lineLimit(1)
 
-            Text("No classes")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.secondary)
+            if let f = focus { FocusEventRow(event: f, theme: theme) }
+            else {
+                HStack(spacing: 6) {
+                    Image(systemName: "zzz").font(.system(size: 14, weight: .semibold)).foregroundColor(.secondary)
+                    Text(LocalizedString.commonNoClassesToday.localized)
+                        .font(.system(size: 11.5, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .lineLimit(2).minimumScaleFactor(0.7)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            ForEach(others.prefix(4)) { CompactEventRow(event: $0, theme: theme) }
+
+            let rest = max(0, others.count - 4)
+            if rest > 0 {
+                Text("+\(rest)").font(.system(size: 10.5, weight: .semibold)).foregroundColor(.secondary).padding(.top, 1)
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.vertical, 8).padding(.horizontal, 10)
     }
 }
 
-// MARK: - Medium Widget (Day Schedule)
+private struct FocusEventRow: View {
+    let event: ScheduleEvent
+    let theme: any Theme
+    var body: some View {
+        HStack(alignment: .top, spacing: 6) {
+            Capsule().fill(colorForType(event.type, fallback: theme.primary)).frame(width: 3, height: 22).padding(.top, 2)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(eventAbbreviation(from: event.title))
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundColor(.primary)
+                    .lineLimit(1).minimumScaleFactor(0.6).allowsTightening(true)
+
+                if isOnline(event) {
+                    // ↓ поменьше, чтобы не давило на аббревиатуру
+                    Image(systemName: "wifi").font(.system(size: 8))
+                        .foregroundColor(theme.online)
+                } else if !event.displayRoom.isEmpty {
+                    Text(event.displayRoom)
+                        .font(.system(size: 10)).foregroundColor(.secondary)
+                        .lineLimit(1).minimumScaleFactor(0.6).allowsTightening(true)
+                }
+            }
+
+            Spacer(minLength: 4)
+
+            VStack(alignment: .trailing, spacing: 0) {
+                if let s = event.startDate {
+                    Text(s, style: .time)
+                        .font(.system(size: 13, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundColor(.primary)
+                        .lineLimit(1).minimumScaleFactor(0.7).allowsTightening(true)
+                }
+                if let e = event.endDate {
+                    Text(e, style: .time)
+                        .font(.system(size: 10))
+                        .monospacedDigit()
+                        .foregroundColor(.secondary)
+                        .lineLimit(1).minimumScaleFactor(0.7).allowsTightening(true)
+                }
+            }
+            .frame(minWidth: 46, idealWidth: 52, maxWidth: 60, alignment: .trailing)
+        }
+    }
+}
+
+private struct CompactEventRow: View {
+    let event: ScheduleEvent
+    let theme: any Theme
+    var body: some View {
+        HStack(spacing: 4) {
+            if isOnline(event) {
+                Image(systemName: "wifi").font(.system(size: 8)).foregroundColor(theme.online)
+            } else {
+                Circle().fill(colorForType(event.type, fallback: theme.secondary)).frame(width: 4, height: 4)
+            }
+
+            Text(eventAbbreviation(from: event.title))
+                .font(.system(size: 11.5, weight: .semibold))
+                .foregroundColor(.primary)
+                .lineLimit(1).minimumScaleFactor(0.6).allowsTightening(true)
+                .layoutPriority(1)
+
+            Spacer(minLength: 2)
+
+            if let s = event.startDate {
+                Text(s, style: .time)
+                    .font(.system(size: 11, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundColor(.primary)
+                    .lineLimit(1).minimumScaleFactor(0.7).allowsTightening(true)
+                    .frame(minWidth: 38, alignment: .trailing)
+            }
+        }
+    }
+}
 
 struct MediumWidgetView: View {
     let entry: TimetableWidgetEntry
     @Environment(\.colorScheme) var colorScheme
+    private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
 
-    private var theme: any Theme {
-        ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
-    }
+    // высота «палочки» ~ высоте строки (чтобы не тянуть ячейку по высоте)
+    private let barHeight: CGFloat = 13
+    private let barWidth: CGFloat = 2
 
     var body: some View {
-        ZStack {
-            // Liquid glass background
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    LinearGradient(
-                        colors: [
-                            theme.primary.opacity(0.2),
-                            theme.secondary.opacity(0.15),
-                            theme.tertiary.opacity(0.1)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    .blur(radius: 15)
-                }
-                .overlay {
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.4),
-                                    Color.white.opacity(0.1)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                }
-
-            if entry.todayEvents.isEmpty {
-                noEventsView
-            } else {
-                todayScheduleView
-            }
-        }
-    }
-
-    private var todayScheduleView: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header
-            HStack {
-                Text("Today")
-                    .font(.system(size: 16, weight: .bold))
+        VStack(alignment: .leading, spacing: 5) { // было 5–6
+            HStack(spacing: 6) {
+                Text(LocalizedString.commonToday.localized)
+                    .font(.system(size: 14.5, weight: .bold))
                     .foregroundStyle(
-                        LinearGradient(
-                            colors: [theme.primary, theme.secondary],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+                        LinearGradient(colors: [theme.primary, theme.secondary],
+                                       startPoint: .leading, endPoint: .trailing)
                     )
+                    .lineLimit(1)
 
                 Spacer()
 
                 Text(entry.date, style: .date)
-                    .font(.system(size: 12))
+                    .font(.system(size: 10.5))
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
             }
 
-            // Events list
-            ForEach(entry.todayEvents.prefix(3)) { event in
-                eventRow(event)
-            }
-
-            if entry.todayEvents.count > 3 {
-                Text("+\(entry.todayEvents.count - 3) more")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding()
-    }
-
-    private func eventRow(_ event: ScheduleEvent) -> some View {
-        HStack(spacing: 8) {
-            // Time
-            if let start = event.startDate {
-                Text(start, style: .time)
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .foregroundColor(theme.accent)
-                    .frame(width: 45, alignment: .leading)
-            }
-
-            // Event card
-            HStack(spacing: 6) {
-                Rectangle()
-                    .fill(eventColor(for: event.type))
-                    .frame(width: 3)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(event.title)
-                        .font(.system(size: 12, weight: .medium))
-                        .lineLimit(1)
-                        .foregroundColor(.primary)
-
-                    if !event.displayRoom.isEmpty {
-                        let room = event.displayRoom
-                        Text(room)
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
+            if entry.todayEvents.isEmpty {
+                noEventsView
+            } else {
+                let maxRows = 5
+                // список строк — шаг уменьшен
+                VStack(alignment: .leading, spacing: 2.5) { // было 3–4
+                    ForEach(entry.todayEvents.prefix(maxRows)) { event in
+                        eventRow(event)
                     }
                 }
 
-                Spacer()
-
-                if let remarks = event.remarks, remarks.lowercased().contains("online") {
-                    Image(systemName: "wifi")
-                        .font(.system(size: 10))
-                        .foregroundColor(theme.online)
-                }
-            }
-            .padding(.vertical, 6)
-            .padding(.horizontal, 8)
-            .background {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(.ultraThinMaterial)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
-                    }
-            }
-        }
-    }
-
-    private func eventColor(for type: String?) -> Color {
-        switch type?.lowercased() {
-        case "lecture", "лекция":
-            return Color(red: 1.0, green: 0.5, blue: 0.0)
-        case "exercise", "упражнение":
-            return Color(red: 0.1, green: 0.6, blue: 1.0)
-        case "laboratory", "лабораторная":
-            return Color(red: 0.7, green: 0.2, blue: 0.9)
-        default:
-            return theme.primary
-        }
-    }
-
-    private var noEventsView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "calendar.badge.checkmark")
-                .font(.system(size: 40))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [theme.primary, theme.secondary],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-
-            Text("No classes today")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.primary)
-
-            Text("Enjoy your free day!")
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-// MARK: - Large Widget (Week Schedule)
-
-struct LargeWidgetView: View {
-    let entry: TimetableWidgetEntry
-    @Environment(\.colorScheme) var colorScheme
-
-    private var theme: any Theme {
-        ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
-    }
-
-    var body: some View {
-        ZStack {
-            // Liquid glass background
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    LinearGradient(
-                        colors: [
-                            theme.primary.opacity(0.25),
-                            theme.secondary.opacity(0.2),
-                            theme.tertiary.opacity(0.15)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    .blur(radius: 20)
-                }
-                .overlay {
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.4),
-                                    Color.white.opacity(0.1)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                }
-
-            weekScheduleView
-        }
-    }
-
-    private var weekScheduleView: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header
-            HStack {
-                Text("This Week")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [theme.primary, theme.secondary],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-
-                Spacer()
-
-                Text("Week \(Calendar.current.component(.weekOfYear, from: entry.date))")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-            }
-
-            // Days grid
-            let weekEvents = entry.weekEvents
-            ForEach(Array(weekEvents.keys.sorted()), id: \.self) { day in
-                if let events = weekEvents[day], !events.isEmpty {
-                    dayRow(date: day, events: events)
-                }
-            }
-
-            if weekEvents.isEmpty {
-                Spacer()
-                Text("No classes this week")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Spacer()
-            }
-        }
-        .padding()
-    }
-
-    private func dayRow(date: Date, events: [ScheduleEvent]) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // Day header
-            HStack {
-                Text(date, format: .dateTime.weekday(.abbreviated))
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(Calendar.current.isDateInToday(date) ? theme.accent : .primary)
-
-                Text(date, format: .dateTime.day())
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-
-                Spacer()
-
-                Text("\(events.count) classes")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
-            }
-
-            // Events
-            HStack(spacing: 4) {
-                ForEach(events.prefix(4)) { event in
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(eventColor(for: event.type))
-                        .frame(height: 20)
-                        .overlay {
-                            if events.count <= 2 {
-                                Text(event.title)
-                                    .font(.system(size: 8))
-                                    .foregroundColor(.white)
-                                    .lineLimit(1)
-                                    .padding(.horizontal, 2)
-                            }
-                        }
-                }
-
-                if events.count > 4 {
-                    Text("+\(events.count - 4)")
-                        .font(.system(size: 8))
+                let remaining = entry.todayEvents.count - maxRows
+                if remaining > 0 {
+                    Text("+\(remaining) \(LocalizedString.commonMoreSuffix.localized)")
+                        .font(.system(size: 9.5))
                         .foregroundColor(.secondary)
                 }
             }
         }
-        .padding(8)
-        .background {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+        .padding(.vertical, 6.5) // было 7
+        .padding(.horizontal, 10)
+    }
+
+    private func eventRow(_ event: ScheduleEvent) -> some View {
+        HStack(alignment: .center, spacing: 5) {
+            // компактная «палка» той же высоты, что строка
+            Capsule()
+                .fill(colorForType(event.type, fallback: theme.primary))
+                .frame(width: barWidth, height: barHeight) // ← фиксированная короткая
+                .fixedSize() // не раздувать по высоте
+
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 4) {
+                    Text(timeRange(event.startDate, event.endDate))
+                        .font(.system(size: 11.5, weight: .semibold)) // было 12
+                        .monospacedDigit()
+                        .foregroundColor(.primary) // единый цвет как в остальных
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.9)
+
+                    Text(eventAbbreviation(from: event.title))
+                        .font(.system(size: 11.5, weight: .medium))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+
+                    Spacer(minLength: 0)
+
+                    if isOnline(event) {
+                        Image(systemName: "wifi")
+                            .font(.system(size: 9.5))
+                            .foregroundColor(theme.online)
+                    }
                 }
+
+                if !event.displayRoom.isEmpty {
+                    Text(event.displayRoom)
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                }
+            }
         }
     }
 
-    private func eventColor(for type: String?) -> Color {
-        switch type?.lowercased() {
-        case "lecture", "лекция":
-            return Color(red: 1.0, green: 0.5, blue: 0.0)
-        case "exercise", "упражнение":
-            return Color(red: 0.1, green: 0.6, blue: 1.0)
-        case "laboratory", "лабораторная":
-            return Color(red: 0.7, green: 0.2, blue: 0.9)
-        default:
-            return theme.primary
+    private var noEventsView: some View {
+        HStack(spacing: 7) {
+            Image(systemName: "calendar.badge.checkmark")
+                .font(.system(size: 19))
+                .foregroundStyle(
+                    LinearGradient(colors: [theme.primary, theme.secondary],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+            VStack(alignment: .leading, spacing: 1) {
+                Text(LocalizedString.commonNoClassesToday.localized)
+                    .font(.system(size: 12.5, weight: .medium))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+
+                Text(LocalizedString.commonEnjoyFreeDay.localized)
+                    .font(.system(size: 10.5))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+
+// MARK: - LARGE — неделя: 2×3, ещё компактнее шрифты/отступы в колоночном режиме
+
+struct LargeWidgetView: View {
+    let entry: TimetableWidgetEntry
+    @Environment(\.colorScheme) var colorScheme
+    private var theme: any Theme { ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme) }
+
+    var body: some View {
+        let calendar = Calendar.current
+        let orderedDays = entry.weekEvents.keys.sorted {
+            weekdayRank($0, calendar: calendar) < weekdayRank($1, calendar: calendar)
+        }
+        let dayCount = orderedDays.count
+        let eventsByDay = entry.weekEvents
+        let maxPerDay = orderedDays.map { eventsByDay[$0]?.count ?? 0 }.max() ?? 0
+        let useGrid = (dayCount >= 4) || (dayCount == 3 && maxPerDay >= 5)
+
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text(LocalizedString.commonThisWeek.localized)
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(LinearGradient(colors: [theme.primary, theme.secondary], startPoint: .leading, endPoint: .trailing))
+                Spacer()
+                let weekNum = calendar.component(.weekOfYear, from: entry.date)
+                Text("\(LocalizedString.commonWeek.localized) \(weekNum)")
+                    .font(.system(size: 11)).foregroundColor(.secondary)
+            }
+
+            if dayCount == 0 {
+                Spacer()
+                Text("\(LocalizedString.commonNoClasses.localized) \(LocalizedString.commonThisWeek.localized.lowercased())")
+                    .font(.system(size: 13.5)).foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                Spacer()
+            } else if useGrid {
+                // пары строк: [Пн,Вт,Ср] / [Чт,Пт,Сб]
+                let splitIndex = gridSplitIndex(for: dayCount)
+                let leftDays = Array(orderedDays.prefix(splitIndex))
+                let rightDays = Array(orderedDays.dropFirst(splitIndex))
+                let rows = max(leftDays.count, rightDays.count)
+
+                let columns = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 6) {
+                    ForEach(0..<rows, id: \.self) { i in
+                        if i < leftDays.count, let evs = entry.weekEvents[leftDays[i]] {
+                            DaySectionCompactView(date: leftDays[i], events: evs, theme: theme) // ↓ компактный режим
+                        } else { Color.clear.frame(height: 0) }
+
+                        if i < rightDays.count, let evs = entry.weekEvents[rightDays[i]] {
+                            DaySectionCompactView(date: rightDays[i], events: evs, theme: theme)
+                        } else { Color.clear.frame(height: 0) }
+                    }
+                }
+            } else {
+                ForEach(orderedDays, id: \.self) { day in
+                    if let events = entry.weekEvents[day] {
+                        DaySectionView(date: day, events: events, theme: theme)
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 8).padding(.horizontal, 9)
+    }
+}
+
+private func gridSplitIndex(for daysCount: Int) -> Int {
+    switch daysCount {
+    case 6: return 3      // 3+3  (Пн-Ср | Чт-Сб)
+    case 5: return 3      // 3+2
+    case 4: return 2      // 2+2
+    case 3: return 2      // 2+1 (новое правило для плотного дня)
+    case 2: return 1      // 1+1
+    default:
+        // 7 или иные — балансно: ceil(n/2)
+        return Int(ceil(Double(daysCount) / 2.0))
+    }
+}
+
+// Компактная секция дня для сетки — ЕЩЁ меньше
+private struct DaySectionCompactView: View {
+    let date: Date
+    let events: [ScheduleEvent]
+    let theme: any Theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2.5) {
+            HStack(spacing: 4) {
+                Text(date, format: .dateTime.weekday(.abbreviated))
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(Calendar.current.isDateInToday(date) ? theme.accent : .primary)
+                Text(date, format: .dateTime.day())
+                    .font(.system(size: 9.5)).foregroundColor(.secondary)
+                Spacer(minLength: 0)
+            }
+
+            ForEach(events.prefix(5)) { ev in
+                HStack(spacing: 3.5) {
+                    Circle().fill(colorForType(ev.type, fallback: theme.primary)).frame(width: 3, height: 3)
+
+                    Text(timeRange(ev.startDate, ev.endDate))
+                        .font(.system(size: 10, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+
+                    Text(eventAbbreviation(from: ev.title))
+                        .font(.system(size: 10))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .allowsTightening(true)
+
+                    if !ev.displayRoom.isEmpty {
+                        Text(ev.displayRoom)
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
+                    }
+
+                    Spacer(minLength: 0)
+
+                    if isOnline(ev) {
+                        Image(systemName: "wifi").font(.system(size: 8.5)).foregroundColor(theme.online)
+                    }
+                }
+            }
+
+            if events.count > 5 {
+                Text("+\(events.count - 5)")
+                    .font(.system(size: 9.5, weight: .semibold))
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }
+
+// Вертикальная секция дня (≤3 дней)
+private struct DaySectionView: View {
+    let date: Date
+    let events: [ScheduleEvent]
+    let theme: any Theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 5) {
+                Text(date, format: .dateTime.weekday(.abbreviated))
+                    .font(.system(size: 11.5, weight: .semibold))
+                    .foregroundColor(Calendar.current.isDateInToday(date) ? theme.accent : .primary)
+                Text(date, format: .dateTime.day())
+                    .font(.system(size: 10.5)).foregroundColor(.secondary)
+                Spacer()
+                Text("\(events.count) \(LocalizedString.commonClasses.localized)")
+                    .font(.system(size: 9.5)).foregroundColor(.secondary)
+            }
+
+            ForEach(events.prefix(5)) { ev in
+                HStack(spacing: 5) {
+                    Circle().fill(colorForType(ev.type, fallback: theme.primary)).frame(width: 4, height: 4)
+
+                    Text(timeRange(ev.startDate, ev.endDate))
+                        .font(.system(size: 11, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+
+                    Text(eventAbbreviation(from: ev.title))
+                        .font(.system(size: 11))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+
+                    if !ev.displayRoom.isEmpty {
+                        Text(ev.displayRoom)
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                    }
+
+                    Spacer(minLength: 0)
+
+                    if isOnline(ev) {
+                        Image(systemName: "wifi").font(.system(size: 9.5)).foregroundColor(theme.online)
+                    }
+                }
+            }
+
+            if events.count > 5 {
+                Text("+\(events.count - 5)")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+
+//// MARK: - Превью (Large, 3×5 и 3×6)
+//
+//#if DEBUG
+//#Preview("Large – 3 days × 5", as: .systemLarge) {
+//    TimetableWidget()
+//} timeline: {
+//    TestData.makeEntry(days: 4, perDay: 5)
+//}
+//
+//#Preview("Large – 3 days × 6", as: .systemLarge) {
+//    TimetableWidget()
+//} timeline: {
+//    TestData.makeEntry(days: 4, perDay: 6)
+//}
+//
+//// MARK: - Preview Mocks (type-checker friendly)
+//
+//enum TestData {
+//    // Календарь/временные константы вынесены и типизированы
+//    private static let cal: Calendar = {
+//        var c = Calendar(identifier: .gregorian)
+//        c.locale = Locale(identifier: "en_US_POSIX")
+//        c.timeZone = .current
+//        return c
+//    }()
+//
+//    private static let slot: TimeInterval = 75 * 60 // 75 минут пара
+//
+//    // Один форматтер на все
+//    private static let iso: ISO8601DateFormatter = {
+//        let f = ISO8601DateFormatter()
+//        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+//        f.timeZone = .current
+//        return f
+//    }()
+//
+//    // Разбиваем большие литералы на батчи — так превью не «подменяет» одну огромную строку
+//    private static let titles: [String] = {
+//        var out: [String] = []
+//        out += ["PGD", "HMWIA", "WDGS"]
+//        out += ["PPP", "KP1", "UED"]
+//        out += ["PR", "PPG", "PJFIP"]
+//        out += ["ALG", "DB"]
+//        return out
+//    }()
+//
+//    private static let rooms: [String] = {
+//        var out: [String] = []
+//        out += ["S55 106", "S55 107", "S47 119"]
+//        out += ["S47 216", "S47 314", "S55 308"]
+//        return out
+//    }()
+//
+//    // Понедельник текущей недели
+//    private static func mondayOfCurrentWeek(_ date: Date = .now) -> Date {
+//        let comps = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+//        return cal.date(from: comps) ?? date
+//    }
+//
+//    // MARK: - Schedule factory (под твою модель)
+//
+//    static func buildPreviewSchedule(
+//        days: Int,
+//        perDay: Int,
+//        startHour: Int = 8,
+//        includeOnline: Bool = true
+//    ) -> GroupScheduleResponse {
+//        var events: [ScheduleEvent] = []
+//        events.reserveCapacity(max(0, min(days, 7) * perDay))
+//
+//        let weekStart: Date = mondayOfCurrentWeek()
+//
+//        for d in 0..<min(days, 7) {
+//            guard
+//                let day = cal.date(byAdding: .day, value: d, to: weekStart),
+//                let dayStart = cal.date(bySettingHour: startHour, minute: 0, second: 0, of: day)
+//            else { continue }
+//
+//            for i in 0..<perDay {
+//                let start: Date = dayStart.addingTimeInterval(TimeInterval(i) * slot)
+//                let end: Date   = start.addingTimeInterval(slot)
+//
+//                let title: String = titles[(d + i) % titles.count]
+//                let room: String  = rooms[(d * 2 + i) % rooms.count]
+//                let type: String  = (i % 3 == 0) ? "lecture" : ((i % 3 == 1) ? "exercise" : "laboratory")
+//                let online: Bool  = includeOnline && (i % 4 == 3)
+//
+//                // Конструктор строго под твою модель ScheduleEvent
+//                let ev = ScheduleEvent(
+//                    title: title,
+//                    type: type,
+//                    startISO: iso.string(from: start),
+//                    endISO: iso.string(from: end),
+//                    room: online ? "" : room,          // если online, комнаты нет
+//                    grading: nil,
+//                    remarks: online ? "online" : nil,  // помечаем online для иконки Wi-Fi
+//                    studyTrack: nil,
+//                    groups: nil,
+//                    teacherId: 1,
+//                    teacherName: "Dr. Novak",
+//                    teacherEmail: nil,
+//                    startDate: start,
+//                    endDate: end
+//                )
+//                events.append(ev)
+//            }
+//        }
+//
+//        // Оставь ровно тот init, который есть у тебя в проекте.
+//        // Если у тебя именно такой — будет работать из коробки:
+//        return GroupScheduleResponse(
+//            groupId: 2345,
+//            from: "2025-09-01",
+//            to: "2026-01-31",
+//            intervalType: 1,
+//            groupSchedule: events,
+//            fetchedAt: "2025-10-25T00:00:00Z"
+//        )
+//        // Если у тебя другой init, замени на свой, но оставь events как есть.
+//    }
+//
+//    // MARK: - Entry builder
+//
+//    static func makeEntry(days: Int, perDay: Int) -> TimetableWidgetEntry {
+//        let schedule: GroupScheduleResponse = buildPreviewSchedule(days: days, perDay: perDay)
+//        return TimetableWidgetEntry(
+//            date: .now,
+//            schedule: schedule,
+//            selectedThemeId: "default",
+//            appearanceMode: "system",
+//            configuration: nil
+//        )
+//    }
+//}
+//#endif

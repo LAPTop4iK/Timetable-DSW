@@ -62,6 +62,7 @@
 				Core/Localization/LocalizedString.swift,
 				Models/GroupScheduleResponse.swift,
 				Models/ScheduleEvent.swift,
+				Resources/Localizable.xcstrings,
 				Services/DateService/DateService.swift,
 				Services/DateService/DefaultDateService.swift,
 			);

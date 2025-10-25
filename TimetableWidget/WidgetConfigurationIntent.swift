@@ -8,14 +8,14 @@
 import AppIntents
 import WidgetKit
 
-struct ConfigurationAppIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource = "Configure Widget"
-    static var description: IntentDescription = IntentDescription("Choose widget display options")
+struct ConfigurationAppIntent: WidgetConfigurationIntent { // fixnik
+    static var title: LocalizedStringResource = "Timetable"
+    static var description: IntentDescription = IntentDescription("Configure your timetable widget")
 
-    @Parameter(title: "View Type", default: .today)
+    @Parameter(title: "View", default: .today)
     var viewType: WidgetViewType
 
-    @Parameter(title: "Show Online Status", default: true)
+    @Parameter(title: "Show online status", default: true)
     var showOnlineStatus: Bool
 }
 
@@ -23,9 +23,10 @@ enum WidgetViewType: String, AppEnum {
     case today
     case week
 
-    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "View Type")
+    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "View")
+
     static var caseDisplayRepresentations: [WidgetViewType: DisplayRepresentation] = [
-        .today: "Today's Schedule",
-        .week: "Weekly Schedule"
+        .today: DisplayRepresentation(title: "Today"),
+        .week:  DisplayRepresentation(title: "Week")
     ]
 }
