@@ -29,6 +29,15 @@ struct GroupScheduleResponse: Equatable, Codable, Sendable {
     let groupSchedule: [ScheduleEvent]
     let fetchedAt: String
 
+    init(groupId: Int, from: String, to: String, intervalType: Int, groupSchedule: [ScheduleEvent], fetchedAt: String) {
+        self.groupId = groupId
+        self.from = from
+        self.to = to
+        self.intervalType = intervalType
+        self.groupSchedule = groupSchedule
+        self.fetchedAt = fetchedAt
+    }
+
     // Explicit Codable to avoid synthesis issues when dependent types fail to resolve in some targets
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

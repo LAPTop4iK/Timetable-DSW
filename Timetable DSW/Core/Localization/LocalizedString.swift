@@ -342,347 +342,446 @@ enum LocalizedString {
     case featureThemeSettings
     case featureThemeSettingsDescription
     case featureWidgetSettings
+
+    // Widget names/descriptions
+        case widgetNameTimetable
+        case widgetDescriptionTimetable
+
+        // Control Center: open schedule
+        case controlOpenScheduleDisplayName
+        case controlOpenScheduleDescription
+        case controlOpenScheduleLabel
+
+        // Control Center: toggle
+        case controlToggleDisplayName
+        case controlToggleDescription
+        case controlToggleLabel
+
+        // Status
+        case statusActive
+        case statusNoClasses
+
+        // AppIntents
+        case intentOpenTimetableTitle
+        case intentOpenTimetableDescription
+        case intentTodayScheduleTitle
+        case intentTodayScheduleDescription
+        case intentNextClassTitle
+        case intentNextClassDescription
+        case intentRefreshScheduleTitle
+        case intentRefreshScheduleParameterEnabled
+        case intentConfigurationTitle
+
+        // Live Activity
+        case liveEnds
+        case livePercentCompleteSuffix
+
+        // Common UI
+        case commonNow
+        case commonNext
+        case commonUntil
+        case commonNoClasses
+        case commonNoClassesToday
+        case commonEnjoyFreeDay
+        case commonToday
+        case commonThisWeek
+        case commonWeek
+        case commonClasses
+        case commonMoreSuffix
+
+        // Widget config (widget configuration intent)
+        case configTitle
+        case configDescription
+        case configViewTypeTitle
+        case configViewTypeToday
+        case configViewTypeWeek
+        case configShowOnlineStatusTitle
 }
 
 extension LocalizedString {
-    var localized: String {
+    var key: String {
         switch self {
         // General
-        case .generalCancel: return String(localized: "general.cancel")
-        case .generalDone: return String(localized: "general.done")
-        case .generalToday: return String(localized: "general.today")
-        case .generalRetry: return String(localized: "general.retry")
-        case .generalRefresh: return String(localized: "general.refresh")
-        case .generalOnline: return String(localized: "general.online")
-        case .generalOffline: return String(localized: "general.offline")
-        case .generalCancelled: return String(localized: "general.cancelled")
-        case .generalLoading: return String(localized: "general.loading")
+        case .generalCancel: return "general.cancel"
+        case .generalDone: return "general.done"
+        case .generalToday: return "general.today"
+        case .generalRetry: return "general.retry"
+        case .generalRefresh: return "general.refresh"
+        case .generalOnline: return "general.online"
+        case .generalOffline: return "general.offline"
+        case .generalCancelled: return "general.cancelled"
+        case .generalLoading: return "general.loading"
 
         // Greeting
-        case .greetingMorning: return String(localized: "greeting.morning")
-        case .greetingAfternoon: return String(localized: "greeting.afternoon")
-        case .greetingEvening: return String(localized: "greeting.evening")
-        case .greetingNight: return String(localized: "greeting.night")
+        case .greetingMorning: return "greeting.morning"
+        case .greetingAfternoon: return "greeting.afternoon"
+        case .greetingEvening: return "greeting.evening"
+        case .greetingNight: return "greeting.night"
 
         // Schedule
-        case .scheduleTitle: return String(localized: "schedule.title")
-        case .scheduleSelectDate: return String(localized: "schedule.selectDate")
-        case .scheduleHasClasses: return String(localized: "schedule.hasClasses")
-        case .scheduleOnlineOnly: return String(localized: "schedule.onlineOnly")
-        case .scheduleNoClasses: return String(localized: "schedule.noClasses")
-        case .scheduleEnjoyFreeTime: return String(localized: "schedule.enjoyFreeTime")
-        case .scheduleLoading: return String(localized: "schedule.loading")
-        case .scheduleLastUpdated: return String(localized: "schedule.lastUpdated")
+        case .scheduleTitle: return "schedule.title"
+        case .scheduleSelectDate: return "schedule.selectDate"
+        case .scheduleHasClasses: return "schedule.hasClasses"
+        case .scheduleOnlineOnly: return "schedule.onlineOnly"
+        case .scheduleNoClasses: return "schedule.noClasses"
+        case .scheduleEnjoyFreeTime: return "schedule.enjoyFreeTime"
+        case .scheduleLoading: return "schedule.loading"
+        case .scheduleLastUpdated: return "schedule.lastUpdated"
 
         // Groups
-        case .groupsSelect: return String(localized: "groups.select")
-        case .groupsSelected: return String(localized: "groups.selected")
-        case .groupsNoSelection: return String(localized: "groups.noSelection")
-        case .groupsSearch: return String(localized: "groups.search")
-        case .groupsLoading: return String(localized: "groups.loading")
-        case .groupsNoAvailable: return String(localized: "groups.noAvailable")
-        case .groupsNoFound: return String(localized: "groups.noFound")
-        case .groupsPullToRefresh: return String(localized: "groups.pullToRefresh")
-        case .groupsAdjustSearch: return String(localized: "groups.adjustSearch")
+        case .groupsSelect: return "groups.select"
+        case .groupsSelected: return "groups.selected"
+        case .groupsNoSelection: return "groups.noSelection"
+        case .groupsSearch: return "groups.search"
+        case .groupsLoading: return "groups.loading"
+        case .groupsNoAvailable: return "groups.noAvailable"
+        case .groupsNoFound: return "groups.noFound"
+        case .groupsPullToRefresh: return "groups.pullToRefresh"
+        case .groupsAdjustSearch: return "groups.adjustSearch"
 
         // Teachers
-        case .teachersTitle: return String(localized: "teachers.title")
-        case .teachersSearch: return String(localized: "teachers.search")
-        case .teachersLoading: return String(localized: "teachers.loading")
-        case .teachersNoFound: return String(localized: "teachers.noFound")
-        case .teachersClasses: return String(localized: "teachers.classes")
-        case .teachersNoData: return String(localized: "teachers.noData")
-        case .teachersLoadScheduleFirst: return String(localized: "teachers.loadScheduleFirst")
+        case .teachersTitle: return "teachers.title"
+        case .teachersSearch: return "teachers.search"
+        case .teachersLoading: return "teachers.loading"
+        case .teachersNoFound: return "teachers.noFound"
+        case .teachersClasses: return "teachers.classes"
+        case .teachersNoData: return "teachers.noData"
+        case .teachersLoadScheduleFirst: return "teachers.loadScheduleFirst"
 
         // Subjects
-        case .subjectsTitle: return String(localized: "subjects.title")
-        case .subjectsSearch: return String(localized: "subjects.search")
-        case .subjectsLoading: return String(localized: "subjects.loading")
-        case .subjectsNoFound: return String(localized: "subjects.noFound")
-        case .subjectsClasses: return String(localized: "subjects.classes")
-        case .subjectsNoData: return String(localized: "subjects.noData")
-        case .subjectsLoadScheduleFirst: return String(localized: "subjects.loadScheduleFirst")
-        case .subjectsStats: return String(localized: "subjects.stats")
-        case .subjectsTotal: return String(localized: "subjects.total")
-        case .subjectsPast: return String(localized: "subjects.past")
-        case .subjectsUpcoming: return String(localized: "subjects.upcoming")
-        case .subjectsLectures: return String(localized: "subjects.lectures")
-        case .subjectsExercises: return String(localized: "subjects.exercises")
-        case .subjectsLaboratories: return String(localized: "subjects.laboratories")
-        case .subjectsGradingType: return String(localized: "subjects.gradingType")
+        case .subjectsTitle: return "subjects.title"
+        case .subjectsSearch: return "subjects.search"
+        case .subjectsLoading: return "subjects.loading"
+        case .subjectsNoFound: return "subjects.noFound"
+        case .subjectsClasses: return "subjects.classes"
+        case .subjectsNoData: return "subjects.noData"
+        case .subjectsLoadScheduleFirst: return "subjects.loadScheduleFirst"
+        case .subjectsStats: return "subjects.stats"
+        case .subjectsTotal: return "subjects.total"
+        case .subjectsPast: return "subjects.past"
+        case .subjectsUpcoming: return "subjects.upcoming"
+        case .subjectsLectures: return "subjects.lectures"
+        case .subjectsExercises: return "subjects.exercises"
+        case .subjectsLaboratories: return "subjects.laboratories"
+        case .subjectsGradingType: return "subjects.gradingType"
 
         // Settings
-        case .settingsTitle: return String(localized: "settings.title")
-        case .settingsGroupSettings: return String(localized: "settings.groupSettings")
-        case .settingsThemeSectionTitle: return String(localized: "settings.themeSection.title")
-        case .settingsThemeSectionHeader: return String(localized: "settings.themeSection.header")
-        case .settingsThemeSectionFooter: return String(localized: "settings.themeSection.footer")
-        case .settingsCacheStatus: return String(localized: "settings.cacheStatus")
-        case .settingsClearCache: return String(localized: "settings.clearCache")
-        case .settingsClearCacheMessage: return String(localized: "settings.clearCacheMessage")
-        case .settingsVersion: return String(localized: "settings.version")
-        case .settingsAbout: return String(localized: "settings.about")
-        case .settingsEvents: return String(localized: "settings.events")
-        case .settingsLastUpdated: return String(localized: "settings.lastUpdated")
-        case .settingsNever: return String(localized: "settings.never")
-        case .settingsPleaseSelectGroup: return String(localized: "settings.pleaseSelectGroup")
-        case .settingsWidgetsTitle: return String(localized: "settings.widgetsTitle")
+        case .settingsTitle: return "settings.title"
+        case .settingsGroupSettings: return "settings.groupSettings"
+        case .settingsThemeSectionTitle: return "settings.themeSection.title"
+        case .settingsThemeSectionHeader: return "settings.themeSection.header"
+        case .settingsThemeSectionFooter: return "settings.themeSection.footer"
+        case .settingsCacheStatus: return "settings.cacheStatus"
+        case .settingsClearCache: return "settings.clearCache"
+        case .settingsClearCacheMessage: return "settings.clearCacheMessage"
+        case .settingsVersion: return "settings.version"
+        case .settingsAbout: return "settings.about"
+        case .settingsEvents: return "settings.events"
+        case .settingsLastUpdated: return "settings.lastUpdated"
+        case .settingsNever: return "settings.never"
+        case .settingsPleaseSelectGroup: return "settings.pleaseSelectGroup"
+        case .settingsWidgetsTitle: return "settings.widgetsTitle"
 
         // Tabs
-        case .tabsSchedule: return String(localized: "tabs.schedule")
-        case .tabsTeachers: return String(localized: "tabs.teachers")
-        case .tabsSettings: return String(localized: "tabs.settings")
-        case .tabsSubjects: return String(localized: "tabs.subjects")
+        case .tabsSchedule: return "tabs.schedule"
+        case .tabsTeachers: return "tabs.teachers"
+        case .tabsSettings: return "tabs.settings"
+        case .tabsSubjects: return "tabs.subjects"
 
         // Error
-        case .errorTitle: return String(localized: "error.title")
-        case .errorInvalidURL: return String(localized: "error.invalidURL")
-        case .errorInvalidResponse: return String(localized: "error.invalidResponse")
-        case .errorServer: return String(localized: "error.server")
+        case .errorTitle: return "error.title"
+        case .errorInvalidURL: return "error.invalidURL"
+        case .errorInvalidResponse: return "error.invalidResponse"
+        case .errorServer: return "error.server"
 
         // Days
-        case .daysMonday: return String(localized: "days.monday")
-        case .daysTuesday: return String(localized: "days.tuesday")
-        case .daysWednesday: return String(localized: "days.wednesday")
-        case .daysThursday: return String(localized: "days.thursday")
-        case .daysFriday: return String(localized: "days.friday")
-        case .daysSaturday: return String(localized: "days.saturday")
-        case .daysSunday: return String(localized: "days.sunday")
+        case .daysMonday: return "days.monday"
+        case .daysTuesday: return "days.tuesday"
+        case .daysWednesday: return "days.wednesday"
+        case .daysThursday: return "days.thursday"
+        case .daysFriday: return "days.friday"
+        case .daysSaturday: return "days.saturday"
+        case .daysSunday: return "days.sunday"
 
         // Support / Contact
-        case .settingsContactTitle: return String(localized: "settings.contact.title")
-        case .settingsSupportSectionTitle: return String(localized: "settings.support.sectionTitle")
-        case .settingsSupportFooter: return String(localized: "settings.support.footer")
+        case .settingsContactTitle: return "settings.contact.title"
+        case .settingsSupportSectionTitle: return "settings.support.sectionTitle"
+        case .settingsSupportFooter: return "settings.support.footer"
 
         // Developer Support
-        case .settingsDeveloperSectionTitle: return String(localized: "settings.developer.sectionTitle")
-        case .settingsDeveloperAction: return String(localized: "settings.developer.action")
-        case .settingsDeveloperFooter: return String(localized: "settings.developer.footer")
+        case .settingsDeveloperSectionTitle: return "settings.developer.sectionTitle"
+        case .settingsDeveloperAction: return "settings.developer.action"
+        case .settingsDeveloperFooter: return "settings.developer.footer"
 
         // Contact actions
-        case .contactActionReportProblem: return String(localized: "contact.action.reportProblem")
-        case .contactActionRequestFeature: return String(localized: "contact.action.requestFeature")
+        case .contactActionReportProblem: return "contact.action.reportProblem"
+        case .contactActionRequestFeature: return "contact.action.requestFeature"
 
         // Mail / system
-        case .mailUnavailableTitle: return String(localized: "mail.unavailable.title")
-        case .mailUnavailableMessage: return String(localized: "mail.unavailable.message")
-        case .mailCopyAddress: return String(localized: "mail.copyAddress")
+        case .mailUnavailableTitle: return "mail.unavailable.title"
+        case .mailUnavailableMessage: return "mail.unavailable.message"
+        case .mailCopyAddress: return "mail.copyAddress"
 
         // Email subjects
-        case .contactEmailSubjectBug: return String(localized: "contact.email.subject.bug")
-        case .contactEmailSubjectFeature: return String(localized: "contact.email.subject.feature")
+        case .contactEmailSubjectBug: return "contact.email.subject.bug"
+        case .contactEmailSubjectFeature: return "contact.email.subject.feature"
 
         // Email body headers
-        case .contactEmailBodyBugHeader: return String(localized: "contact.email.body.bugHeader")
-        case .contactEmailBodyFeatureHeader: return String(localized: "contact.email.body.featureHeader")
+        case .contactEmailBodyBugHeader: return "contact.email.body.bugHeader"
+        case .contactEmailBodyFeatureHeader: return "contact.email.body.featureHeader"
 
         // Email info labels
-        case .contactEmailInfoApp: return String(localized: "contact.email.info.app")
-        case .contactEmailInfoiOS: return String(localized: "contact.email.info.ios")
-        case .contactEmailInfoDevice: return String(localized: "contact.email.info.device")
-        case .contactEmailInfoLocale: return String(localized: "contact.email.info.locale")
-        case .contactEmailInfoGroup: return String(localized: "contact.email.info.group")
-        case .contactEmailInfoDate: return String(localized: "contact.email.info.date")
+        case .contactEmailInfoApp: return "contact.email.info.app"
+        case .contactEmailInfoiOS: return "contact.email.info.ios"
+        case .contactEmailInfoDevice: return "contact.email.info.device"
+        case .contactEmailInfoLocale: return "contact.email.info.locale"
+        case .contactEmailInfoGroup: return "contact.email.info.group"
+        case .contactEmailInfoDate: return "contact.email.info.date"
 
-        case .contactEmailBodyAdditionalInfo: return String(localized: "contact.email.body.additionalInfo")
-        case .contactEmailBodyDetailsTitle: return String(localized: "contact.email.body.detailsTitle")
+        case .contactEmailBodyAdditionalInfo: return "contact.email.body.additionalInfo"
+        case .contactEmailBodyDetailsTitle: return "contact.email.body.detailsTitle"
 
         // Premium
-        case .premiumFeatureTitle: return String(localized: "premium.feature.title")
-        case .premiumTapToUnlock: return String(localized: "premium.tapToUnlock")
-        case .premiumActive: return String(localized: "premium.active")
-        case .premiumThankYou: return String(localized: "premium.thankYou")
-        case .premiumEnjoyFeatures: return String(localized: "premium.enjoyFeatures")
-        case .premiumTimeRemaining: return String(localized: "premium.timeRemaining")
-        case .premiumWatchOrPurchase: return String(localized: "premium.watchOrPurchase")
-        case .premiumUnlockTitle: return String(localized: "premium.unlock.title")
-        case .premiumGetAccess: return String(localized: "premium.getAccess")
-        case .premiumWatchAdButton: return String(localized: "premium.watchAd.button")
-        case .premiumPurchaseButton: return String(localized: "premium.purchase.button")
-        case .premiumUnlocked: return String(localized: "premium.unlocked")
-        case .premiumMaybeLater: return String(localized: "premium.maybeLater")
-        case .premiumCalculating: return String(localized: "premium.calculating")
-        case .premiumRemaining: return String(localized: "premium.remaining")
+        case .premiumFeatureTitle: return "premium.feature.title"
+        case .premiumTapToUnlock: return "premium.tapToUnlock"
+        case .premiumActive: return "premium.active"
+        case .premiumThankYou: return "premium.thankYou"
+        case .premiumEnjoyFeatures: return "premium.enjoyFeatures"
+        case .premiumTimeRemaining: return "premium.timeRemaining"
+        case .premiumWatchOrPurchase: return "premium.watchOrPurchase"
+        case .premiumUnlockTitle: return "premium.unlock.title"
+        case .premiumGetAccess: return "premium.getAccess"
+        case .premiumWatchAdButton: return "premium.watchAd.button"
+        case .premiumPurchaseButton: return "premium.purchase.button"
+        case .premiumUnlocked: return "premium.unlocked"
+        case .premiumMaybeLater: return "premium.maybeLater"
+        case .premiumCalculating: return "premium.calculating"
+        case .premiumRemaining: return "premium.remaining"
 
         // Settings Premium
-        case .settingsPremiumActive: return String(localized: "settings.premium.active")
+        case .settingsPremiumActive: return "settings.premium.active"
 
         // Debug
-        case .debugTools: return String(localized: "debug.tools")
-        case .debugDone: return String(localized: "debug.done")
-        case .debugResetAllFlags: return String(localized: "debug.resetAllFlags")
-        case .debugResetConfirm: return String(localized: "debug.resetConfirm")
-        case .debugCancel: return String(localized: "debug.cancel")
-        case .debugPremiumStatus: return String(localized: "debug.premiumStatus")
-        case .debugPremiumControls: return String(localized: "debug.premiumControls")
-        case .debugGrantPermanentPremium: return String(localized: "debug.grantPermanentPremium")
-        case .debugGrant1HourPremium: return String(localized: "debug.grant1HourPremium")
-        case .debugRevokePremium: return String(localized: "debug.revokePremium")
-        case .debugFeatureFlags: return String(localized: "debug.featureFlags")
-        case .debugFlagsFooter: return String(localized: "debug.flagsFooter")
-        case .debugActions: return String(localized: "debug.actions")
-        case .debugResetToDefault: return String(localized: "debug.resetToDefault")
-        case .debugSyncFromRemote: return String(localized: "debug.syncFromRemote")
-        case .debugShowDetails: return String(localized: "debug.showDetails")
-        case .debugHideDetails: return String(localized: "debug.hideDetails")
+        case .debugTools: return "debug.tools"
+        case .debugDone: return "debug.done"
+        case .debugResetAllFlags: return "debug.resetAllFlags"
+        case .debugResetConfirm: return "debug.resetConfirm"
+        case .debugCancel: return "debug.cancel"
+        case .debugPremiumStatus: return "debug.premiumStatus"
+        case .debugPremiumControls: return "debug.premiumControls"
+        case .debugGrantPermanentPremium: return "debug.grantPermanentPremium"
+        case .debugGrant1HourPremium: return "debug.grant1HourPremium"
+        case .debugRevokePremium: return "debug.revokePremium"
+        case .debugFeatureFlags: return "debug.featureFlags"
+        case .debugFlagsFooter: return "debug.flagsFooter"
+        case .debugActions: return "debug.actions"
+        case .debugResetToDefault: return "debug.resetToDefault"
+        case .debugSyncFromRemote: return "debug.syncFromRemote"
+        case .debugShowDetails: return "debug.showDetails"
+        case .debugHideDetails: return "debug.hideDetails"
 
         // Debug Menu (Extended)
-        case .debugMenuTitle: return String(localized: "debug.menu.title")
-        case .debugActionResult: return String(localized: "debug.actionResult")
-        case .debugOK: return String(localized: "debug.ok")
-        case .debugConfirm: return String(localized: "debug.confirm")
-        case .debugFree: return String(localized: "debug.free")
-        case .debugPremiumLabel: return String(localized: "debug.premiumLabel")
-        case .debugTrial: return String(localized: "debug.trial")
-        case .debugStatus: return String(localized: "debug.status")
-        case .debugExpires: return String(localized: "debug.expires")
-        case .debugGrantPremium: return String(localized: "debug.grantPremium")
-        case .debugGrantTrial1h: return String(localized: "debug.grantTrial1h")
-        case .debugRevokePremiumLabel: return String(localized: "debug.revokePremiumLabel")
-        case .debugPremiumManagement: return String(localized: "debug.premiumManagement")
-        case .debugFeatureFlagsTitle: return String(localized: "debug.featureFlagsTitle")
-        case .debugLocalOverrides: return String(localized: "debug.localOverrides")
-        case .debugLastSynced: return String(localized: "debug.lastSynced")
-        case .debugActionsTitle: return String(localized: "debug.actionsTitle")
-        case .debugSyncFromServer: return String(localized: "debug.syncFromServer")
-        case .debugClearAllData: return String(localized: "debug.clearAllData")
-        case .debugStatistics: return String(localized: "debug.statistics")
-        case .debugAdsWatched: return String(localized: "debug.adsWatched")
-        case .debugLastAd: return String(localized: "debug.lastAd")
-        case .debugPremiumSince: return String(localized: "debug.premiumSince")
-        case .debugAbout: return String(localized: "debug.about")
-        case .debugEnvironment: return String(localized: "debug.environment")
-        case .debugDebug: return String(localized: "debug.debug")
-        case .debugRelease: return String(localized: "debug.release")
-        case .debugBuild: return String(localized: "debug.build")
-        case .debugOnlyInDebugBuilds: return String(localized: "debug.onlyInDebugBuilds")
-        case .debugResetToDefaultLabel: return String(localized: "debug.resetToDefaultLabel")
-        case .debugResetAllFlagsLabel: return String(localized: "debug.resetAllFlagsLabel")
-        case .debugRevokePremiumQuestion: return String(localized: "debug.revokePremiumQuestion")
-        case .debugResetAllFlagsQuestion: return String(localized: "debug.resetAllFlagsQuestion")
-        case .debugClearAllDataQuestion: return String(localized: "debug.clearAllDataQuestion")
-        case .debugConfirmActionQuestion: return String(localized: "debug.confirmActionQuestion")
-        case .debugWillRemovePremium: return String(localized: "debug.willRemovePremium")
-        case .debugWillResetAllFlags: return String(localized: "debug.willResetAllFlags")
-        case .debugWillResetEverything: return String(localized: "debug.willResetEverything")
-        case .debugAreYouSure: return String(localized: "debug.areYouSure")
-        case .debugPremiumGranted: return String(localized: "debug.premiumGranted")
-        case .debugTemporaryPremiumGranted: return String(localized: "debug.temporaryPremiumGranted")
-        case .debugPremiumRevoked: return String(localized: "debug.premiumRevoked")
-        case .debugAllFlagsReset: return String(localized: "debug.allFlagsReset")
-        case .debugAllDataCleared: return String(localized: "debug.allDataCleared")
-        case .debugFlagResetTemplate: return String(localized: "debug.flagResetTemplate")
-        case .debugSyncFailedTemplate: return String(localized: "debug.syncFailedTemplate")
+        case .debugMenuTitle: return "debug.menu.title"
+        case .debugActionResult: return "debug.actionResult"
+        case .debugOK: return "debug.ok"
+        case .debugConfirm: return "debug.confirm"
+        case .debugFree: return "debug.free"
+        case .debugPremiumLabel: return "debug.premiumLabel"
+        case .debugTrial: return "debug.trial"
+        case .debugStatus: return "debug.status"
+        case .debugExpires: return "debug.expires"
+        case .debugGrantPremium: return "debug.grantPremium"
+        case .debugGrantTrial1h: return "debug.grantTrial1h"
+        case .debugRevokePremiumLabel: return "debug.revokePremiumLabel"
+        case .debugPremiumManagement: return "debug.premiumManagement"
+        case .debugFeatureFlagsTitle: return "debug.featureFlagsTitle"
+        case .debugLocalOverrides: return "debug.localOverrides"
+        case .debugLastSynced: return "debug.lastSynced"
+        case .debugActionsTitle: return "debug.actionsTitle"
+        case .debugSyncFromServer: return "debug.syncFromServer"
+        case .debugClearAllData: return "debug.clearAllData"
+        case .debugStatistics: return "debug.statistics"
+        case .debugAdsWatched: return "debug.adsWatched"
+        case .debugLastAd: return "debug.lastAd"
+        case .debugPremiumSince: return "debug.premiumSince"
+        case .debugAbout: return "debug.about"
+        case .debugEnvironment: return "debug.environment"
+        case .debugDebug: return "debug.debug"
+        case .debugRelease: return "debug.release"
+        case .debugBuild: return "debug.build"
+        case .debugOnlyInDebugBuilds: return "debug.onlyInDebugBuilds"
+        case .debugResetToDefaultLabel: return "debug.resetToDefaultLabel"
+        case .debugResetAllFlagsLabel: return "debug.resetAllFlagsLabel"
+        case .debugRevokePremiumQuestion: return "debug.revokePremiumQuestion"
+        case .debugResetAllFlagsQuestion: return "debug.resetAllFlagsQuestion"
+        case .debugClearAllDataQuestion: return "debug.clearAllDataQuestion"
+        case .debugConfirmActionQuestion: return "debug.confirmActionQuestion"
+        case .debugWillRemovePremium: return "debug.willRemovePremium"
+        case .debugWillResetAllFlags: return "debug.willResetAllFlags"
+        case .debugWillResetEverything: return "debug.willResetEverything"
+        case .debugAreYouSure: return "debug.areYouSure"
+        case .debugPremiumGranted: return "debug.premiumGranted"
+        case .debugTemporaryPremiumGranted: return "debug.temporaryPremiumGranted"
+        case .debugPremiumRevoked: return "debug.premiumRevoked"
+        case .debugAllFlagsReset: return "debug.allFlagsReset"
+        case .debugAllDataCleared: return "debug.allDataCleared"
+        case .debugFlagResetTemplate: return "debug.flagResetTemplate"
+        case .debugSyncFailedTemplate: return "debug.syncFailedTemplate"
 
         // Performance Monitor
-        case .perfMonitorTitle: return String(localized: "perfMonitor.title")
-        case .perfMonitorClear: return String(localized: "perfMonitor.clear")
-        case .perfMonitorExport: return String(localized: "perfMonitor.export")
-        case .perfMonitorExportedEvents: return String(localized: "perfMonitor.exportedEvents")
-        case .perfMonitorMetrics: return String(localized: "perfMonitor.metrics")
-        case .perfMonitorTotalEvents: return String(localized: "perfMonitor.totalEvents")
-        case .perfMonitorAverageDuration: return String(localized: "perfMonitor.averageDuration")
-        case .perfMonitorSlowestEvent: return String(localized: "perfMonitor.slowestEvent")
-        case .perfMonitorFastestEvent: return String(localized: "perfMonitor.fastestEvent")
-        case .perfMonitorFilterByCategory: return String(localized: "perfMonitor.filterByCategory")
-        case .perfMonitorCategory: return String(localized: "perfMonitor.category")
-        case .perfMonitorAll: return String(localized: "perfMonitor.all")
-        case .perfMonitorEvents: return String(localized: "perfMonitor.events")
-        case .perfMonitorNoEventsRecorded: return String(localized: "perfMonitor.noEventsRecorded")
+        case .perfMonitorTitle: return "perfMonitor.title"
+        case .perfMonitorClear: return "perfMonitor.clear"
+        case .perfMonitorExport: return "perfMonitor.export"
+        case .perfMonitorExportedEvents: return "perfMonitor.exportedEvents"
+        case .perfMonitorMetrics: return "perfMonitor.metrics"
+        case .perfMonitorTotalEvents: return "perfMonitor.totalEvents"
+        case .perfMonitorAverageDuration: return "perfMonitor.averageDuration"
+        case .perfMonitorSlowestEvent: return "perfMonitor.slowestEvent"
+        case .perfMonitorFastestEvent: return "perfMonitor.fastestEvent"
+        case .perfMonitorFilterByCategory: return "perfMonitor.filterByCategory"
+        case .perfMonitorCategory: return "perfMonitor.category"
+        case .perfMonitorAll: return "perfMonitor.all"
+        case .perfMonitorEvents: return "perfMonitor.events"
+        case .perfMonitorNoEventsRecorded: return "perfMonitor.noEventsRecorded"
 
         // Ads Debug
-        case .adsDebugTitle: return String(localized: "adsDebug.title")
-        case .adsDebugAdaptiveBanner: return String(localized: "adsDebug.adaptiveBanner")
-        case .adsDebugBannerAd: return String(localized: "adsDebug.bannerAd")
-        case .adsDebugBannerDescription: return String(localized: "adsDebug.bannerDescription")
-        case .adsDebugNativeAd: return String(localized: "adsDebug.nativeAd")
-        case .adsDebugNativeDescription: return String(localized: "adsDebug.nativeDescription")
-        case .adsDebugLoad: return String(localized: "adsDebug.load")
-        case .adsDebugShow: return String(localized: "adsDebug.show")
-        case .adsDebugReadyToShow: return String(localized: "adsDebug.readyToShow")
-        case .adsDebugInterstitialAd: return String(localized: "adsDebug.interstitialAd")
-        case .adsDebugInterstitialDescription: return String(localized: "adsDebug.interstitialDescription")
-        case .adsDebugRewardedAd: return String(localized: "adsDebug.rewardedAd")
-        case .adsDebugRewardedDescription: return String(localized: "adsDebug.rewardedDescription")
-        case .adsDebugRewardedInterstitial: return String(localized: "adsDebug.rewardedInterstitial")
-        case .adsDebugRewardedInterstitialDescription: return String(localized: "adsDebug.rewardedInterstitialDescription")
-        case .adsDebugPreload: return String(localized: "adsDebug.preload")
-        case .adsDebugAppOpenAd: return String(localized: "adsDebug.appOpenAd")
-        case .adsDebugAppOpenDescription: return String(localized: "adsDebug.appOpenDescription")
-        case .adsDebugDeveloperTools: return String(localized: "adsDebug.developerTools")
-        case .adsDebugLaunchAdInspector: return String(localized: "adsDebug.launchAdInspector")
-        case .adsDebugAdInspectorDescription: return String(localized: "adsDebug.adInspectorDescription")
-        case .adsDebugEventLog: return String(localized: "adsDebug.eventLog")
-        case .adsDebugNoEventsYet: return String(localized: "adsDebug.noEventsYet")
-        case .adsDebugClearLog: return String(localized: "adsDebug.clearLog")
+        case .adsDebugTitle: return "adsDebug.title"
+        case .adsDebugAdaptiveBanner: return "adsDebug.adaptiveBanner"
+        case .adsDebugBannerAd: return "adsDebug.bannerAd"
+        case .adsDebugBannerDescription: return "adsDebug.bannerDescription"
+        case .adsDebugNativeAd: return "adsDebug.nativeAd"
+        case .adsDebugNativeDescription: return "adsDebug.nativeDescription"
+        case .adsDebugLoad: return "adsDebug.load"
+        case .adsDebugShow: return "adsDebug.show"
+        case .adsDebugReadyToShow: return "adsDebug.readyToShow"
+        case .adsDebugInterstitialAd: return "adsDebug.interstitialAd"
+        case .adsDebugInterstitialDescription: return "adsDebug.interstitialDescription"
+        case .adsDebugRewardedAd: return "adsDebug.rewardedAd"
+        case .adsDebugRewardedDescription: return "adsDebug.rewardedDescription"
+        case .adsDebugRewardedInterstitial: return "adsDebug.rewardedInterstitial"
+        case .adsDebugRewardedInterstitialDescription: return "adsDebug.rewardedInterstitialDescription"
+        case .adsDebugPreload: return "adsDebug.preload"
+        case .adsDebugAppOpenAd: return "adsDebug.appOpenAd"
+        case .adsDebugAppOpenDescription: return "adsDebug.appOpenDescription"
+        case .adsDebugDeveloperTools: return "adsDebug.developerTools"
+        case .adsDebugLaunchAdInspector: return "adsDebug.launchAdInspector"
+        case .adsDebugAdInspectorDescription: return "adsDebug.adInspectorDescription"
+        case .adsDebugEventLog: return "adsDebug.eventLog"
+        case .adsDebugNoEventsYet: return "adsDebug.noEventsYet"
+        case .adsDebugClearLog: return "adsDebug.clearLog"
 
         // Ad Loading
-        case .adLoadingText: return String(localized: "adLoading.text")
-        case .adLoadingFailed: return String(localized: "adLoading.failed")
-        case .adLoadingRetry: return String(localized: "adLoading.retry")
+        case .adLoadingText: return "adLoading.text"
+        case .adLoadingFailed: return "adLoading.failed"
+        case .adLoadingRetry: return "adLoading.retry"
 
         // Theme Settings (NEW)
-        case .themeSettingsTitle: return String(localized: "themeSettings.title")
-        case .themeSettingsAppearanceTitle: return String(localized: "themeSettings.appearance.title")
-        case .themeSettingsColorThemeTitle: return String(localized: "themeSettings.colorTheme.title")
+        case .themeSettingsTitle: return "themeSettings.title"
+        case .themeSettingsAppearanceTitle: return "themeSettings.appearance.title"
+        case .themeSettingsColorThemeTitle: return "themeSettings.colorTheme.title"
 
-        case .appearanceSystem: return String(localized: "appearance.system")
-        case .appearanceLight:  return String(localized: "appearance.light")
-        case .appearanceDark:   return String(localized: "appearance.dark")
-        case .appearanceDescSystem: return String(localized: "appearance.description.system")
-        case .appearanceDescLight:  return String(localized: "appearance.description.light")
-        case .appearanceDescDark:   return String(localized: "appearance.description.dark")
+        case .appearanceSystem: return "appearance.system"
+        case .appearanceLight:  return "appearance.light"
+        case .appearanceDark:   return "appearance.dark"
+        case .appearanceDescSystem: return "appearance.description.system"
+        case .appearanceDescLight:  return "appearance.description.light"
+        case .appearanceDescDark:   return "appearance.description.dark"
 
-        case .themeNameDefault:    return String(localized: "theme.name.default")
-        case .themeNameOcean:      return String(localized: "theme.name.ocean")
-        case .themeNameSunset:     return String(localized: "theme.name.sunset")
-        case .themeNameForest:     return String(localized: "theme.name.forest")
-        case .themeNameLavender:   return String(localized: "theme.name.lavender")
-        case .themeNameCherry:     return String(localized: "theme.name.cherry")
-        case .themeNameMidnight:   return String(localized: "theme.name.midnight")
-        case .themeNameMonochrome: return String(localized: "theme.name.monochrome")
+        case .themeNameDefault:    return "theme.name.default"
+        case .themeNameOcean:      return "theme.name.ocean"
+        case .themeNameSunset:     return "theme.name.sunset"
+        case .themeNameForest:     return "theme.name.forest"
+        case .themeNameLavender:   return "theme.name.lavender"
+        case .themeNameCherry:     return "theme.name.cherry"
+        case .themeNameMidnight:   return "theme.name.midnight"
+        case .themeNameMonochrome: return "theme.name.monochrome"
 
-        case .widgetSettingsTitle:   return String(localized: "widget.settings.title")
-        case .widgetTitle:           return String(localized: "widget.title")
-        case .widgetEnabled:         return String(localized: "widget.enabled")
-        case .widgetAccess:          return String(localized: "widget.access")
-        case .widgetStatusTitle:     return String(localized: "widget.status.title")
-        case .widgetEnabledTitle:    return String(localized: "widget.enabled.title")
-        case .widgetAccessDescription: return String(localized: "widget.access.description")
-        case .widgetInstructionStep1: return String(localized: "widget.instruction.step1")
-        case .widgetInstructionStep2: return String(localized: "widget.instruction.step2")
-        case .widgetInstructionStep3: return String(localized: "widget.instruction.step3")
-        case .widgetInstructionStep4: return String(localized: "widget.instruction.step4")
-        case .widgetTypeSmallTitle: return String(localized: "widget.type.small.title")
-        case .widgetTypeSmallDescription: return String(localized: "widget.type.small.description")
-        case .widgetTypeMediumTitle: return String(localized: "widget.type.medium.title")
-        case .widgetTypeMediumDescription: return String(localized: "widget.type.medium.description")
-        case .widgetTypeLargeTitle: return String(localized: "widget.type.large.title")
-        case .widgetTypeLargeDescription: return String(localized: "widget.type.large.description")
-        case .widgetTypeLiveTitle: return String(localized: "widget.type.live.title")
-        case .widgetTypeLiveDescription: return String(localized: "widget.type.live.description")
-        case .relativeAgo: return String(localized: "relative.ago")
-        case .widgetTroubleNoDataTitle: return String(localized: "widget.troubleshoot.noData.title")
-        case .widgetTroubleNoDataSolution: return String(localized: "widget.troubleshoot.noData.solution")
-        case .widgetTroubleNotUpdatingTitle: return String(localized: "widget.troubleshoot.notUpdating.title")
-        case .widgetTroubleNotUpdatingSolution: return String(localized: "widget.troubleshoot.notUpdating.solution")
-        case .widgetTroubleWrongThemeTitle: return String(localized: "widget.troubleshoot.wrongTheme.title")
-        case .widgetTroubleWrongThemeSolution: return String(localized: "widget.troubleshoot.wrongTheme.solution")
-        case .widgetTroubleshooting: return String(localized: "widget.troubleshooting")
-        case .widgetNeverUpdated: return String(localized: "widget.never.updated")
-        case .widgetHowToAdd: return String(localized: "widget.how.to.add")
-        case .widgetConfigure: return String(localized: "widget.configure")
-        case .widgetAvailable: return String(localized: "widget.available")
-        case .widgetSettingsSubtitle: return String(localized: "widget.settings.subtitle")
-        case .settingsRefresh: return String(localized: "settings.refresh")
-        case .widgetFooterReloadHint: return String(localized: "widget.footer.reloadHint")
-        case .featureTeachersTab: return String(localized: "feature.teachersTab")
-        case .featureSubjectsTab: return String(localized: "feature.subjectsTab")
-        case .featureThemeSettings: return String(localized: "feature.themeSettings")
-        case .featureTeachersTabDescription: return String(localized: "feature.teachersTab.description")
-        case .featureSubjectsTabDescription: return String(localized: "feature.subjectsTab.description")
-        case .featureThemeSettingsDescription: return String(localized: "feature.themeSettings.description")
-        case .featureWidgetSettings: return String(localized: "feature.widgetSettings")
+        case .widgetSettingsTitle:   return "widget.settings.title"
+        case .widgetTitle:           return "widget.title"
+        case .widgetEnabled:         return "widget.enabled"
+        case .widgetAccess:          return "widget.access"
+        case .widgetStatusTitle:     return "widget.status.title"
+        case .widgetEnabledTitle:    return "widget.enabled.title"
+        case .widgetAccessDescription: return "widget.access.description"
+        case .widgetInstructionStep1: return "widget.instruction.step1"
+        case .widgetInstructionStep2: return "widget.instruction.step2"
+        case .widgetInstructionStep3: return "widget.instruction.step3"
+        case .widgetInstructionStep4: return "widget.instruction.step4"
+        case .widgetTypeSmallTitle: return "widget.type.small.title"
+        case .widgetTypeSmallDescription: return "widget.type.small.description"
+        case .widgetTypeMediumTitle: return "widget.type.medium.title"
+        case .widgetTypeMediumDescription: return "widget.type.medium.description"
+        case .widgetTypeLargeTitle: return "widget.type.large.title"
+        case .widgetTypeLargeDescription: return "widget.type.large.description"
+        case .widgetTypeLiveTitle: return "widget.type.live.title"
+        case .widgetTypeLiveDescription: return "widget.type.live.description"
+        case .relativeAgo: return "relative.ago"
+        case .widgetTroubleNoDataTitle: return "widget.troubleshoot.noData.title"
+        case .widgetTroubleNoDataSolution: return "widget.troubleshoot.noData.solution"
+        case .widgetTroubleNotUpdatingTitle: return "widget.troubleshoot.notUpdating.title"
+        case .widgetTroubleNotUpdatingSolution: return "widget.troubleshoot.notUpdating.solution"
+        case .widgetTroubleWrongThemeTitle: return "widget.troubleshoot.wrongTheme.title"
+        case .widgetTroubleWrongThemeSolution: return "widget.troubleshoot.wrongTheme.solution"
+        case .widgetTroubleshooting: return "widget.troubleshooting"
+        case .widgetNeverUpdated: return "widget.never.updated"
+        case .widgetHowToAdd: return "widget.how.to.add"
+        case .widgetConfigure: return "widget.configure"
+        case .widgetAvailable: return "widget.available"
+        case .widgetSettingsSubtitle: return "widget.settings.subtitle"
+        case .settingsRefresh: return "settings.refresh"
+        case .widgetFooterReloadHint: return "widget.footer.reloadHint"
+        case .featureTeachersTab: return "feature.teachersTab"
+        case .featureSubjectsTab: return "feature.subjectsTab"
+        case .featureThemeSettings: return "feature.themeSettings"
+        case .featureTeachersTabDescription: return "feature.teachersTab.description"
+        case .featureSubjectsTabDescription: return "feature.subjectsTab.description"
+        case .featureThemeSettingsDescription: return "feature.themeSettings.description"
+        case .featureWidgetSettings: return "feature.widgetSettings"
+        case .widgetNameTimetable: return "widget.name.timetable"
+        case .widgetDescriptionTimetable: return "widget.description.timetable"
+
+        case .controlOpenScheduleDisplayName: return "widget.control.openSchedule.displayName"
+        case .controlOpenScheduleDescription: return "widget.control.openSchedule.description"
+        case .controlOpenScheduleLabel: return "widget.control.openSchedule.label"
+
+        case .controlToggleDisplayName: return "widget.control.toggle.displayName"
+        case .controlToggleDescription: return "widget.control.toggle.description"
+        case .controlToggleLabel: return "widget.control.toggle.label"
+
+        case .statusActive: return "widget.status.active"
+        case .statusNoClasses: return "widget.status.noClasses"
+
+        case .intentOpenTimetableTitle: return "widget.intent.openTimetable.title"
+        case .intentOpenTimetableDescription: return "widget.intent.openTimetable.description"
+        case .intentTodayScheduleTitle: return "widget.intent.todaySchedule.title"
+        case .intentTodayScheduleDescription: return "widget.intent.todaySchedule.description"
+        case .intentNextClassTitle: return "widget.intent.nextClass.title"
+        case .intentNextClassDescription: return "widget.intent.nextClass.description"
+        case .intentRefreshScheduleTitle: return "widget.intent.refreshSchedule.title"
+        case .intentRefreshScheduleParameterEnabled: return "widget.intent.refreshSchedule.parameter.enabled"
+        case .intentConfigurationTitle: return "widget.intent.configuration.title"
+
+        case .liveEnds: return "widget.live.ends"
+        case .livePercentCompleteSuffix: return "widget.live.percentCompleteSuffix"
+
+        case .commonNow: return "widget.common.now"
+        case .commonNext: return "widget.common.next"
+        case .commonUntil: return "widget.common.until"
+        case .commonNoClasses: return "widget.common.noClasses"
+        case .commonNoClassesToday: return "widget.common.noClassesToday"
+        case .commonEnjoyFreeDay: return "widget.common.enjoyFreeDay"
+        case .commonToday: return "widget.common.today"
+        case .commonThisWeek: return "widget.common.thisWeek"
+        case .commonWeek: return "widget.common.week"
+        case .commonClasses: return "widget.common.classes"
+        case .commonMoreSuffix: return "widget.common.moreSuffix"
+
+        case .configTitle: return "widget.config.title"
+        case .configDescription: return "widget.config.description"
+        case .configViewTypeTitle: return "widget.config.viewType.title"
+        case .configViewTypeToday: return "widget.config.viewType.today"
+        case .configViewTypeWeek: return "widget.config.viewType.week"
+        case .configShowOnlineStatusTitle: return "widget.config.showOnlineStatus.title"
         }
     }
 
@@ -700,4 +799,12 @@ extension LocalizedString {
         default:           return LocalizedString.themeNameDefault.localized
         }
     }
+
+    var localized: String {
+            NSLocalizedString(self.key, bundle: .main, comment: "")
+        }
+
+    var resource: LocalizedStringResource {
+            LocalizedStringResource(String.LocalizationValue(self.key), table: nil, bundle: .main)
+        }
 }
