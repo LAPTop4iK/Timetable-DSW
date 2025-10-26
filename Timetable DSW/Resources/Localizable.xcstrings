@@ -4817,7 +4817,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Widżety"
+            "value" : "Widgets"
           }
         },
         "pl" : {
@@ -6474,6 +6474,52 @@
         }
       }
     },
+    "widget.home.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configure how widgets display your schedule"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skonfiguruj sposób wyświetlania harmonogramu w widżetach"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Налаштуйте, як віджети показують ваш розклад"
+          }
+        }
+      }
+    },
+    "widget.home.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home screen widgets"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżety ekranu głównego"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Віджети головного екрана"
+          }
+        }
+      }
+    },
     "widget.how.to.add" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -7006,6 +7052,12 @@
     "widget.title" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widgets"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",

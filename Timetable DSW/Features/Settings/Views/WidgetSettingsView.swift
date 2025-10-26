@@ -152,7 +152,7 @@ struct WidgetSettingsView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                     }
-                    .themedForeground(.primary, colorScheme: colorScheme)
+                    .themedForeground(.success, colorScheme: colorScheme)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)
                     // Только капсула-обводка без фона
@@ -230,11 +230,11 @@ struct WidgetSettingsView: View {
                     icon: "rectangle.portrait.fill",
                     description: LocalizedString.widgetTypeLargeDescription.localized
                 )
-                widgetTypeCard(
-                    title: LocalizedString.widgetTypeLiveTitle.localized,
-                    icon: "circle.hexagongrid.circle.fill",
-                    description: LocalizedString.widgetTypeLiveDescription.localized
-                )
+//                widgetTypeCard(
+//                    title: LocalizedString.widgetTypeLiveTitle.localized,
+//                    icon: "circle.hexagongrid.circle.fill",
+//                    description: LocalizedString.widgetTypeLiveDescription.localized
+//                )
             }
         }
     }

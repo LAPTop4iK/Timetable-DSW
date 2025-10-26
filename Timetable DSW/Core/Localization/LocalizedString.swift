@@ -80,7 +80,6 @@ enum LocalizedString {
     case settingsLastUpdated
     case settingsNever
     case settingsPleaseSelectGroup
-    case settingsWidgetsTitle
 
     // MARK: - Tabs
     case tabsSchedule
@@ -303,7 +302,6 @@ enum LocalizedString {
     case widgetHowToAdd
     case widgetNeverUpdated
     case widgetTroubleshooting
-    case widgetSettingsTitle
     case widgetTitle
     case widgetEnabled
     case widgetAccess
@@ -334,6 +332,8 @@ enum LocalizedString {
     case widgetSettingsSubtitle
     case settingsRefresh
     case widgetFooterReloadHint
+    case widgetHomeTitle
+    case widgetHomeSubtitle
 
     case featureTeachersTab
     case featureTeachersTabDescription
@@ -480,7 +480,6 @@ extension LocalizedString {
         case .settingsLastUpdated: return "settings.lastUpdated"
         case .settingsNever: return "settings.never"
         case .settingsPleaseSelectGroup: return "settings.pleaseSelectGroup"
-        case .settingsWidgetsTitle: return "settings.widgetsTitle"
 
         // Tabs
         case .tabsSchedule: return "tabs.schedule"
@@ -696,8 +695,9 @@ extension LocalizedString {
         case .themeNameMidnight:   return "theme.name.midnight"
         case .themeNameMonochrome: return "theme.name.monochrome"
 
-        case .widgetSettingsTitle:   return "widget.settings.title"
-        case .widgetTitle:           return "widget.title"
+        case .widgetTitle:   return "widget.title"
+        case .widgetHomeTitle:   return "widget.home.title"
+        case .widgetHomeSubtitle:   return "widget.home.subtitle"
         case .widgetEnabled:         return "widget.enabled"
         case .widgetAccess:          return "widget.access"
         case .widgetStatusTitle:     return "widget.status.title"

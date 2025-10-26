@@ -49,7 +49,7 @@ struct WidgetSettingsContainer: View {
             // Наш кастомный заголовок сверху
             .safeAreaInset(edge: .top) {
                 GradientTitleBar(
-                    title: LocalizedString.settingsWidgetsTitle.localized,
+                    title: LocalizedString.widgetTitle.localized,
                     onDone: { dismiss() }
                 )
             }

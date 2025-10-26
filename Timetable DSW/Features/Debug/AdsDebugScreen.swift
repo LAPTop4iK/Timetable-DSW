@@ -87,7 +87,7 @@ struct AdsDebugScreen: View {
             Text(LocalizedString.adsDebugNativeDescription.localized)
                 .font(.caption2)
         }
-        .withNativeAds()
+//        .withNativeAds()
     }
 
     private var interstitialSection: some View {

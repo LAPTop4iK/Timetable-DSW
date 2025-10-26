@@ -167,10 +167,7 @@ struct SettingsView: View {
                 HStack(spacing: Configuration.constants.spacing.value) {
                     iconView(icon: .squareGrid2x2Fill, colors: gradientColors)
                     VStack(alignment: .leading, spacing: Configuration.constants.captionSpacing.value) {
-                        Text(LocalizedString.settingsWidgetsTitle.localized)
-                            .font(AppTypography.caption.font)
-                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
-                        Text(LocalizedString.widgetConfigure.localized)
+                        Text(LocalizedString.widgetHomeTitle.localized)
                             .font(AppTypography.body.font)
                             .foregroundAppColor(.primaryText, colorScheme: colorScheme)
                     }
@@ -183,9 +180,9 @@ struct SettingsView: View {
             }
             .buttonStyle(.plain)
         } header: {
-            Text(LocalizedString.settingsWidgetsTitle.localized)
+            Text(LocalizedString.widgetTitle.localized)
         } footer: {
-            Text(LocalizedString.widgetConfigure.localized)
+            Text(LocalizedString.widgetHomeSubtitle.localized)
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
         }
     }
