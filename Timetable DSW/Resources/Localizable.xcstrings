@@ -4029,19 +4029,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Watch Ad (1 hour free)"
+            "value" : "Watch Ad (%@ free)"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obejrzyj Reklamę (1 godzina za darmo)"
+            "value" : "Obejrzyj Reklamę (%@ za darmo)"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подивитись Рекламу (1 година безкоштовно)"
+            "value" : "Подивитись Рекламу (%@ безкоштовно)"
           }
         }
       }
@@ -4423,19 +4423,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unlock Premium (1 hour)"
+            "value" : "Unlock Premium (%@)"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odblokuj Premium (1 godzina)"
+            "value" : "Odblokuj Premium (%@)"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Розблокувати Преміум (1 година)"
+            "value" : "Розблокувати Преміум (%@)"
           }
         }
       }
@@ -4446,19 +4446,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Watch a rewarded ad to support the developer and unlock Premium features for 1 hour."
+            "value" : "Watch a rewarded ad to support the developer and unlock Premium features for 1%@."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obejrzyj reklamę z nagrodą, aby wesprzeć dewelopera i odblokować funkcje Premium na 1 godzinę."
+            "value" : "Obejrzyj reklamę z nagrodą, aby wesprzeć dewelopera i odblokować funkcje Premium na %@."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перегляньте рекламу з винагородою, щоб підтримати розробника та розблокувати Преміум функції на 1 годину."
+            "value" : "Перегляньте рекламу з винагородою, щоб підтримати розробника та розблокувати Преміум функції на %@."
           }
         }
       }

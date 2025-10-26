@@ -153,6 +153,16 @@ struct PremiumStatusValidator {
 
 @MainActor
 final class DefaultAppStateService: ObservableObject, AppStateService {
+    var tempAwareDuration: TimeInterval {
+        let effectiveDuration: TimeInterval
+        if let paramDuration = parametersService?.getInt(.premiumTrialDuration) {
+            effectiveDuration = TimeInterval(paramDuration)
+        } else {
+            effectiveDuration = AppStateConfiguration.temporaryPremiumDuration
+        }
+        return effectiveDuration
+    }
+
 
     // MARK: - Dependencies
 
@@ -184,6 +194,8 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
     var isPremium: Bool {
         state.premiumStatus.isPremium
     }
+
+
 
     private lazy var expirationMonitor: PremiumExpirationMonitor = {
             PremiumExpirationMonitor { [weak self] in
@@ -223,10 +235,8 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
         let effectiveDuration: TimeInterval
         if let duration = duration {
             effectiveDuration = duration
-        } else if let paramDuration = parametersService?.getInt(.premiumTrialDuration) {
-            effectiveDuration = TimeInterval(paramDuration)
         } else {
-            effectiveDuration = AppStateConfiguration.temporaryPremiumDuration
+            effectiveDuration = tempAwareDuration
         }
 
         let expiresAt = Date().addingTimeInterval(effectiveDuration)

@@ -13,65 +13,102 @@ import SwiftUI
 // MARK: - Parameter Types
 
 /// Type-safe parameter value
-enum FeatureFlagParameterValue: Codable, Sendable, Equatable {
-    case string(String)
+enum FeatureFlagParameterValue: Codable, Sendable {
     case int(Int)
     case double(Double)
     case bool(Bool)
+    case string(String)
     case stringArray([String])
 
-    // MARK: - Codable
+    // MARK: - decode
 
-    private enum CodingKeys: String, CodingKey {
-        case type, value
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        // Порядок важен: если JSON пришёл 900 -> сначала пытаемся Int
+        if let intVal = try? container.decode(Int.self) {
+            self = .int(intVal)
+            return
+        }
+        if let doubleVal = try? container.decode(Double.self) {
+            self = .double(doubleVal)
+            return
+        }
+        if let boolVal = try? container.decode(Bool.self) {
+            self = .bool(boolVal)
+            return
+        }
+        if let stringVal = try? container.decode(String.self) {
+            self = .string(stringVal)
+            return
+        }
+        if let arrayVal = try? container.decode([String].self) {
+            self = .stringArray(arrayVal)
+            return
+        }
+
+        // Если ничего не подошло
+        throw DecodingError.typeMismatch(
+            FeatureFlagParameterValue.self,
+            .init(
+                codingPath: decoder.codingPath,
+                debugDescription: "Unsupported parameter value type"
+            )
+        )
     }
 
-    private enum ValueType: String, Codable {
-        case string, int, double, bool, stringArray
-    }
+    // MARK: - encode (на будущее, debug overrides)
 
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
+        var container = encoder.singleValueContainer()
         switch self {
-        case .string(let val):
-            try container.encode(ValueType.string, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .int(let val):
-            try container.encode(ValueType.int, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .double(let val):
-            try container.encode(ValueType.double, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .bool(let val):
-            try container.encode(ValueType.bool, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .stringArray(let val):
-            try container.encode(ValueType.stringArray, forKey: .type)
-            try container.encode(val, forKey: .value)
+        case .int(let v):          try container.encode(v)
+        case .double(let v):       try container.encode(v)
+        case .bool(let v):         try container.encode(v)
+        case .string(let v):       try container.encode(v)
+        case .stringArray(let v):  try container.encode(v)
         }
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let type = try container.decode(ValueType.self, forKey: .type)
+    // Удобные вьюшные геттеры
+    var intValue: Int? {
+        if case let .int(v) = self { return v }
+        return nil
+    }
 
-        switch type {
-        case .string:
-            self = .string(try container.decode(String.self, forKey: .value))
-        case .int:
-            self = .int(try container.decode(Int.self, forKey: .value))
-        case .double:
-            self = .double(try container.decode(Double.self, forKey: .value))
-        case .bool:
-            self = .bool(try container.decode(Bool.self, forKey: .value))
-        case .stringArray:
-            self = .stringArray(try container.decode([String].self, forKey: .value))
+    var stringValue: String? {
+        if case let .string(v) = self { return v }
+        return nil
+    }
+
+    var timeIntervalValue: TimeInterval? {
+        switch self {
+        case .int(let i):     return TimeInterval(i)
+        case .double(let d):  return TimeInterval(d)
+        default:              return nil
         }
     }
 }
 
 // MARK: - Parameter Definition
+
+actor FeatureFlagsParameterSyncService {
+    private let networkManager: NetworkManager
+    private let syncInterval: TimeInterval = 3600 // 1 hour
+
+    init(networkManager: NetworkManager) {
+        self.networkManager = networkManager
+    }
+
+    func shouldSync(lastSyncDate: Date?) -> Bool {
+        guard let lastSync = lastSyncDate else { return true }
+        return Date().timeIntervalSince(lastSync) > syncInterval
+    }
+
+    func fetchRemoteFlags() async throws -> FeatureFlagParametersResponse {
+        try await networkManager.fetch(endpoint: "/api/feature-parameters")
+    }
+}
 
 struct FeatureFlagParameterDefinition: Codable, Sendable {
     let key: String
@@ -153,10 +190,12 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
 struct FeatureFlagParametersState: Codable, Sendable {
     var localOverrides: [String: FeatureFlagParameterValue]
     var remoteParameters: [String: FeatureFlagParameterValue]
+    var lastSync: Date?
 
     static let empty = FeatureFlagParametersState(
         localOverrides: [:],
-        remoteParameters: [:]
+        remoteParameters: [:],
+        lastSync: nil
     )
 }
 
@@ -204,6 +243,7 @@ final class FeatureFlagParametersService: ObservableObject {
     // MARK: - Dependencies
 
     private let storage: FeatureFlagParametersStorage
+    private let syncService: FeatureFlagsParameterSyncService
     private let parametersSubject = CurrentValueSubject<[FeatureFlagParameterKey: FeatureFlagParameterValue], Never>([:])
 
     nonisolated var parametersPublisher: AnyPublisher<[FeatureFlagParameterKey: FeatureFlagParameterValue], Never> {
@@ -212,8 +252,9 @@ final class FeatureFlagParametersService: ObservableObject {
 
     // MARK: - Initialization
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(networkManager: NetworkManager = NetworkManager(), userDefaults: UserDefaults = .standard) {
         self.storage = FeatureFlagParametersStorage(userDefaults: userDefaults)
+        self.syncService = FeatureFlagsParameterSyncService(networkManager: networkManager)
         self.state = .empty
 
         Task {
@@ -311,8 +352,29 @@ final class FeatureFlagParametersService: ObservableObject {
     }
 
     private func loadInitialState() async {
-        state = await storage.loadState()
+        let cached = await storage.loadState()
+        self.state = cached
+        
         updatePublisher()
+        
+        let should = await syncService.shouldSync(lastSyncDate: cached.lastSync)
+        guard should else { return }
+        
+        do {
+            try await syncFromRemote()
+        } catch {
+            print("⚪️ skip sync error@\(Date())")
+        }
+    }
+
+    func syncFromRemote() async throws {
+        let response = try await syncService.fetchRemoteFlags()
+
+        state.remoteParameters = response.parameters
+        state.lastSync = Date()
+
+        updatePublisher()
+        await storage.saveState(state)
     }
 
     private func updatePublisher() {
@@ -342,5 +404,35 @@ extension EnvironmentValues {
 extension View {
     func featureFlagParameters(_ service: FeatureFlagParametersService) -> some View {
         environment(\.featureFlagParameters, service)
+    }
+}
+
+
+enum DurationFormatter {
+    /// Возвращает человекочитаемую длительность из секунд:
+    ///  - 3600 -> "1 godzina" (при польской локали)
+    ///  - 7200 -> "2 godziny"
+    ///  - 86400 -> "1 dzień"
+    ///  - 172800 -> "2 dni"
+    ///
+    /// Локаль берётся системная автоматически.
+    static func localizedShortDuration(from seconds: TimeInterval) -> String {
+        // Кешируем форматтер как static -> без аллокаций каждый раз
+        struct Cache {
+            static let formatter: DateComponentsFormatter = {
+                let f = DateComponentsFormatter()
+                // какие единицы нам разрешены
+                f.allowedUnits = [.day, .hour, .minute]
+                // хотим только самую крупную единицу (не "1 godzina 30 minut")
+                f.maximumUnitCount = 1
+                // полноразмерные единицы ("godzina", "dzień", "minuta")
+                f.unitsStyle = .full
+                // локаль не задаём вручную -> возьмётся Locale.current
+                return f
+            }()
+        }
+
+        // Если форматтер вдруг вернул nil (редко, но на всякий)
+        return Cache.formatter.string(from: seconds) ?? ""
     }
 }

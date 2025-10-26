@@ -259,7 +259,8 @@ struct SettingsView: View {
                         .themedForeground(.header, colorScheme: colorScheme)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(LocalizedString.settingsDeveloperAction.localized)
+                        Text(String(format: LocalizedString.settingsDeveloperAction.localized,
+                                    DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
                             .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
                         if case .temporaryPremium = premiumAccess.status {
@@ -292,7 +293,8 @@ struct SettingsView: View {
         } header: {
             Text(LocalizedString.settingsDeveloperSectionTitle.localized)
         } footer: {
-            Text(LocalizedString.settingsDeveloperFooter.localized)
+            Text(String(format: LocalizedString.settingsDeveloperFooter.localized,
+                        DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
                 .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
         }
         .preloadAds(.rewardedInterstitial, coordinator: coordinator)

@@ -34,6 +34,7 @@ protocol FeatureFlagService: AnyObject {
 protocol AppStateService: AnyObject {
     // State properties
     var isPremium: Bool { get }
+    var tempAwareDuration: TimeInterval { get }
     var premiumStatus: PremiumStatus { get }
     var state: AppState { get }
     
@@ -103,6 +104,10 @@ final class MockFeatureFlagService: FeatureFlagService {
 
 @MainActor
 final class MockAppStateService: AppStateService {
+    var tempAwareDuration: TimeInterval {
+        return 3600
+    }
+
     @Published private(set) var state: AppState
     
     var statePublisher: AnyPublisher<AppState, Never> {

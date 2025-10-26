@@ -41,6 +41,7 @@ struct PremiumPaywallView: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var appStateService: DefaultAppStateService
 
     // MARK: - Body
 
@@ -140,7 +141,8 @@ struct PremiumPaywallView: View {
             }) {
                 HStack {
                     Image(systemName: "play.rectangle.fill")
-                    Text(LocalizedString.premiumWatchAdButton.localized)
+                    Text(String(format: LocalizedString.premiumWatchAdButton.localized,
+                                DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
                         .fontWeight(.semibold)
                 }
                 .font(AppTypography.body.font)
