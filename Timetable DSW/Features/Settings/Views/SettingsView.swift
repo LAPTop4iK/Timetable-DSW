@@ -6,7 +6,6 @@
 import SwiftUI
 import Combine
 import Foundation
-import StoreKit
 
 struct SettingsView: View {
     struct Configuration: ComponentConfiguration {
@@ -308,8 +307,8 @@ struct SettingsView: View {
                     Text(LocalizedString.iapTipTitle.localized)
                         .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
-                    if let product = storeKitManager?.products[.tip] {
-                        Text(product.displayPrice)
+                    if let productInfo = storeKitManager?.getProductInfo(for: .tip) {
+                        Text(productInfo.displayPrice)
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     }
@@ -408,8 +407,8 @@ struct SettingsView: View {
                     Text(LocalizedString.iapPremiumTitle.localized)
                         .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
-                    if let product = storeKitManager?.products[.premium] {
-                        Text(product.displayPrice)
+                    if let productInfo = storeKitManager?.getProductInfo(for: .premium) {
+                        Text(productInfo.displayPrice)
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     }

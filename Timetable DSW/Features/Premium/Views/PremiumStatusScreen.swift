@@ -7,7 +7,6 @@
 
 
 import SwiftUI
-import StoreKit
 
 struct PremiumStatusScreen: View {
     // MARK: - Configuration
@@ -277,8 +276,8 @@ struct PremiumStatusScreen: View {
             } label: {
                 HStack {
                     Image(systemName: "cart.fill")
-                    if let product = storeKitManager?.products[.premium] {
-                        Text("\(LocalizedString.iapPremiumTitle.localized) • \(product.displayPrice)")
+                    if let productInfo = storeKitManager?.getProductInfo(for: .premium) {
+                        Text("\(LocalizedString.iapPremiumTitle.localized) • \(productInfo.displayPrice)")
                             .fontWeight(.semibold)
                     } else {
                         Text(LocalizedString.premiumPurchaseButton.localized)

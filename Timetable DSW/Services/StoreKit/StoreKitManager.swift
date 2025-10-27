@@ -10,6 +10,16 @@ import StoreKit
 import Combine
 import SwiftUI
 
+// MARK: - Product Info (Without StoreKit dependency)
+
+/// Lightweight product info that doesn't require StoreKit import
+struct ProductInfo {
+    let id: String
+    let displayName: String
+    let displayPrice: String
+    let description: String
+}
+
 // MARK: - Product Types
 
 enum ProductType: String, CaseIterable {
@@ -170,6 +180,20 @@ final class StoreKitManager: ObservableObject {
     /// Check if user has purchased premium
     func hasPurchasedPremium() -> Bool {
         return purchasedProducts.contains(.premium)
+    }
+
+    /// Get product info without StoreKit dependency
+    func getProductInfo(for productType: ProductType) -> ProductInfo? {
+        guard let product = products[productType] else {
+            return nil
+        }
+
+        return ProductInfo(
+            id: product.id,
+            displayName: productType.displayName.localized,
+            displayPrice: product.displayPrice,
+            description: productType.description.localized
+        )
     }
 
     // MARK: - Private Methods
