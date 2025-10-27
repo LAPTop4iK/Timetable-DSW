@@ -41,6 +41,7 @@ struct PremiumStatusScreen: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @Environment(\.storeKitManager) private var storeKitManager
     @EnvironmentObject var appStateService: DefaultAppStateService
 
     // MARK: - Body
@@ -257,38 +258,55 @@ struct PremiumStatusScreen: View {
             .buttonStyle(ScaleButtonStyle())
 
             // Purchase button
-//            Button(action: {
-////                dismiss()
-//                onPurchase()
-//            }) {
-//                HStack {
-//                    Image(systemName: "cart.fill")
-//                    Text(LocalizedString.premiumPurchaseButton.localized)
-//                        .fontWeight(.semibold)
-//                }
-//                .font(AppTypography.body.font)
-//                .foregroundStyle(
-//                    LinearGradient(
-//                        colors: gradientColors,
-//                        startPoint: .leading,
-//                        endPoint: .trailing
-//                    )
-//                )
-//                .padding(Configuration.constants.buttonPadding)
-//                .frame(maxWidth: .infinity)
-//                .background {
-//                    RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
-//                        .strokeBorder(
-//                            LinearGradient(
-//                                colors: gradientColors,
-//                                startPoint: .leading,
-//                                endPoint: .trailing
-//                            ),
-//                            lineWidth: 2
-//                        )
-//                }
-//            }
-//            .buttonStyle(ScaleButtonStyle())
+            Button(action: {
+                guard let manager = storeKitManager else { return }
+                Task {
+                    let result = await manager.purchase(.premium)
+                    switch result {
+                    case .success:
+                        onPurchase()
+                    case .cancelled:
+                        break
+                    case .pending:
+                        break
+                    case .failed:
+                        break
+                    }
+                }
+            }) {
+                HStack {
+                    Image(systemName: "cart.fill")
+                    if let product = storeKitManager?.products[.premium] {
+                        Text("\(LocalizedString.iapPremiumTitle.localized) • \(product.displayPrice)")
+                            .fontWeight(.semibold)
+                    } else {
+                        Text(LocalizedString.premiumPurchaseButton.localized)
+                            .fontWeight(.semibold)
+                    }
+                }
+                .font(AppTypography.body.font)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: gradientColors,
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .padding(Configuration.constants.buttonPadding)
+                .frame(maxWidth: .infinity)
+                .background {
+                    RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: gradientColors,
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 2
+                        )
+                }
+            }
+            .buttonStyle(ScaleButtonStyle())
         }
     }
 

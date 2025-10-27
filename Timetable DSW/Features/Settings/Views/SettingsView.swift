@@ -29,6 +29,7 @@ struct SettingsView: View {
     @Environment(\.adCoordinator) private var coordinator
     @Environment(\.bottomInsetService) private var bottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService
+    @Environment(\.storeKitManager) private var storeKitManager
 
     @State private var showingContactDialog = false
     @State private var showingMailComposer = false
@@ -236,68 +237,243 @@ struct SettingsView: View {
     private var awardSection: some View {
         let premiumAccess = PremiumAccess.from(appState: appStateService.state)
         let isPremium = premiumAccess.isPremium
+        let hasAds = !(coordinator?.isAdDisabled() ?? true)
 
         return Section {
-            Button {
-                Task {
-                    do {
-                        try await coordinator?.showAd(type: .rewardedInterstitial)
-                        appStateService.grantTemporaryPremium()
+            // Always show: Tip button (Hotdog for developer)
+            tipButton(isPremium: isPremium)
 
-                        withAnimation {
-                            showConfetti = true
-                        }
-                        updateTimeRemaining()
-                    } catch {
-                        print("Failed to show ad: \(error)")
+            // If ads are enabled and not premium - show ad button
+            if hasAds && !isPremium {
+                watchAdButton(premiumAccess: premiumAccess)
+            }
+
+            // If ads are enabled and not premium - show premium purchase button
+            if hasAds && !isPremium {
+                premiumPurchaseButton
+            }
+
+            // If ads are enabled and not premium - show restore purchases button
+            if hasAds && !isPremium {
+                restorePurchasesButton
+            }
+
+            // Show premium status if already premium
+            if isPremium {
+                premiumStatusRow(premiumAccess: premiumAccess)
+            }
+        } header: {
+            Text(LocalizedString.settingsDeveloperSectionTitle.localized)
+        } footer: {
+            if hasAds {
+                Text(String(format: LocalizedString.settingsDeveloperFooter.localized,
+                            DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            }
+        }
+        .preloadAds(.rewardedInterstitial, coordinator: coordinator)
+    }
+
+    // MARK: - Award Section Components
+
+    private func tipButton(isPremium: Bool) -> some View {
+        Button {
+            guard let manager = storeKitManager else { return }
+            Task {
+                let result = await manager.purchase(.tip)
+                switch result {
+                case .success:
+                    withAnimation {
+                        showConfetti = true
                     }
+                case .cancelled:
+                    break
+                case .pending:
+                    break
+                case .failed(let error):
+                    print("Tip purchase failed: \(error)")
                 }
-            } label: {
-                HStack {
-                    AppIcon.lockOpen.image()
-                        .font(AppTypography.title3.font)
-                        .themedForeground(.header, colorScheme: colorScheme)
+            }
+        } label: {
+            HStack {
+                AppIcon.giftFill.image()
+                    .font(AppTypography.title3.font)
+                    .themedForeground(.header, colorScheme: colorScheme)
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(String(format: LocalizedString.settingsDeveloperAction.localized,
-                                    DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
-                            .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(LocalizedString.iapTipTitle.localized)
+                        .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
-                        if case .temporaryPremium = premiumAccess.status {
-                            Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
-                                .font(AppTypography.caption.font)
-                                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
-                        } else if case .premium = premiumAccess.status {
-                            Text(LocalizedString.settingsPremiumActive.localized)
-                                .font(AppTypography.caption.font)
-                                .foregroundAppColor(.success, colorScheme: colorScheme)
-                        }
-                    }
-
-                    Spacer()
-
-                    if !isPremium {
-                        AppIcon.chevronRight.image()
+                    if let product = storeKitManager?.products[.tip] {
+                        Text(product.displayPrice)
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
-                .padding(.vertical, 6)
+
+                Spacer()
+
+                AppIcon.chevronRight.image()
+                    .font(AppTypography.caption.font)
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
             }
-            .buttonStyle(.plain)
-            .disabled(isPremium)
-            .opacity(isPremium ? 0.6 : 1.0)
-            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        } header: {
-            Text(LocalizedString.settingsDeveloperSectionTitle.localized)
-        } footer: {
-            Text(String(format: LocalizedString.settingsDeveloperFooter.localized,
-                        DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
-                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
         }
-        .preloadAds(.rewardedInterstitial, coordinator: coordinator)
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private func watchAdButton(premiumAccess: PremiumAccess) -> some View {
+        Button {
+            Task {
+                do {
+                    try await coordinator?.showAd(type: .rewardedInterstitial)
+                    appStateService.grantTemporaryPremium()
+
+                    withAnimation {
+                        showConfetti = true
+                    }
+                    updateTimeRemaining()
+                } catch {
+                    print("Failed to show ad: \(error)")
+                }
+            }
+        } label: {
+            HStack {
+                AppIcon.lockOpen.image()
+                    .font(AppTypography.title3.font)
+                    .themedForeground(.header, colorScheme: colorScheme)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(String(format: LocalizedString.settingsDeveloperAction.localized,
+                                DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
+                        .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                    if case .temporaryPremium = premiumAccess.status {
+                        Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    }
+                }
+
+                Spacer()
+
+                AppIcon.chevronRight.image()
+                    .font(AppTypography.caption.font)
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private var premiumPurchaseButton: some View {
+        Button {
+            guard let manager = storeKitManager else { return }
+            Task {
+                let result = await manager.purchase(.premium)
+                switch result {
+                case .success:
+                    withAnimation {
+                        showConfetti = true
+                    }
+                case .cancelled:
+                    break
+                case .pending:
+                    break
+                case .failed(let error):
+                    print("Premium purchase failed: \(error)")
+                }
+            }
+        } label: {
+            HStack {
+                AppIcon.crownFill.image()
+                    .font(AppTypography.title3.font)
+                    .themedForeground(.header, colorScheme: colorScheme)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(LocalizedString.iapPremiumTitle.localized)
+                        .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                    if let product = storeKitManager?.products[.premium] {
+                        Text(product.displayPrice)
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    }
+                }
+
+                Spacer()
+
+                AppIcon.chevronRight.image()
+                    .font(AppTypography.caption.font)
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private var restorePurchasesButton: some View {
+        Button {
+            guard let manager = storeKitManager else { return }
+            Task {
+                do {
+                    try await manager.restorePurchases()
+                    // Success - purchases restored
+                } catch {
+                    print("Failed to restore purchases: \(error)")
+                }
+            }
+        } label: {
+            HStack {
+                AppIcon.arrowClockwise.image()
+                    .font(AppTypography.title3.font)
+                    .themedForeground(.header, colorScheme: colorScheme)
+
+                Text(LocalizedString.iapRestorePurchases.localized)
+                    .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private func premiumStatusRow(premiumAccess: PremiumAccess) -> some View {
+        HStack {
+            AppIcon.crownFill.image()
+                .font(AppTypography.title3.font)
+                .themedForeground(.header, colorScheme: colorScheme)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(LocalizedString.settingsPremiumActive.localized)
+                    .font(AppTypography.caption.font)
+                    .foregroundAppColor(.success, colorScheme: colorScheme)
+
+                if case .temporaryPremium = premiumAccess.status {
+                    Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
+                        .font(AppTypography.caption.font)
+                        .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                }
+            }
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 6)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
     }
 
     // MARK: - Контакты
