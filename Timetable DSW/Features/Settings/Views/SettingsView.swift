@@ -6,6 +6,7 @@
 import SwiftUI
 import Combine
 import Foundation
+import StoreKit
 
 struct SettingsView: View {
     struct Configuration: ComponentConfiguration {
