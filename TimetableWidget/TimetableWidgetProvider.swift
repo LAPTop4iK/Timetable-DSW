@@ -19,12 +19,14 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
             schedule: nil,
             selectedThemeId: "default",
             appearanceMode: "system",
-            configuration: nil
+            configuration: nil,
+            hasAccess: true
         )
     }
 
     func snapshot(for configuration: Intent, in context: Context) async -> TimetableWidgetEntry {
-        let schedule = AppGroupManager.loadSemesterSchedule()
+        let allowed = AppGroupManager.loadWidgetAccessAllowed()
+        let schedule = loadScheduleIf(allowed: allowed)
         let themeId = AppGroupManager.loadSelectedThemeId() ?? "default"
         let appearanceMode = AppGroupManager.loadAppearanceMode() ?? "system"
 
@@ -33,12 +35,14 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
             schedule: schedule,
             selectedThemeId: themeId,
             appearanceMode: appearanceMode,
-            configuration: configuration   // <—
+            configuration: configuration,
+            hasAccess: allowed
         )
     }
 
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<TimetableWidgetEntry> {
-        let schedule = AppGroupManager.loadSemesterSchedule()
+        let allowed = AppGroupManager.loadWidgetAccessAllowed()
+        let schedule = loadScheduleIf(allowed: allowed)
         let themeId = AppGroupManager.loadSelectedThemeId() ?? "default"
         let appearanceMode = AppGroupManager.loadAppearanceMode() ?? "system"
         let currentDate = Date()
@@ -50,7 +54,8 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
                 schedule: schedule,
                 selectedThemeId: themeId,
                 appearanceMode: appearanceMode,
-                configuration: configuration    // <—
+                configuration: configuration,
+                hasAccess: allowed
             )
         }
 
@@ -87,5 +92,10 @@ struct TimetableWidgetProvider: AppIntentTimelineProvider {
         let nextUpdate = entries.last?.date.addingTimeInterval(3600) ?? currentDate.addingTimeInterval(3600)
 
         return Timeline(entries: entries, policy: .after(nextUpdate))
+    }
+
+    private func loadScheduleIf(allowed: Bool) -> GroupScheduleResponse? {
+        guard allowed else { return nil }
+        return AppGroupManager.loadSemesterSchedule()
     }
 }

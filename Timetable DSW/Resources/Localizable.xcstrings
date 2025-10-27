@@ -3322,19 +3322,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pizza + Pepsi"
+            "value" : "Buy Premium"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pizza + Pepsi"
+            "value" : "Kup Premium"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Піца + Pepsi"
+            "value" : "Придбати Premium"
           }
         }
       }

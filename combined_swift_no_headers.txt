@@ -33,6 +33,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 // ===== FILE: Timetable DSW/App/ContentView.swift =====
 import SwiftUI
+import Combine
 
 struct ContentView: View {
     // MARK: - Configuration
@@ -47,10 +48,11 @@ struct ContentView: View {
     // MARK: - Properties
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var appStateService: DefaultAppStateService
+    @EnvironmentObject var toastManager: ToastManager
+    @StateObject private var successFeedback = SuccessFeedbackSystem()
     @Environment(\.adCoordinator) private var adCoordinator
 
     @State private var selectedTab = 0
-    @State private var showConfetti = false
 
     // MARK: - Dependencies
     private let tabs: [TabBarItem] = [
@@ -116,7 +118,7 @@ struct ContentView: View {
                     dampingFraction: Configuration.constants.springDamping),
             value: selectedTab
         )
-        .confetti(isShowing: $showConfetti, configuration: .rainbow)
+        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
     }
 
     // MARK: - Actions
@@ -130,9 +132,13 @@ struct ContentView: View {
                 // Grant temporary premium (duration from AppStateConfiguration)
                 appStateService.grantTemporaryPremium()
 
-                // Show confetti celebration
-                withAnimation {
-                    showConfetti = true
+                // Show success feedback
+                await MainActor.run {
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
                 }
             } catch {
                 print("[Premium] Failed to show rewarded ad: \(error)")
@@ -145,9 +151,11 @@ struct ContentView: View {
         // For now, grant permanent premium for testing
         #if DEBUG
         appStateService.grantPremium()
-        withAnimation {
-            showConfetti = true
-        }
+        successFeedback.celebrate(
+            message: LocalizedString.premiumUnlocked.localized,
+            icon: "crown.fill",
+            toastManager: toastManager
+        )
         #endif
     }
 
@@ -176,6 +184,9 @@ struct DSWScheduleApp: App {
     @StateObject private var parametersService: FeatureFlagParametersService
     @StateObject private var bottomInsetService: DefaultBottomInsetService
     @StateObject private var themeManager = ThemeManager.shared
+    @StateObject private var toastManager = ToastManager()
+    @StateObject private var successFeedback = SuccessFeedbackSystem()
+    @StateObject private var storeKitManager: StoreKitManager
 
     // AdCoordinator - не ObservableObject, поэтому @State
     @State private var adCoordinator: AdMobCoordinator
@@ -215,6 +226,10 @@ struct DSWScheduleApp: App {
         _parametersService = StateObject(wrappedValue: parameters)
         _bottomInsetService = StateObject(wrappedValue: bottomInset)
 
+        // StoreKit Manager
+        let storeKit = StoreKitManager(appStateService: appState)
+        _storeKitManager = StateObject(wrappedValue: storeKit)
+
         // 5️⃣ Создаем AdCoordinator используя уже созданные сервисы
         // ✅ Правильно: используем те же экземпляры, что и в StateObject
         let coordinator = AdMobCoordinator.makeForProduction(
@@ -240,10 +255,14 @@ struct DSWScheduleApp: App {
                 .environmentObject(parametersService)
                 .environmentObject(bottomInsetService)
                 .environmentObject(themeManager)
+                .environmentObject(toastManager)
+                .environmentObject(successFeedback)
                 .environment(\.featureFlagParameters, parametersService)
                 .environment(\.bottomInsetService, bottomInsetService)
                 .environment(\.themeManager, themeManager)
+                .environment(\.storeKitManager, storeKitManager)
                 .adCoordinator(adCoordinator)
+                .toastManager()
                 .onChange(of: scenePhase) { _, phase in
                     guard phase == .active else { return }
                     guard !didAskATTThisSession else {
@@ -585,6 +604,8 @@ enum AppIcon {
     case envelope
     case lockOpen
     case paintpaletteFill
+    case giftFill
+    case crownFill
 
     // MARK: - Themes / Appearance (NEW)
     case sunMaxFill
@@ -653,8 +674,10 @@ enum AppIcon {
 
         // Misc
         case .envelope: return "envelope"
-        case .lockOpen: return "lock.open"
+        case .lockOpen: return "lock.open.fill"
         case .paintpaletteFill: return "paintpalette.fill"
+        case .giftFill: return "gift.fill"
+        case .crownFill: return "crown.fill"
 
         // Themes / Appearance
         case .sunMaxFill: return "sun.max.fill"
@@ -1502,6 +1525,19 @@ enum LocalizedString {
     // MARK: - Settings Premium
     case settingsPremiumActive
 
+    // MARK: - In-App Purchases
+    case iapTipTitle
+    case iapTipDescription
+    case iapPremiumTitle
+    case iapPremiumDescription
+    case iapRestorePurchases
+    case iapPurchaseSuccess
+    case iapPurchaseFailed
+    case iapRestoreSuccess
+    case iapRestoreFailed
+    case iapPurchasing
+    case iapRestoring
+
     // MARK: - Debug
     case debugTools
     case debugDone
@@ -1901,6 +1937,19 @@ extension LocalizedString {
         // Settings Premium
         case .settingsPremiumActive: return "settings.premium.active"
 
+        // In-App Purchases
+        case .iapTipTitle: return "iap.tip.title"
+        case .iapTipDescription: return "iap.tip.description"
+        case .iapPremiumTitle: return "iap.premium.title"
+        case .iapPremiumDescription: return "iap.premium.description"
+        case .iapRestorePurchases: return "iap.restorePurchases"
+        case .iapPurchaseSuccess: return "iap.purchaseSuccess"
+        case .iapPurchaseFailed: return "iap.purchaseFailed"
+        case .iapRestoreSuccess: return "iap.restoreSuccess"
+        case .iapRestoreFailed: return "iap.restoreFailed"
+        case .iapPurchasing: return "iap.purchasing"
+        case .iapRestoring: return "iap.restoring"
+
         // Debug
         case .debugTools: return "debug.tools"
         case .debugDone: return "debug.done"
@@ -2236,6 +2285,235 @@ struct AppGroupManager {
 
     static func loadLastUpdated() -> Date? {
         sharedDefaults?.object(forKey: Keys.lastUpdated) as? Date
+    }
+}
+
+// ===== FILE: Timetable DSW/Core/UI/Components/SuccessToast.swift =====
+import SwiftUI
+import Combine
+
+struct SuccessToast: View {
+    let message: String
+    let icon: String
+    @Environment(\.colorScheme) var colorScheme
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.green, .cyan],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            Text(message)
+                .font(AppTypography.body.font)
+                .fontWeight(.medium)
+                .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background {
+            ZStack {
+                // Glassmorphism background
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                .green.opacity(0.1),
+                                .cyan.opacity(0.1)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                // Subtle glow
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [.green.opacity(0.3), .cyan.opacity(0.3)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+        }
+        .shadow(color: .green.opacity(0.2), radius: 20, x: 0, y: 10)
+    }
+}
+
+// MARK: - Toast Manager
+
+@MainActor
+class ToastManager: ObservableObject {
+    @Published var isShowing = false
+    @Published var message = ""
+    @Published var icon = "checkmark.circle.fill"
+
+    func show(message: String, icon: String = "checkmark.circle.fill") {
+        self.message = message
+        self.icon = icon
+
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+            isShowing = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                self.isShowing = false
+            }
+        }
+    }
+}
+
+// MARK: - Toast Modifier
+
+struct ToastModifier: ViewModifier {
+    @StateObject private var manager = ToastManager()
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(alignment: .top) {
+                if manager.isShowing {
+                    SuccessToast(message: manager.message, icon: manager.icon)
+                        .padding(.top, 60)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .zIndex(999)
+                }
+            }
+            .environmentObject(manager)
+    }
+}
+
+extension View {
+    func toastManager() -> some View {
+        modifier(ToastModifier())
+    }
+}
+
+// ===== FILE: Timetable DSW/Core/UI/Effects/SiriStyleBorderEffect.swift =====
+import SwiftUI
+
+struct SiriStyleBorderEffect: ViewModifier {
+    let isActive: Bool
+
+    @State private var rotation: Double = 0
+    @State private var opacity: Double = 0
+    @Environment(\.colorScheme) var colorScheme
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                ZStack {
+                    if isActive {
+                        // Rotating gradient border
+                        RoundedRectangle(cornerRadius: 0)
+                            .strokeBorder(
+                                AngularGradient(
+                                    colors: GradientStyle.primary.colors(for: colorScheme),
+                                    center: .center,
+                                    startAngle: .degrees(rotation),
+                                    endAngle: .degrees(rotation + 360)
+                                ),
+                                lineWidth: 8
+                            )
+                            .blur(radius: 16)
+                            .opacity(opacity)
+                    }
+                }
+                .allowsHitTesting(false)
+            )
+            .ignoresSafeArea()
+            .onChange(of: isActive) { newValue in
+                if newValue {
+                    withAnimation(.easeIn(duration: 0.2)) {
+                        opacity = 1.0
+                    }
+
+                    withAnimation(.linear(duration: 2.0).repeatCount(2, autoreverses: false)) {
+                        rotation = 720
+                    }
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            opacity = 0
+                        }
+                    }
+                } else {
+                    rotation = 0
+                    opacity = 0
+                }
+            }
+    }
+}
+
+extension View {
+    func siriStyleBorder(isActive: Bool) -> some View {
+        modifier(SiriStyleBorderEffect(isActive: isActive))
+    }
+}
+
+// ===== FILE: Timetable DSW/Core/UI/Effects/SuccessFeedbackSystem.swift =====
+import SwiftUI
+import Combine
+
+@MainActor
+class SuccessFeedbackSystem: ObservableObject {
+    @Published var showBorderEffect = false
+
+    private let hapticService: HapticFeedbackService
+
+    init(hapticService: HapticFeedbackService = DefaultHapticFeedbackService()) {
+        self.hapticService = hapticService
+    }
+
+    func celebrate(
+        message: String,
+        icon: String = "checkmark.circle.fill",
+        toastManager: ToastManager
+    ) {
+        // 1. Haptic feedback
+        hapticService.impact(style: .medium)
+
+        // 2. Show border effect
+        showBorderEffect = true
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // 3. Show toast
+            toastManager.show(message: message, icon: icon)
+        }
+
+        // Reset border effect after animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.showBorderEffect = false
+        }
+    }
+}
+
+// MARK: - Environment Key
+
+private struct SuccessFeedbackSystemKey: EnvironmentKey {
+    static let defaultValue: SuccessFeedbackSystem? = nil
+}
+
+extension EnvironmentValues {
+    var successFeedback: SuccessFeedbackSystem? {
+        get { self[SuccessFeedbackSystemKey.self] }
+        set { self[SuccessFeedbackSystemKey.self] = newValue }
+    }
+}
+
+extension View {
+    func successFeedbackSystem(_ system: SuccessFeedbackSystem) -> some View {
+        environment(\.successFeedback, system)
     }
 }
 
@@ -3782,7 +4060,7 @@ final class DebugMenuViewModel: ObservableObject {
             showSuccessAlert(LocalizedString.debugPremiumGranted.localized)
 
         case .grantTemporaryPremium:
-            appStateService.grantTemporaryPremium(duration: nil)
+            appStateService.grantTemporaryPremium(duration: 30)
             showSuccessAlert(LocalizedString.debugTemporaryPremiumGranted.localized)
 
         case .revokePremium:
@@ -4503,6 +4781,126 @@ private struct EventRow: View {
     }
 }
 
+// ===== FILE: Timetable DSW/Features/Premium/Components/PremiumPurchaseButton.swift =====
+import SwiftUI
+
+struct PremiumPurchaseButton: View {
+    let productType: ProductType
+    let style: ButtonStyleType
+    let onSuccess: () -> Void
+
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.storeKitManager) private var storeKitManager: StoreKitManager?
+
+    enum ButtonStyleType {
+        case primary
+        case outlined
+    }
+
+    var body: some View {
+        Button {
+            guard let manager = storeKitManager else { return }
+            Task {
+                let result = await manager.purchase(productType)
+                switch result {
+                case .success:
+                    onSuccess()
+                case .cancelled, .pending, .failed:
+                    break
+                }
+            }
+        } label: {
+            HStack {
+                Image(systemName: productType == .premium ? "cart.fill" : "gift.fill")
+                if let productInfo = storeKitManager?.getProductInfo(for: productType) {
+                    Text("\(productType.displayName.localized) • \(productInfo.displayPrice)")
+                        .fontWeight(.semibold)
+                } else {
+                    Text(productType.displayName.localized)
+                        .fontWeight(.semibold)
+                }
+            }
+            .font(AppTypography.body.font)
+            .foregroundStyle(style == .primary ? AnyShapeStyle(Color.white) : AnyShapeStyle(gradientStyle))
+            .padding(EdgeInsets(
+                top: AppSpacing.medium.value,
+                leading: AppSpacing.xxxl.value,
+                bottom: AppSpacing.medium.value,
+                trailing: AppSpacing.xxxl.value
+            ))
+            .frame(maxWidth: .infinity)
+            .background {
+                if style == .primary {
+                    primaryBackground
+                } else {
+                    outlinedBackground
+                }
+            }
+        }
+        .buttonStyle(ScaleButtonStyle())
+    }
+
+    private var primaryBackground: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
+                .fill(.ultraThinMaterial)
+
+            RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
+                .fill(
+                    LinearGradient(
+                        colors: gradientColors,
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .opacity(0.9)
+
+            RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            AppColor.white.color(for: colorScheme).opacity(0.3),
+                            AppColor.clear.color(for: colorScheme)
+                        ],
+                        center: .topLeading,
+                        startRadius: 5,
+                        endRadius: 100
+                    )
+                )
+        }
+        .shadow(
+            color: gradientColors[0].opacity(0.4),
+            radius: 20,
+            x: 0,
+            y: 8
+        )
+    }
+
+    private var outlinedBackground: some View {
+        RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
+            .strokeBorder(
+                LinearGradient(
+                    colors: gradientColors,
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ),
+                lineWidth: 2
+            )
+    }
+
+    private var gradientColors: [Color] {
+        GradientStyle.primary.colors(for: colorScheme)
+    }
+
+    private var gradientStyle: LinearGradient {
+        LinearGradient(
+            colors: gradientColors,
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+}
+
 // ===== FILE: Timetable DSW/Features/Premium/PremiumFeature.swift =====
 import Foundation
 
@@ -4607,166 +5005,6 @@ struct PremiumAccess: Sendable {
     }
 }
 
-// ===== FILE: Timetable DSW/Features/Premium/Views/ConfettiView.swift =====
-import SwiftUI
-
-// MARK: - Confetti Particle
-
-struct ConfettiParticle: Identifiable {
-    let id = UUID()
-    let color: Color
-    let x: CGFloat
-    let y: CGFloat
-    let rotation: Double
-    let scale: CGFloat
-}
-
-// MARK: - Confetti View
-
-struct ConfettiView: View {
-    // MARK: - Configuration
-
-    struct Configuration {
-        let particleCount: Int
-        let animationDuration: Double
-        let colors: [Color]
-
-        static let `default` = Configuration(
-            particleCount: 50,
-            animationDuration: 3.0,
-            colors: GradientStyle.primary.colors(for: .light)
-        )
-
-        static let rainbow = Configuration(
-            particleCount: 60,
-            animationDuration: 3.5,
-            colors: [
-                .red, .orange, .yellow,
-                .green, .cyan, .blue,
-                .purple, .pink
-            ]
-        )
-    }
-
-    // MARK: - Properties
-
-    let configuration: Configuration
-    let onComplete: () -> Void
-
-    @State private var particles: [ConfettiParticle] = []
-    @State private var isAnimating = false
-
-    @Environment(\.colorScheme) var colorScheme
-
-    // MARK: - Body
-
-    var body: some View {
-        ZStack {
-            // Background
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    complete()
-                }
-
-            // Particles
-            ForEach(particles) { particle in
-                Circle()
-                    .fill(particle.color)
-                    .frame(width: 10 * particle.scale, height: 10 * particle.scale)
-                    .rotationEffect(.degrees(isAnimating ? particle.rotation + 720 : particle.rotation))
-                    .offset(
-                        x: particle.x,
-                        y: isAnimating ? UIScreen.main.bounds.height : particle.y
-                    )
-                    .opacity(isAnimating ? 0 : 1)
-            }
-
-            // Center message
-            VStack(spacing: AppSpacing.large.value) {
-                Text("🎉")
-                    .font(.system(size: 100))
-                    .scaleEffect(isAnimating ? 1.0 : 0.5)
-
-                Text(LocalizedString.premiumUnlocked.localized)
-                    .font(AppTypography.title.font)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.3), radius: 10)
-                    .scaleEffect(isAnimating ? 1.0 : 0.5)
-                    .opacity(isAnimating ? 1.0 : 0)
-            }
-        }
-        .onAppear {
-            generateParticles()
-            withAnimation(.easeOut(duration: configuration.animationDuration)) {
-                isAnimating = true
-            }
-
-            // Auto-dismiss
-            DispatchQueue.main.asyncAfter(deadline: .now() + configuration.animationDuration) {
-                complete()
-            }
-        }
-    }
-
-    // MARK: - Private Methods
-
-    private func generateParticles() {
-        let screenWidth = UIScreen.main.bounds.width
-        let screenHeight = UIScreen.main.bounds.height
-
-        particles = (0..<configuration.particleCount).map { _ in
-            ConfettiParticle(
-                color: configuration.colors.randomElement() ?? .blue,
-                x: CGFloat.random(in: -screenWidth/2...screenWidth/2),
-                y: CGFloat.random(in: (-screenHeight)/2...(-100)),
-                rotation: Double.random(in: 0...360),
-                scale: CGFloat.random(in: 0.5...1.5)
-            )
-        }
-    }
-
-    private func complete() {
-        onComplete()
-    }
-}
-
-// MARK: - Confetti Modifier
-
-struct ConfettiModifier: ViewModifier {
-    @Binding var isShowing: Bool
-    let configuration: ConfettiView.Configuration
-
-    func body(content: Content) -> some View {
-        ZStack {
-            content
-
-            if isShowing {
-                ConfettiView(configuration: configuration) {
-                    isShowing = false
-                }
-                .transition(.opacity)
-                .zIndex(999)
-            }
-        }
-    }
-}
-
-extension View {
-    func confetti(
-        isShowing: Binding<Bool>,
-        configuration: ConfettiView.Configuration = .rainbow
-    ) -> some View {
-        modifier(
-            ConfettiModifier(
-                isShowing: isShowing,
-                configuration: configuration
-            )
-        )
-    }
-}
-
 // ===== FILE: Timetable DSW/Features/Premium/Views/PremiumContentModifier.swift =====
 import SwiftUI
 
@@ -4800,32 +5038,70 @@ struct PremiumContentModifier: ViewModifier {
                 onPurchase: onPurchase
             )
             .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.hidden)
         }
     }
 
     @ViewBuilder
     private var premiumOverlay: some View {
         ZStack {
-            // Semi-transparent background
-            Color.black.opacity(0.3)
+            // Liquid Glass background
+            Color.clear
+                .background(.ultraThinMaterial)
                 .ignoresSafeArea()
 
-            // Lock icon and text
-            VStack(spacing: AppSpacing.large.value) {
+            // Gradient overlay for depth
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(0.1),
+                    Color.black.opacity(0.3),
+                    Color.black.opacity(0.1)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            // Premium card
+            VStack(spacing: AppSpacing.xl.value) {
+                // Lock icon with glow effect
                 ZStack {
+                    // Outer glow
                     Circle()
                         .fill(
-                            LinearGradient(
-                                colors: gradientColors.map { $0.opacity(0.2) },
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                            RadialGradient(
+                                colors: [
+                                    gradientColors[0].opacity(0.4),
+                                    gradientColors[1].opacity(0.2),
+                                    Color.clear
+                                ],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 60
                             )
                         )
-                        .frame(width: 80, height: 80)
-                        .blur(radius: 20)
+                        .frame(width: 120, height: 120)
 
+                    // Glass circle
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 80, height: 80)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: gradientColors.map { $0.opacity(0.5) },
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 2
+                                )
+                        )
+                        .shadow(color: gradientColors[0].opacity(0.3), radius: 20, x: 0, y: 10)
+
+                    // Lock icon
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 40))
+                        .font(.system(size: 36, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: gradientColors,
@@ -4835,15 +5111,53 @@ struct PremiumContentModifier: ViewModifier {
                         )
                 }
 
-                Text(LocalizedString.premiumFeatureTitle.localized)
-                    .font(AppTypography.title3.font)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                VStack(spacing: AppSpacing.medium.value) {
+                    Text(LocalizedString.premiumFeatureTitle.localized)
+                        .font(AppTypography.title2.font)
+                        .fontWeight(.bold)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.white, .white.opacity(0.8)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
 
-                Text(LocalizedString.premiumTapToUnlock.localized)
-                    .font(AppTypography.body.font)
-                    .foregroundColor(.white.opacity(0.8))
+                    Text(LocalizedString.premiumTapToUnlock.localized)
+                        .font(AppTypography.body.font)
+                        .foregroundColor(.white.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                }
+
+                // Shimmer effect
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(
+                        LinearGradient(
+                            colors: gradientColors.map { $0.opacity(0.6) },
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 4)
+                    .frame(width: 100)
             }
+            .padding(AppSpacing.xxxl.value)
+            .background {
+                RoundedRectangle(cornerRadius: AppCornerRadius.xxl.value)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppCornerRadius.xxl.value)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [.white.opacity(0.2), .white.opacity(0.05)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
+                    )
+            }
+            .shadow(color: .black.opacity(0.3), radius: 30, x: 0, y: 15)
         }
     }
 
@@ -4914,6 +5228,8 @@ struct PremiumPaywallView: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @Environment(\.storeKitManager) private var storeKitManager: StoreKitManager?
+    @EnvironmentObject var appStateService: DefaultAppStateService
 
     // MARK: - Body
 
@@ -5013,7 +5329,8 @@ struct PremiumPaywallView: View {
             }) {
                 HStack {
                     Image(systemName: "play.rectangle.fill")
-                    Text(LocalizedString.premiumWatchAdButton.localized)
+                    Text(String(format: LocalizedString.premiumWatchAdButton.localized,
+                                DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
                         .fontWeight(.semibold)
                 }
                 .font(AppTypography.body.font)
@@ -5033,38 +5350,56 @@ struct PremiumPaywallView: View {
             .buttonStyle(ScaleButtonStyle())
 
             // Purchase button
-//            Button(action: {
-//                dismiss()
-//                onPurchase()
-//            }) {
-//                HStack {
-//                    Image(systemName: "cart.fill")
-//                    Text("Purchase Premium")
-//                        .fontWeight(.semibold)
-//                }
-//                .font(AppTypography.body.font)
-//                .foregroundStyle(
-//                    LinearGradient(
-//                        colors: gradientColors,
-//                        startPoint: .leading,
-//                        endPoint: .trailing
-//                    )
-//                )
-//                .padding(Configuration.constants.buttonPadding)
-//                .frame(maxWidth: .infinity)
-//                .background {
-//                    RoundedRectangle(cornerRadius: Configuration.constants.cornerRadius.value)
-//                        .strokeBorder(
-//                            LinearGradient(
-//                                colors: gradientColors,
-//                                startPoint: .leading,
-//                                endPoint: .trailing
-//                            ),
-//                            lineWidth: 2
-//                        )
-//                }
-//            }
-//            .buttonStyle(ScaleButtonStyle())
+            Button {
+                guard let manager = storeKitManager else { return }
+                Task {
+                    let result = await manager.purchase(.premium)
+                    switch result {
+                    case .success:
+                        dismiss()
+                        onPurchase()
+                    case .cancelled:
+                        break
+                    case .pending:
+                        break
+                    case .failed:
+                        break
+                    }
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "cart.fill")
+                    if let productInfo = storeKitManager?.getProductInfo(for: .premium) {
+                        Text("\(LocalizedString.iapPremiumTitle.localized) • \(productInfo.displayPrice)")
+                            .fontWeight(.semibold)
+                    } else {
+                        Text(LocalizedString.iapPremiumTitle.localized)
+                            .fontWeight(.semibold)
+                    }
+                }
+                .font(AppTypography.body.font)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: gradientColors,
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .padding(Configuration.constants.buttonPadding)
+                .frame(maxWidth: .infinity)
+                .background {
+                    RoundedRectangle(cornerRadius: Configuration.constants.cornerRadius.value)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: gradientColors,
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 2
+                        )
+                }
+            }
+            .buttonStyle(ScaleButtonStyle())
 
             // Close button
             Button(LocalizedString.premiumMaybeLater.localized) {
@@ -5242,6 +5577,8 @@ struct PremiumStatusScreen: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @Environment(\.storeKitManager) private var storeKitManager: StoreKitManager?
+    @EnvironmentObject var appStateService: DefaultAppStateService
 
     // MARK: - Body
 
@@ -5442,7 +5779,8 @@ struct PremiumStatusScreen: View {
             }) {
                 HStack {
                     Image(systemName: "play.rectangle.fill")
-                    Text(LocalizedString.premiumWatchAdButton.localized)
+                    Text(String(format: LocalizedString.premiumWatchAdButton.localized,
+                                DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
                         .fontWeight(.semibold)
                 }
                 .font(AppTypography.body.font)
@@ -5456,38 +5794,55 @@ struct PremiumStatusScreen: View {
             .buttonStyle(ScaleButtonStyle())
 
             // Purchase button
-//            Button(action: {
-////                dismiss()
-//                onPurchase()
-//            }) {
-//                HStack {
-//                    Image(systemName: "cart.fill")
-//                    Text(LocalizedString.premiumPurchaseButton.localized)
-//                        .fontWeight(.semibold)
-//                }
-//                .font(AppTypography.body.font)
-//                .foregroundStyle(
-//                    LinearGradient(
-//                        colors: gradientColors,
-//                        startPoint: .leading,
-//                        endPoint: .trailing
-//                    )
-//                )
-//                .padding(Configuration.constants.buttonPadding)
-//                .frame(maxWidth: .infinity)
-//                .background {
-//                    RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
-//                        .strokeBorder(
-//                            LinearGradient(
-//                                colors: gradientColors,
-//                                startPoint: .leading,
-//                                endPoint: .trailing
-//                            ),
-//                            lineWidth: 2
-//                        )
-//                }
-//            }
-//            .buttonStyle(ScaleButtonStyle())
+            Button {
+                guard let manager = storeKitManager else { return }
+                Task {
+                    let result = await manager.purchase(.premium)
+                    switch result {
+                    case .success:
+                        onPurchase()
+                    case .cancelled:
+                        break
+                    case .pending:
+                        break
+                    case .failed:
+                        break
+                    }
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "cart.fill")
+                    if let productInfo = storeKitManager?.getProductInfo(for: .premium) {
+                        Text("\(LocalizedString.iapPremiumTitle.localized) • \(productInfo.displayPrice)")
+                            .fontWeight(.semibold)
+                    } else {
+                        Text(LocalizedString.premiumPurchaseButton.localized)
+                            .fontWeight(.semibold)
+                    }
+                }
+                .font(AppTypography.body.font)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: gradientColors,
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .padding(Configuration.constants.buttonPadding)
+                .frame(maxWidth: .infinity)
+                .background {
+                    RoundedRectangle(cornerRadius: AppCornerRadius.xl.value)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: gradientColors,
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 2
+                        )
+                }
+            }
+            .buttonStyle(ScaleButtonStyle())
         }
     }
 
@@ -5651,7 +6006,10 @@ final class ScheduleViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
     weak var appViewModel: AppViewModel?
-    let interstitialCooldown = InterstitialCooldownManager(configuration: .weekSwitch)
+    weak var parametersService: FeatureFlagParametersService?
+    lazy var interstitialCooldown: InterstitialCooldownManager = {
+        InterstitialCooldownManager(configuration: .weekSwitch(parametersService: parametersService))
+    }()
 
     // MARK: - Computed Properties
     
@@ -9175,13 +9533,15 @@ struct SettingsView: View {
     @Environment(\.adCoordinator) private var coordinator
     @Environment(\.bottomInsetService) private var bottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService
+    @Environment(\.storeKitManager) private var storeKitManager
+    @EnvironmentObject var toastManager: ToastManager
+    @EnvironmentObject var successFeedback: SuccessFeedbackSystem
 
     @State private var showingContactDialog = false
     @State private var showingMailComposer = false
     @State private var showingMailUnavailableAlert = false
     @State private var pendingMailSubject = ""
     @State private var pendingMailBody = ""
-    @State private var showConfetti = false
     @State private var timeRemaining = ""
     @State private var timer: Timer?
 
@@ -9198,9 +9558,7 @@ struct SettingsView: View {
                 themeRow
                 widgetRow
                 cacheSection
-                if !(coordinator?.isAdDisabled() ?? true) {
-                    awardSection
-                }
+                awardSection
                 contactSection
                 aboutSection
                 debugSection
@@ -9257,7 +9615,7 @@ struct SettingsView: View {
         } message: {
             Text(LocalizedString.settingsClearCacheMessage.localized)
         }
-        .confetti(isShowing: $showConfetti, configuration: .rainbow)
+        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
         .onAppear {
             updateTimeRemaining()
             startTimer()
@@ -9382,66 +9740,247 @@ struct SettingsView: View {
     private var awardSection: some View {
         let premiumAccess = PremiumAccess.from(appState: appStateService.state)
         let isPremium = premiumAccess.isPremium
+        let hasAds = !(coordinator?.isAdDisabled() ?? true)
 
         return Section {
-            Button {
-                Task {
-                    do {
-                        try await coordinator?.showAd(type: .rewardedInterstitial)
-                        appStateService.grantTemporaryPremium()
+            // Always show: Tip button (Hotdog for developer)
+            tipButton(isPremium: isPremium)
 
-                        withAnimation {
-                            showConfetti = true
-                        }
-                        updateTimeRemaining()
-                    } catch {
-                        print("Failed to show ad: \(error)")
-                    }
+            // If ads are enabled and not premium - show ad button
+            if hasAds && !isPremium {
+                watchAdButton(premiumAccess: premiumAccess)
+            }
+
+            // If ads are enabled and not premium - show premium purchase button
+            if hasAds && !isPremium {
+                premiumPurchaseButton
+            }
+
+            // If ads are enabled and not premium - show restore purchases button
+            if hasAds && !isPremium {
+                restorePurchasesButton
+            }
+
+            // Show premium status if already premium
+            if isPremium {
+                premiumStatusRow(premiumAccess: premiumAccess)
+            }
+        } header: {
+            Text(LocalizedString.settingsDeveloperSectionTitle.localized)
+        } footer: {
+            if hasAds {
+                Text(String(format: LocalizedString.settingsDeveloperFooter.localized,
+                            DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            }
+        }
+        .preloadAds(.rewardedInterstitial, coordinator: coordinator)
+    }
+
+    // MARK: - Award Section Components
+
+    private func tipButton(isPremium: Bool) -> some View {
+        Button {
+            guard let manager = storeKitManager else { return }
+            Task {
+                let result = await manager.purchase(.tip)
+                switch result {
+                case .success:
+                    successFeedback.celebrate(
+                        message: LocalizedString.iapPurchaseSuccess.localized,
+                        icon: "gift.fill",
+                        toastManager: toastManager
+                    )
+                case .cancelled:
+                    break
+                case .pending:
+                    break
+                case .failed(let error):
+                    print("Tip purchase failed: \(error)")
                 }
-            } label: {
-                HStack {
-                    AppIcon.lockOpen.image()
-                        .font(AppTypography.title3.font)
-                        .themedForeground(.header, colorScheme: colorScheme)
+            }
+        } label: {
+            HStack {
+                AppIcon.giftFill.image()
+                    .font(AppTypography.title3.font)
+                    .themedForeground(.header, colorScheme: colorScheme)
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(LocalizedString.settingsDeveloperAction.localized)
-                            .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(LocalizedString.iapTipTitle.localized)
+                        .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
-                        if case .temporaryPremium = premiumAccess.status {
-                            Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
-                                .font(AppTypography.caption.font)
-                                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
-                        } else if case .premium = premiumAccess.status {
-                            Text(LocalizedString.settingsPremiumActive.localized)
-                                .font(AppTypography.caption.font)
-                                .foregroundAppColor(.success, colorScheme: colorScheme)
-                        }
-                    }
-
-                    Spacer()
-
-                    if !isPremium {
-                        AppIcon.chevronRight.image()
+                    if let productInfo = storeKitManager?.getProductInfo(for: .tip) {
+                        Text(productInfo.displayPrice)
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
-                .padding(.vertical, 6)
+
+                Spacer()
+
+                AppIcon.chevronRight.image()
+                    .font(AppTypography.caption.font)
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
             }
-            .buttonStyle(.plain)
-            .disabled(isPremium)
-            .opacity(isPremium ? 0.6 : 1.0)
-            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        } header: {
-            Text(LocalizedString.settingsDeveloperSectionTitle.localized)
-        } footer: {
-            Text(LocalizedString.settingsDeveloperFooter.localized)
-                .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
         }
-        .preloadAds(.rewardedInterstitial, coordinator: coordinator)
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private func watchAdButton(premiumAccess: PremiumAccess) -> some View {
+        Button {
+            Task {
+                do {
+                    try await coordinator?.showAd(type: .rewardedInterstitial)
+                    appStateService.grantTemporaryPremium()
+
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
+                    updateTimeRemaining()
+                } catch {
+                    print("Failed to show ad: \(error)")
+                }
+            }
+        } label: {
+            HStack {
+                AppIcon.lockOpen.image()
+                    .font(AppTypography.title3.font)
+                    .themedForeground(.header, colorScheme: colorScheme)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(String(format: LocalizedString.settingsDeveloperAction.localized,
+                                DurationFormatter.localizedShortDuration(from: appStateService.tempAwareDuration)))
+                        .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                    if case .temporaryPremium = premiumAccess.status {
+                        Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    }
+                }
+
+                Spacer()
+
+                AppIcon.chevronRight.image()
+                    .font(AppTypography.caption.font)
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private var premiumPurchaseButton: some View {
+        Button {
+            guard let manager = storeKitManager else { return }
+            Task {
+                let result = await manager.purchase(.premium)
+                switch result {
+                case .success:
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
+                case .cancelled:
+                    break
+                case .pending:
+                    break
+                case .failed(let error):
+                    print("Premium purchase failed: \(error)")
+                }
+            }
+        } label: {
+            HStack {
+                rowIcon(.crownFill)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(LocalizedString.iapPremiumTitle.localized)
+                        .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                    if let productInfo = storeKitManager?.getProductInfo(for: .premium) {
+                        Text(productInfo.displayPrice)
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    }
+                }
+
+                Spacer()
+
+                AppIcon.chevronRight.image()
+                    .font(AppTypography.caption.font)
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private var restorePurchasesButton: some View {
+        Button {
+            guard let manager = storeKitManager else { return }
+            Task {
+                do {
+                    try await manager.restorePurchases()
+                    appStateService.grantPremium()
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
+                } catch {
+                    print("Failed to restore purchases: \(error)")
+                }
+            }
+        } label: {
+            HStack {
+                rowIcon(.arrowClockwise)
+
+                Text(LocalizedString.iapRestorePurchases.localized)
+                    .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    }
+
+    private func premiumStatusRow(premiumAccess: PremiumAccess) -> some View {
+        HStack {
+            rowIcon(.crownFill)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(LocalizedString.settingsPremiumActive.localized)
+                    .foregroundAppColor(.primaryText, colorScheme: colorScheme)
+
+                if case .temporaryPremium = premiumAccess.status {
+                    Text(timeRemaining)
+                        .font(AppTypography.caption.font)
+                        .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                }
+            }
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 6)
+        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
     }
 
     // MARK: - Контакты
@@ -9595,7 +10134,7 @@ struct SettingsView: View {
 
         let now = Date()
         guard endDate > now else {
-            timeRemaining = "Expired"
+            timeRemaining = ""
             return
         }
 
@@ -9605,9 +10144,9 @@ struct SettingsView: View {
         let seconds = Int(interval) % 60
 
         if hours > 0 {
-            timeRemaining = String(format: "%02d:%02d:%02d remaining", hours, minutes, seconds)
+            timeRemaining = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
         } else {
-            timeRemaining = String(format: "%02d:%02d remaining", minutes, seconds)
+            timeRemaining = String(format: "%02d:%02d", minutes, seconds)
         }
     }
 
@@ -9620,6 +10159,13 @@ struct SettingsView: View {
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
+    }
+
+    private func rowIcon(_ icon: AppIcon) -> some View {
+        icon.image()
+            .font(AppTypography.title3.font)
+            .themedForeground(.header, colorScheme: colorScheme)
+            .frame(width: 24, height: 24, alignment: .center)
     }
 }
 
@@ -12961,10 +13507,17 @@ final class InterstitialCooldownManager {
         let cooldownInterval: TimeInterval
         let actionsBeforeShow: Int
 
-        static let weekSwitch = Configuration(
-            cooldownInterval: 300, // 5 minutes
-            actionsBeforeShow: 3   // Show after every 3 week switches
-        )
+        static func weekSwitch(parametersService: FeatureFlagParametersService?) -> Configuration {
+            let cooldownInterval = TimeInterval(
+                parametersService?.getInt(.weekSwitchCooldownInterval) ?? 300
+            )
+            let actionsBeforeShow = parametersService?.getInt(.weekSwitchActionsBeforeShow) ?? 3
+
+            return Configuration(
+                cooldownInterval: cooldownInterval,
+                actionsBeforeShow: actionsBeforeShow
+            )
+        }
     }
 
     // MARK: - Properties
@@ -14430,6 +14983,16 @@ struct PremiumStatusValidator {
 
 @MainActor
 final class DefaultAppStateService: ObservableObject, AppStateService {
+    var tempAwareDuration: TimeInterval {
+        let effectiveDuration: TimeInterval
+        if let paramDuration = parametersService?.getInt(.premiumTrialDuration) {
+            effectiveDuration = TimeInterval(paramDuration)
+        } else {
+            effectiveDuration = AppStateConfiguration.temporaryPremiumDuration
+        }
+        return effectiveDuration
+    }
+
 
     // MARK: - Dependencies
 
@@ -14461,6 +15024,8 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
     var isPremium: Bool {
         state.premiumStatus.isPremium
     }
+
+
 
     private lazy var expirationMonitor: PremiumExpirationMonitor = {
             PremiumExpirationMonitor { [weak self] in
@@ -14500,10 +15065,8 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
         let effectiveDuration: TimeInterval
         if let duration = duration {
             effectiveDuration = duration
-        } else if let paramDuration = parametersService?.getInt(.premiumTrialDuration) {
-            effectiveDuration = TimeInterval(paramDuration)
         } else {
-            effectiveDuration = AppStateConfiguration.temporaryPremiumDuration
+            effectiveDuration = tempAwareDuration
         }
 
         let expiresAt = Date().addingTimeInterval(effectiveDuration)
@@ -15039,65 +15602,102 @@ import SwiftUI
 // MARK: - Parameter Types
 
 /// Type-safe parameter value
-enum FeatureFlagParameterValue: Codable, Sendable, Equatable {
-    case string(String)
+enum FeatureFlagParameterValue: Codable, Sendable {
     case int(Int)
     case double(Double)
     case bool(Bool)
+    case string(String)
     case stringArray([String])
 
-    // MARK: - Codable
+    // MARK: - decode
 
-    private enum CodingKeys: String, CodingKey {
-        case type, value
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        // Порядок важен: если JSON пришёл 900 -> сначала пытаемся Int
+        if let intVal = try? container.decode(Int.self) {
+            self = .int(intVal)
+            return
+        }
+        if let doubleVal = try? container.decode(Double.self) {
+            self = .double(doubleVal)
+            return
+        }
+        if let boolVal = try? container.decode(Bool.self) {
+            self = .bool(boolVal)
+            return
+        }
+        if let stringVal = try? container.decode(String.self) {
+            self = .string(stringVal)
+            return
+        }
+        if let arrayVal = try? container.decode([String].self) {
+            self = .stringArray(arrayVal)
+            return
+        }
+
+        // Если ничего не подошло
+        throw DecodingError.typeMismatch(
+            FeatureFlagParameterValue.self,
+            .init(
+                codingPath: decoder.codingPath,
+                debugDescription: "Unsupported parameter value type"
+            )
+        )
     }
 
-    private enum ValueType: String, Codable {
-        case string, int, double, bool, stringArray
-    }
+    // MARK: - encode (на будущее, debug overrides)
 
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
+        var container = encoder.singleValueContainer()
         switch self {
-        case .string(let val):
-            try container.encode(ValueType.string, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .int(let val):
-            try container.encode(ValueType.int, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .double(let val):
-            try container.encode(ValueType.double, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .bool(let val):
-            try container.encode(ValueType.bool, forKey: .type)
-            try container.encode(val, forKey: .value)
-        case .stringArray(let val):
-            try container.encode(ValueType.stringArray, forKey: .type)
-            try container.encode(val, forKey: .value)
+        case .int(let v):          try container.encode(v)
+        case .double(let v):       try container.encode(v)
+        case .bool(let v):         try container.encode(v)
+        case .string(let v):       try container.encode(v)
+        case .stringArray(let v):  try container.encode(v)
         }
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let type = try container.decode(ValueType.self, forKey: .type)
+    // Удобные вьюшные геттеры
+    var intValue: Int? {
+        if case let .int(v) = self { return v }
+        return nil
+    }
 
-        switch type {
-        case .string:
-            self = .string(try container.decode(String.self, forKey: .value))
-        case .int:
-            self = .int(try container.decode(Int.self, forKey: .value))
-        case .double:
-            self = .double(try container.decode(Double.self, forKey: .value))
-        case .bool:
-            self = .bool(try container.decode(Bool.self, forKey: .value))
-        case .stringArray:
-            self = .stringArray(try container.decode([String].self, forKey: .value))
+    var stringValue: String? {
+        if case let .string(v) = self { return v }
+        return nil
+    }
+
+    var timeIntervalValue: TimeInterval? {
+        switch self {
+        case .int(let i):     return TimeInterval(i)
+        case .double(let d):  return TimeInterval(d)
+        default:              return nil
         }
     }
 }
 
 // MARK: - Parameter Definition
+
+actor FeatureFlagsParameterSyncService {
+    private let networkManager: NetworkManager
+    private let syncInterval: TimeInterval = 3600 // 1 hour
+
+    init(networkManager: NetworkManager) {
+        self.networkManager = networkManager
+    }
+
+    func shouldSync(lastSyncDate: Date?) -> Bool {
+        guard let lastSync = lastSyncDate else { return true }
+        return Date().timeIntervalSince(lastSync) > syncInterval
+    }
+
+    func fetchRemoteFlags() async throws -> FeatureFlagParametersResponse {
+        try await networkManager.fetch(endpoint: "/api/feature-parameters")
+    }
+}
 
 struct FeatureFlagParameterDefinition: Codable, Sendable {
     let key: String
@@ -15117,6 +15717,8 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
     case interstitialCooldown = "interstitial_cooldown"
     case nativeAdCacheSize = "native_ad_cache_size"
     case premiumTrialDuration = "premium_trial_duration"
+    case weekSwitchCooldownInterval = "week_switch_cooldown_interval"
+    case weekSwitchActionsBeforeShow = "week_switch_actions_before_show"
 
     var definition: FeatureFlagParameterDefinition {
         switch self {
@@ -15145,6 +15747,16 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
                 key: rawValue,
                 defaultValue: .int(Int(AppStateConfiguration.temporaryPremiumDuration))
             )
+        case .weekSwitchCooldownInterval:
+            return FeatureFlagParameterDefinition(
+                key: rawValue,
+                defaultValue: .int(300) // 5 minutes
+            )
+        case .weekSwitchActionsBeforeShow:
+            return FeatureFlagParameterDefinition(
+                key: rawValue,
+                defaultValue: .int(3) // Show after every 3 week switches
+            )
         }
     }
 
@@ -15155,6 +15767,8 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
         case .interstitialCooldown: return "Interstitial Cooldown"
         case .nativeAdCacheSize: return "Native Ad Cache Size"
         case .premiumTrialDuration: return "Premium Trial Duration"
+        case .weekSwitchCooldownInterval: return "Week Switch Cooldown Interval"
+        case .weekSwitchActionsBeforeShow: return "Week Switch Actions Before Show"
         }
     }
 
@@ -15170,6 +15784,10 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
             return "Number of native ads to cache"
         case .premiumTrialDuration:
             return "Duration of premium trial after rewarded ad (seconds)"
+        case .weekSwitchCooldownInterval:
+            return "Cooldown between interstitial ads for week switches (seconds)"
+        case .weekSwitchActionsBeforeShow:
+            return "Number of week switch actions before showing interstitial ad"
         }
     }
 }
@@ -15179,10 +15797,12 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
 struct FeatureFlagParametersState: Codable, Sendable {
     var localOverrides: [String: FeatureFlagParameterValue]
     var remoteParameters: [String: FeatureFlagParameterValue]
+    var lastSync: Date?
 
     static let empty = FeatureFlagParametersState(
         localOverrides: [:],
-        remoteParameters: [:]
+        remoteParameters: [:],
+        lastSync: nil
     )
 }
 
@@ -15230,6 +15850,7 @@ final class FeatureFlagParametersService: ObservableObject {
     // MARK: - Dependencies
 
     private let storage: FeatureFlagParametersStorage
+    private let syncService: FeatureFlagsParameterSyncService
     private let parametersSubject = CurrentValueSubject<[FeatureFlagParameterKey: FeatureFlagParameterValue], Never>([:])
 
     nonisolated var parametersPublisher: AnyPublisher<[FeatureFlagParameterKey: FeatureFlagParameterValue], Never> {
@@ -15238,8 +15859,9 @@ final class FeatureFlagParametersService: ObservableObject {
 
     // MARK: - Initialization
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(networkManager: NetworkManager = NetworkManager(), userDefaults: UserDefaults = .standard) {
         self.storage = FeatureFlagParametersStorage(userDefaults: userDefaults)
+        self.syncService = FeatureFlagsParameterSyncService(networkManager: networkManager)
         self.state = .empty
 
         Task {
@@ -15337,8 +15959,29 @@ final class FeatureFlagParametersService: ObservableObject {
     }
 
     private func loadInitialState() async {
-        state = await storage.loadState()
+        let cached = await storage.loadState()
+        self.state = cached
+        
         updatePublisher()
+        
+        let should = await syncService.shouldSync(lastSyncDate: cached.lastSync)
+        guard should else { return }
+        
+        do {
+            try await syncFromRemote()
+        } catch {
+            print("⚪️ skip sync error@\(Date())")
+        }
+    }
+
+    func syncFromRemote() async throws {
+        let response = try await syncService.fetchRemoteFlags()
+
+        state.remoteParameters = response.parameters
+        state.lastSync = Date()
+
+        updatePublisher()
+        await storage.saveState(state)
     }
 
     private func updatePublisher() {
@@ -15371,6 +16014,36 @@ extension View {
     }
 }
 
+
+enum DurationFormatter {
+    /// Возвращает человекочитаемую длительность из секунд:
+    ///  - 3600 -> "1 godzina" (при польской локали)
+    ///  - 7200 -> "2 godziny"
+    ///  - 86400 -> "1 dzień"
+    ///  - 172800 -> "2 dni"
+    ///
+    /// Локаль берётся системная автоматически.
+    static func localizedShortDuration(from seconds: TimeInterval) -> String {
+        // Кешируем форматтер как static -> без аллокаций каждый раз
+        struct Cache {
+            static let formatter: DateComponentsFormatter = {
+                let f = DateComponentsFormatter()
+                // какие единицы нам разрешены
+                f.allowedUnits = [.day, .hour, .minute]
+                // хотим только самую крупную единицу (не "1 godzina 30 minut")
+                f.maximumUnitCount = 1
+                // полноразмерные единицы ("godzina", "dzień", "minuta")
+                f.unitsStyle = .full
+                // локаль не задаём вручную -> возьмётся Locale.current
+                return f
+            }()
+        }
+
+        // Если форматтер вдруг вернул nil (редко, но на всякий)
+        return Cache.formatter.string(from: seconds) ?? ""
+    }
+}
+
 // ===== FILE: Timetable DSW/Services/FeatureFlags/FeatureFlagService.swift =====
 import Foundation
 import Combine
@@ -15400,6 +16073,7 @@ protocol FeatureFlagService: AnyObject {
 protocol AppStateService: AnyObject {
     // State properties
     var isPremium: Bool { get }
+    var tempAwareDuration: TimeInterval { get }
     var premiumStatus: PremiumStatus { get }
     var state: AppState { get }
     
@@ -15469,6 +16143,10 @@ final class MockFeatureFlagService: FeatureFlagService {
 
 @MainActor
 final class MockAppStateService: AppStateService {
+    var tempAwareDuration: TimeInterval {
+        return 3600
+    }
+
     @Published private(set) var state: AppState
     
     var statePublisher: AnyPublisher<AppState, Never> {
@@ -16295,6 +16973,298 @@ extension EnvironmentValues {
     var performanceLogger: PerformanceLogger {
         get { self[PerformanceLoggerKey.self] }
         set { self[PerformanceLoggerKey.self] = newValue }
+    }
+}
+
+// ===== FILE: Timetable DSW/Services/StoreKit/StoreKitManager.swift =====
+import Foundation
+import StoreKit
+import Combine
+import SwiftUI
+
+// MARK: - Product Info (Without StoreKit dependency)
+
+/// Lightweight product info that doesn't require StoreKit import
+struct ProductInfo {
+    let id: String
+    let displayName: String
+    let displayPrice: String
+    let description: String
+}
+
+// MARK: - Product Types
+
+enum ProductType: String, CaseIterable {
+    case tip = "com.dswlab.timetable.tip.hot.dog"           // Tip: Hotdog for developer (6.99 PLN)
+    case premium = "com.dswlab.timetable.premium" // Premium: Pizza + Pepsi (19.00 PLN)
+
+    var displayName: LocalizedString {
+        switch self {
+        case .tip:
+            return .iapTipTitle
+        case .premium:
+            return .iapPremiumTitle
+        }
+    }
+
+    var description: LocalizedString {
+        switch self {
+        case .tip:
+            return .iapTipDescription
+        case .premium:
+            return .iapPremiumDescription
+        }
+    }
+}
+
+// MARK: - Purchase Result
+
+enum PurchaseResult {
+    case success(ProductType)
+    case cancelled
+    case pending
+    case failed(Error)
+}
+
+// MARK: - StoreKit Manager
+
+@MainActor
+final class StoreKitManager: ObservableObject {
+
+    // MARK: - Published Properties
+
+    @Published private(set) var products: [ProductType: Product] = [:]
+    @Published private(set) var purchasedProducts: Set<ProductType> = []
+    @Published private(set) var isLoading = false
+    @Published var errorMessage: String?
+
+    // MARK: - Private Properties
+
+    private var updateListenerTask: Task<Void, Never>?
+    private let appStateService: DefaultAppStateService
+
+    // MARK: - Initialization
+
+    init(appStateService: DefaultAppStateService) {
+        self.appStateService = appStateService
+        updateListenerTask = listenForTransactions()
+
+        Task {
+            await loadProducts()
+            await updatePurchasedProducts()
+        }
+    }
+
+    deinit {
+        updateListenerTask?.cancel()
+    }
+
+    // MARK: - Public Methods
+
+    /// Load products from App Store Connect
+    func loadProducts() async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let productIds = ProductType.allCases.map { $0.rawValue }
+            let storeProducts = try await Product.products(for: productIds)
+
+            var productsDict: [ProductType: Product] = [:]
+            for product in storeProducts {
+                if let productType = ProductType(rawValue: product.id) {
+                    productsDict[productType] = product
+                }
+            }
+
+            self.products = productsDict
+        } catch {
+            errorMessage = "Failed to load products: \(error.localizedDescription)"
+            print("❌ StoreKit Error: Failed to load products - \(error)")
+        }
+
+        isLoading = false
+    }
+
+    /// Purchase a product
+    func purchase(_ productType: ProductType) async -> PurchaseResult {
+        guard let product = products[productType] else {
+            return .failed(StoreKitError.productNotFound)
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let result = try await product.purchase()
+
+            switch result {
+            case .success(let verification):
+                // Verify the transaction
+                let transaction = try checkVerified(verification)
+
+                // Grant access based on product type
+                await handleSuccessfulPurchase(productType: productType, transaction: transaction)
+
+                // Finish the transaction
+                await transaction.finish()
+
+                await updatePurchasedProducts()
+
+                isLoading = false
+                return .success(productType)
+
+            case .userCancelled:
+                isLoading = false
+                return .cancelled
+
+            case .pending:
+                isLoading = false
+                return .pending
+
+            @unknown default:
+                isLoading = false
+                return .failed(StoreKitError.unknown)
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoading = false
+            return .failed(error)
+        }
+    }
+
+    /// Restore purchases
+    func restorePurchases() async throws {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            try await AppStore.sync()
+            await updatePurchasedProducts()
+            isLoading = false
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoading = false
+            throw error
+        }
+    }
+
+    /// Check if user has purchased premium
+    func hasPurchasedPremium() -> Bool {
+        return purchasedProducts.contains(.premium)
+    }
+
+    /// Get product info without StoreKit dependency
+    func getProductInfo(for productType: ProductType) -> ProductInfo? {
+        guard let product = products[productType] else {
+            return nil
+        }
+
+        return ProductInfo(
+            id: product.id,
+            displayName: productType.displayName.localized,
+            displayPrice: product.displayPrice,
+            description: productType.description.localized
+        )
+    }
+
+    // MARK: - Private Methods
+
+    private func handleSuccessfulPurchase(productType: ProductType, transaction: StoreKit.Transaction) async {
+        switch productType {
+        case .premium:
+            // Grant permanent premium access
+            appStateService.grantPremium()
+
+        case .tip:
+            // Tip is consumable - just record the transaction
+            // No premium access granted for tips
+            break
+        }
+    }
+
+    private func updatePurchasedProducts() async {
+        var purchased: Set<ProductType> = []
+
+        for await result in Transaction.currentEntitlements {
+            guard case .verified(let transaction) = result else {
+                continue
+            }
+
+            if let productType = ProductType(rawValue: transaction.productID) {
+                // Only non-consumable purchases grant access
+                if productType == .premium {
+                    purchased.insert(productType)
+                }
+            }
+        }
+
+        self.purchasedProducts = purchased
+
+        // Update app state based on purchases
+        if purchased.contains(.premium) {
+            appStateService.grantPremium()
+        }
+    }
+
+    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+        switch result {
+        case .unverified:
+            throw StoreKitError.verificationFailed
+        case .verified(let safe):
+            return safe
+        }
+    }
+
+    private func listenForTransactions() -> Task<Void, Never> {
+        return Task.detached {
+            for await result in Transaction.updates {
+                guard case .verified(let transaction) = result else {
+                    continue
+                }
+
+                await self.updatePurchasedProducts()
+                await transaction.finish()
+            }
+        }
+    }
+}
+
+// MARK: - StoreKit Errors
+
+enum StoreKitError: LocalizedError {
+    case productNotFound
+    case verificationFailed
+    case unknown
+
+    var errorDescription: String? {
+        switch self {
+        case .productNotFound:
+            return "Product not found"
+        case .verificationFailed:
+            return "Transaction verification failed"
+        case .unknown:
+            return "Unknown error occurred"
+        }
+    }
+}
+
+// MARK: - Environment Key
+
+private struct StoreKitManagerKey: EnvironmentKey {
+    static let defaultValue: StoreKitManager? = nil
+}
+
+extension EnvironmentValues {
+    var storeKitManager: StoreKitManager? {
+        get { self[StoreKitManagerKey.self] }
+        set { self[StoreKitManagerKey.self] = newValue }
+    }
+}
+
+extension View {
+    func storeKitManager(_ manager: StoreKitManager) -> some View {
+        environment(\.storeKitManager, manager)
     }
 }
 

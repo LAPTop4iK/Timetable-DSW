@@ -14,6 +14,8 @@
 		EB41617B2EAD8A9000BC4B50 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = EB41617A2EAD8A9000BC4B50 /* FirebaseAnalyticsCore */; };
 		EB41617D2EAD8A9000BC4B50 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = EB41617C2EAD8A9000BC4B50 /* FirebaseCore */; };
 		EB41617F2EAD8A9000BC4B50 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = EB41617E2EAD8A9000BC4B50 /* FirebaseCrashlytics */; };
+		EB41646C2EB0051000BC4B50 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB41646B2EB0051000BC4B50 /* StoreKit.framework */; };
+		EB4164722EB0247000BC4B50 /* Premium.storekit in Resources */ = {isa = PBXBuildFile; fileRef = EB4164712EB0247000BC4B50 /* Premium.storekit */; };
 		EB4A63FF2EA67EA300EACBDE /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = EB4A63FE2EA67EA300EACBDE /* GoogleMobileAds */; };
 		EB6FBF7C2EA79D2D00A4740E /* LBTATools in Frameworks */ = {isa = PBXBuildFile; productRef = EB6FBF7B2EA79D2D00A4740E /* LBTATools */; };
 		EB82BC732EAAB6F0005FDC0B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */; };
@@ -47,6 +49,8 @@
 
 /* Begin PBXFileReference section */
 		EB4161712EAD895900BC4B50 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EB41646B2EB0051000BC4B50 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		EB4164712EB0247000BC4B50 /* Premium.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Premium.storekit; sourceTree = "<group>"; };
 		EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TimetableWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		EB82BC742EAAB6F0005FDC0B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -113,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB41646C2EB0051000BC4B50 /* StoreKit.framework in Frameworks */,
 				EB4A63FF2EA67EA300EACBDE /* GoogleMobileAds in Frameworks */,
 				EB41617B2EAD8A9000BC4B50 /* FirebaseAnalyticsCore in Frameworks */,
 				EB6FBF7C2EA79D2D00A4740E /* LBTATools in Frameworks */,
@@ -130,6 +135,7 @@
 		EB82BC712EAAB6F0005FDC0B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EB41646B2EB0051000BC4B50 /* StoreKit.framework */,
 				EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */,
 				EB82BC742EAAB6F0005FDC0B /* SwiftUI.framework */,
 			);
@@ -139,6 +145,7 @@
 		EBA0262B2EA1CC140010F32D = {
 			isa = PBXGroup;
 			children = (
+				EB4164712EB0247000BC4B50 /* Premium.storekit */,
 				EB4161712EAD895900BC4B50 /* GoogleService-Info.plist */,
 				EB82BCA32EAABC25005FDC0B /* TimetableWidgetExtension.entitlements */,
 				EBA026362EA1CC140010F32D /* Timetable DSW */,
@@ -273,6 +280,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB4164722EB0247000BC4B50 /* Premium.storekit in Resources */,
 				EB4161722EAD895900BC4B50 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

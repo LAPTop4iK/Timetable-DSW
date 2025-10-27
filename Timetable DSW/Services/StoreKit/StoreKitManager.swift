@@ -23,8 +23,8 @@ struct ProductInfo {
 // MARK: - Product Types
 
 enum ProductType: String, CaseIterable {
-    case tip = "com.dswlab.timetable.tip.hotdog"           // Tip: Hotdog for developer (6.99 PLN)
-    case premium = "com.dswlab.timetable.premium.pizzapepsi" // Premium: Pizza + Pepsi (19.00 PLN)
+    case tip = "com.dswlab.timetable.tip.hot.dog"           // Tip: Hotdog for developer (6.99 PLN)
+    case premium = "com.dswlab.timetable.premium" // Premium: Pizza + Pepsi (19.00 PLN)
 
     var displayName: LocalizedString {
         switch self {

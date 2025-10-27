@@ -12,6 +12,7 @@ struct SiriStyleBorderEffect: ViewModifier {
 
     @State private var rotation: Double = 0
     @State private var opacity: Double = 0
+    @Environment(\.colorScheme) var colorScheme
 
     func body(content: Content) -> some View {
         content
@@ -22,26 +23,20 @@ struct SiriStyleBorderEffect: ViewModifier {
                         RoundedRectangle(cornerRadius: 0)
                             .strokeBorder(
                                 AngularGradient(
-                                    colors: [
-                                        .cyan.opacity(0.8),
-                                        .blue.opacity(0.8),
-                                        .purple.opacity(0.8),
-                                        .pink.opacity(0.8),
-                                        .orange.opacity(0.8),
-                                        .cyan.opacity(0.8)
-                                    ],
+                                    colors: GradientStyle.primary.colors(for: colorScheme),
                                     center: .center,
                                     startAngle: .degrees(rotation),
                                     endAngle: .degrees(rotation + 360)
                                 ),
-                                lineWidth: 4
+                                lineWidth: 8
                             )
-                            .blur(radius: 8)
+                            .blur(radius: 16)
                             .opacity(opacity)
                     }
                 }
                 .allowsHitTesting(false)
             )
+            .ignoresSafeArea()
             .onChange(of: isActive) { newValue in
                 if newValue {
                     withAnimation(.easeIn(duration: 0.2)) {

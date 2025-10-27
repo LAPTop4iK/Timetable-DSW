@@ -54,9 +54,7 @@ struct SettingsView: View {
                 themeRow
                 widgetRow
                 cacheSection
-                if !(coordinator?.isAdDisabled() ?? true) {
-                    awardSection
-                }
+                awardSection
                 contactSection
                 aboutSection
                 debugSection
@@ -244,14 +242,14 @@ struct SettingsView: View {
             // Always show: Tip button (Hotdog for developer)
             tipButton(isPremium: isPremium)
 
-            // If ads are enabled and not premium - show ad button
-            if hasAds && !isPremium {
-                watchAdButton(premiumAccess: premiumAccess)
-            }
-
             // If ads are enabled and not premium - show premium purchase button
             if hasAds && !isPremium {
                 premiumPurchaseButton
+            }
+
+            // If ads are enabled and not premium - show ad button
+            if hasAds && !isPremium {
+                watchAdButton(premiumAccess: premiumAccess)
             }
 
             // If ads are enabled and not premium - show restore purchases button
@@ -399,9 +397,7 @@ struct SettingsView: View {
             }
         } label: {
             HStack {
-                AppIcon.crownFill.image()
-                    .font(AppTypography.title3.font)
-                    .themedForeground(.header, colorScheme: colorScheme)
+                rowIcon(.crownFill)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(LocalizedString.iapPremiumTitle.localized)
@@ -434,16 +430,19 @@ struct SettingsView: View {
             Task {
                 do {
                     try await manager.restorePurchases()
-                    // Success - purchases restored
+                    appStateService.grantPremium()
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
                 } catch {
                     print("Failed to restore purchases: \(error)")
                 }
             }
         } label: {
             HStack {
-                AppIcon.arrowClockwise.image()
-                    .font(AppTypography.title3.font)
-                    .themedForeground(.header, colorScheme: colorScheme)
+                rowIcon(.arrowClockwise)
 
                 Text(LocalizedString.iapRestorePurchases.localized)
                     .foregroundAppColor(.primaryText, colorScheme: colorScheme)
@@ -460,17 +459,14 @@ struct SettingsView: View {
 
     private func premiumStatusRow(premiumAccess: PremiumAccess) -> some View {
         HStack {
-            AppIcon.crownFill.image()
-                .font(AppTypography.title3.font)
-                .themedForeground(.header, colorScheme: colorScheme)
+            rowIcon(.crownFill)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(LocalizedString.settingsPremiumActive.localized)
-                    .font(AppTypography.caption.font)
-                    .foregroundAppColor(.success, colorScheme: colorScheme)
+                    .foregroundAppColor(.primaryText, colorScheme: colorScheme)
 
                 if case .temporaryPremium = premiumAccess.status {
-                    Text(timeRemaining.isEmpty ? "Calculating..." : timeRemaining)
+                    Text(timeRemaining)
                         .font(AppTypography.caption.font)
                         .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 }
@@ -634,7 +630,7 @@ struct SettingsView: View {
 
         let now = Date()
         guard endDate > now else {
-            timeRemaining = "Expired"
+            timeRemaining = ""
             return
         }
 
@@ -644,9 +640,9 @@ struct SettingsView: View {
         let seconds = Int(interval) % 60
 
         if hours > 0 {
-            timeRemaining = String(format: "%02d:%02d:%02d remaining", hours, minutes, seconds)
+            timeRemaining = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
         } else {
-            timeRemaining = String(format: "%02d:%02d remaining", minutes, seconds)
+            timeRemaining = String(format: "%02d:%02d", minutes, seconds)
         }
     }
 
@@ -660,5 +656,11 @@ struct SettingsView: View {
         timer?.invalidate()
         timer = nil
     }
-}
 
+    private func rowIcon(_ icon: AppIcon) -> some View {
+        icon.image()
+            .font(AppTypography.title3.font)
+            .themedForeground(.header, colorScheme: colorScheme)
+            .frame(width: 24, height: 24, alignment: .center)
+    }
+}
