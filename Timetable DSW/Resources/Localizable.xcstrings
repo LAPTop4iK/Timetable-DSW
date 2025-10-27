@@ -4145,6 +4145,29 @@
         }
       }
     },
+    "premium.only.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium Only"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tylko Premium"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тільки Преміум"
+          }
+        }
+      }
+    },
     "premium.purchase.button" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4325,6 +4348,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Подивіться іншу рекламу щоб продовжити\\nабо купіть для необмеженого доступу"
+          }
+        }
+      }
+    },
+    "premium.widget.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widgets are available for premium users"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widżety są dostępne dla użytkowników premium"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Віджети доступні для преміум користувачів"
           }
         }
       }

@@ -157,6 +157,8 @@ enum LocalizedString {
     case premiumMaybeLater
     case premiumCalculating
     case premiumRemaining
+    case premiumOnlyTitle
+    case premiumWidgetDescription
 
     // MARK: - Settings Premium
     case settingsPremiumActive
@@ -569,6 +571,8 @@ extension LocalizedString {
         case .premiumMaybeLater: return "premium.maybeLater"
         case .premiumCalculating: return "premium.calculating"
         case .premiumRemaining: return "premium.remaining"
+        case .premiumOnlyTitle: return "premium.only.title"
+        case .premiumWidgetDescription: return "premium.widget.description"
 
         // Settings Premium
         case .settingsPremiumActive: return "settings.premium.active"

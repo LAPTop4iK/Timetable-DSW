@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Combine
+import WidgetKit
 
 struct ContentView: View {
     // MARK: - Configuration
@@ -106,6 +107,12 @@ struct ContentView: View {
                 // Grant temporary premium (duration from AppStateConfiguration)
                 appStateService.grantTemporaryPremium()
 
+                // Sync widget access
+                WidgetAccessSync.sync(
+                    appStateService: appStateService,
+                    adCoordinator: adCoordinator
+                )
+
                 // Show success feedback
                 await MainActor.run {
                     successFeedback.celebrate(
@@ -125,6 +132,13 @@ struct ContentView: View {
         // For now, grant permanent premium for testing
         #if DEBUG
         appStateService.grantPremium()
+
+        // Sync widget access
+        WidgetAccessSync.sync(
+            appStateService: appStateService,
+            adCoordinator: adCoordinator
+        )
+
         successFeedback.celebrate(
             message: LocalizedString.premiumUnlocked.localized,
             icon: "crown.fill",

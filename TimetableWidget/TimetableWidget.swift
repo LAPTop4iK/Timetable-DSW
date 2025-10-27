@@ -36,15 +36,29 @@ struct TimetableWidgetEntryView: View {
     @Environment(\.widgetFamily) var widgetFamily
 
     var body: some View {
-        switch widgetFamily {
-        case .systemSmall:
-            SmallWidgetView(entry: entry)
-        case .systemMedium:
-            MediumWidgetView(entry: entry)
-        case .systemLarge:
-            LargeWidgetView(entry: entry)
-        default:
-            SmallWidgetView(entry: entry)
+        if entry.hasAccess {
+            switch widgetFamily {
+            case .systemSmall:
+                SmallWidgetView(entry: entry)
+            case .systemMedium:
+                MediumWidgetView(entry: entry)
+            case .systemLarge:
+                LargeWidgetView(entry: entry)
+            default:
+                SmallWidgetView(entry: entry)
+            }
+        } else {
+            // Show premium placeholder when user doesn't have access
+            switch widgetFamily {
+            case .systemSmall:
+                PremiumPlaceholderWidget(size: .small, entry: entry)
+            case .systemMedium:
+                PremiumPlaceholderWidget(size: .medium, entry: entry)
+            case .systemLarge:
+                PremiumPlaceholderWidget(size: .large, entry: entry)
+            default:
+                PremiumPlaceholderWidget(size: .small, entry: entry)
+            }
         }
     }
 }
@@ -57,7 +71,8 @@ struct TimetableWidgetEntryView: View {
         schedule: nil,
         selectedThemeId: "default",
         appearanceMode: "system",
-        configuration: nil
+        configuration: nil,
+        hasAccess: true,
     )
 }
 
@@ -69,7 +84,8 @@ struct TimetableWidgetEntryView: View {
         schedule: nil,
         selectedThemeId: "default",
         appearanceMode: "system",
-        configuration: nil
+        configuration: nil,
+        hasAccess: true,
     )
 }
 
@@ -81,7 +97,8 @@ struct TimetableWidgetEntryView: View {
         schedule: nil,
         selectedThemeId: "default",
         appearanceMode: "system",
-        configuration: nil
+        configuration: nil,
+        hasAccess: true,
     )
 }
 
