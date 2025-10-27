@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import StoreKit
 
 struct PremiumPurchaseButton: View {
     let productType: ProductType
@@ -36,8 +35,8 @@ struct PremiumPurchaseButton: View {
         } label: {
             HStack {
                 Image(systemName: productType == .premium ? "cart.fill" : "gift.fill")
-                if let product = storeKitManager?.products[productType] {
-                    Text("\(productType.displayName.localized) • \(product.displayPrice)")
+                if let productInfo = storeKitManager?.getProductInfo(for: productType) {
+                    Text("\(productType.displayName.localized) • \(productInfo.displayPrice)")
                         .fontWeight(.semibold)
                 } else {
                     Text(productType.displayName.localized)
