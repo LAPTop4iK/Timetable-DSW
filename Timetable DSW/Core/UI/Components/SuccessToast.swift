@@ -93,7 +93,7 @@ class ToastManager: ObservableObject {
 // MARK: - Toast Modifier
 
 struct ToastModifier: ViewModifier {
-    @StateObject private var manager = ToastManager()
+    @EnvironmentObject private var manager: ToastManager
 
     func body(content: Content) -> some View {
         content
@@ -105,7 +105,6 @@ struct ToastModifier: ViewModifier {
                         .zIndex(999)
                 }
             }
-            .environmentObject(manager)
     }
 }
 
