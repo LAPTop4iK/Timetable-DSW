@@ -30,13 +30,14 @@ struct SettingsView: View {
     @Environment(\.bottomInsetService) private var bottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService
     @Environment(\.storeKitManager) private var storeKitManager
+    @EnvironmentObject var toastManager: ToastManager
+    @EnvironmentObject var successFeedback: SuccessFeedbackSystem
 
     @State private var showingContactDialog = false
     @State private var showingMailComposer = false
     @State private var showingMailUnavailableAlert = false
     @State private var pendingMailSubject = ""
     @State private var pendingMailBody = ""
-    @State private var showConfetti = false
     @State private var timeRemaining = ""
     @State private var timer: Timer?
 
@@ -112,7 +113,7 @@ struct SettingsView: View {
         } message: {
             Text(LocalizedString.settingsClearCacheMessage.localized)
         }
-        .confetti(isShowing: $showConfetti, configuration: .rainbow)
+        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
         .onAppear {
             updateTimeRemaining()
             startTimer()
@@ -283,9 +284,11 @@ struct SettingsView: View {
                 let result = await manager.purchase(.tip)
                 switch result {
                 case .success:
-                    withAnimation {
-                        showConfetti = true
-                    }
+                    successFeedback.celebrate(
+                        message: LocalizedString.iapPurchaseSuccess.localized,
+                        icon: "gift.fill",
+                        toastManager: toastManager
+                    )
                 case .cancelled:
                     break
                 case .pending:
@@ -332,9 +335,11 @@ struct SettingsView: View {
                     try await coordinator?.showAd(type: .rewardedInterstitial)
                     appStateService.grantTemporaryPremium()
 
-                    withAnimation {
-                        showConfetti = true
-                    }
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
                     updateTimeRemaining()
                 } catch {
                     print("Failed to show ad: \(error)")
@@ -379,9 +384,11 @@ struct SettingsView: View {
                 let result = await manager.purchase(.premium)
                 switch result {
                 case .success:
-                    withAnimation {
-                        showConfetti = true
-                    }
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
                 case .cancelled:
                     break
                 case .pending:

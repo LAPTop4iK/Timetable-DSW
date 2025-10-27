@@ -102,9 +102,6 @@
     "⚡️ Performance Monitor" : {
 
     },
-    "🎉" : {
-
-    },
     "🐛 Debug Menu" : {
 
     },
@@ -7432,12 +7429,6 @@
             "value" : "Hotdog dla dewelopera"
           }
         },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Хотдог разработчику"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7459,12 +7450,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wesprzyj dewelopera małym posiłkiem"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Поддержите разработчика небольшим угощением"
           }
         },
         "uk" : {
@@ -7490,12 +7475,6 @@
             "value" : "Pizza + Pepsi"
           }
         },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пицца + Pepsi"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7517,12 +7496,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Odblokuj wszystkie funkcje premium na zawsze"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Разблокировать все премиум функции навсегда"
           }
         },
         "uk" : {
@@ -7548,12 +7521,6 @@
             "value" : "Przywróć zakupy"
           }
         },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Восстановить покупки"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7575,12 +7542,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zakup udany!"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Покупка успешна!"
           }
         },
         "uk" : {
@@ -7606,12 +7567,6 @@
             "value" : "Zakup nie powiódł się"
           }
         },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Покупка не удалась"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7633,12 +7588,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zakupy zostały pomyślnie przywrócone"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Покупки успешно восстановлены"
           }
         },
         "uk" : {
@@ -7664,12 +7613,6 @@
             "value" : "Nie udało się przywrócić zakupów"
           }
         },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Не удалось восстановить покупки"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7693,12 +7636,6 @@
             "value" : "Przetwarzanie zakupu..."
           }
         },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Обработка покупки..."
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7720,12 +7657,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Przywracanie zakupów..."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Восстановление покупок..."
           }
         },
         "uk" : {
