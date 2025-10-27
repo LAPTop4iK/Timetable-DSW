@@ -161,6 +161,19 @@ enum LocalizedString {
     // MARK: - Settings Premium
     case settingsPremiumActive
 
+    // MARK: - In-App Purchases
+    case iapTipTitle
+    case iapTipDescription
+    case iapPremiumTitle
+    case iapPremiumDescription
+    case iapRestorePurchases
+    case iapPurchaseSuccess
+    case iapPurchaseFailed
+    case iapRestoreSuccess
+    case iapRestoreFailed
+    case iapPurchasing
+    case iapRestoring
+
     // MARK: - Debug
     case debugTools
     case debugDone
@@ -559,6 +572,19 @@ extension LocalizedString {
 
         // Settings Premium
         case .settingsPremiumActive: return "settings.premium.active"
+
+        // In-App Purchases
+        case .iapTipTitle: return "iap.tip.title"
+        case .iapTipDescription: return "iap.tip.description"
+        case .iapPremiumTitle: return "iap.premium.title"
+        case .iapPremiumDescription: return "iap.premium.description"
+        case .iapRestorePurchases: return "iap.restorePurchases"
+        case .iapPurchaseSuccess: return "iap.purchaseSuccess"
+        case .iapPurchaseFailed: return "iap.purchaseFailed"
+        case .iapRestoreSuccess: return "iap.restoreSuccess"
+        case .iapRestoreFailed: return "iap.restoreFailed"
+        case .iapPurchasing: return "iap.purchasing"
+        case .iapRestoring: return "iap.restoring"
 
         // Debug
         case .debugTools: return "debug.tools"

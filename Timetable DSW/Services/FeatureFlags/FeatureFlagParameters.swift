@@ -128,6 +128,8 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
     case interstitialCooldown = "interstitial_cooldown"
     case nativeAdCacheSize = "native_ad_cache_size"
     case premiumTrialDuration = "premium_trial_duration"
+    case weekSwitchCooldownInterval = "week_switch_cooldown_interval"
+    case weekSwitchActionsBeforeShow = "week_switch_actions_before_show"
 
     var definition: FeatureFlagParameterDefinition {
         switch self {
@@ -156,6 +158,16 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
                 key: rawValue,
                 defaultValue: .int(Int(AppStateConfiguration.temporaryPremiumDuration))
             )
+        case .weekSwitchCooldownInterval:
+            return FeatureFlagParameterDefinition(
+                key: rawValue,
+                defaultValue: .int(300) // 5 minutes
+            )
+        case .weekSwitchActionsBeforeShow:
+            return FeatureFlagParameterDefinition(
+                key: rawValue,
+                defaultValue: .int(3) // Show after every 3 week switches
+            )
         }
     }
 
@@ -166,6 +178,8 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
         case .interstitialCooldown: return "Interstitial Cooldown"
         case .nativeAdCacheSize: return "Native Ad Cache Size"
         case .premiumTrialDuration: return "Premium Trial Duration"
+        case .weekSwitchCooldownInterval: return "Week Switch Cooldown Interval"
+        case .weekSwitchActionsBeforeShow: return "Week Switch Actions Before Show"
         }
     }
 
@@ -181,6 +195,10 @@ enum FeatureFlagParameterKey: String, CaseIterable, Sendable {
             return "Number of native ads to cache"
         case .premiumTrialDuration:
             return "Duration of premium trial after rewarded ad (seconds)"
+        case .weekSwitchCooldownInterval:
+            return "Cooldown between interstitial ads for week switches (seconds)"
+        case .weekSwitchActionsBeforeShow:
+            return "Number of week switch actions before showing interstitial ad"
         }
     }
 }
