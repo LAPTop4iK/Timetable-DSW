@@ -101,6 +101,10 @@ struct DSWScheduleApp: App {
                 .adCoordinator(adCoordinator)
                 .toastManager()
                 .onChange(of: scenePhase) { _, phase in
+                    WidgetAccessSync.sync(
+                        appStateService: appStateService,
+                        adCoordinator: adCoordinator
+                    )
                     guard phase == .active else { return }
                     guard !didAskATTThisSession else {
                         Task { @MainActor in

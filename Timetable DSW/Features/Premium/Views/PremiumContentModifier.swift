@@ -38,6 +38,7 @@ struct PremiumContentModifier: ViewModifier {
                 onPurchase: onPurchase
             )
             .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.hidden)
         }
     }
 

@@ -132,7 +132,7 @@ enum AppIcon {
 
         // Misc
         case .envelope: return "envelope"
-        case .lockOpen: return "lock.open"
+        case .lockOpen: return "lock.open.fill"
         case .paintpaletteFill: return "paintpalette.fill"
         case .giftFill: return "gift.fill"
         case .crownFill: return "crown.fill"
