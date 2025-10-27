@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 @MainActor
 class SuccessFeedbackSystem: ObservableObject {
@@ -23,7 +24,7 @@ class SuccessFeedbackSystem: ObservableObject {
         toastManager: ToastManager
     ) {
         // 1. Haptic feedback
-        hapticService.success()
+        hapticService.impact(style: .medium)
 
         // 2. Show border effect
         showBorderEffect = true

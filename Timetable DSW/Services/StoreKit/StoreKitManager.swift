@@ -8,6 +8,7 @@
 import Foundation
 import StoreKit
 import Combine
+import SwiftUI
 
 // MARK: - Product Types
 
@@ -173,7 +174,7 @@ final class StoreKitManager: ObservableObject {
 
     // MARK: - Private Methods
 
-    private func handleSuccessfulPurchase(productType: ProductType, transaction: Transaction) async {
+    private func handleSuccessfulPurchase(productType: ProductType, transaction: StoreKit.Transaction) async {
         switch productType {
         case .premium:
             // Grant permanent premium access
