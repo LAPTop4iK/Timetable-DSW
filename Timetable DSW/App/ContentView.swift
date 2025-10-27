@@ -21,10 +21,11 @@ struct ContentView: View {
     // MARK: - Properties
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var appStateService: DefaultAppStateService
+    @EnvironmentObject var toastManager: ToastManager
+    @StateObject private var successFeedback = SuccessFeedbackSystem()
     @Environment(\.adCoordinator) private var adCoordinator
 
     @State private var selectedTab = 0
-    @State private var showConfetti = false
 
     // MARK: - Dependencies
     private let tabs: [TabBarItem] = [
@@ -90,7 +91,7 @@ struct ContentView: View {
                     dampingFraction: Configuration.constants.springDamping),
             value: selectedTab
         )
-        .confetti(isShowing: $showConfetti, configuration: .rainbow)
+        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
     }
 
     // MARK: - Actions
@@ -104,9 +105,13 @@ struct ContentView: View {
                 // Grant temporary premium (duration from AppStateConfiguration)
                 appStateService.grantTemporaryPremium()
 
-                // Show confetti celebration
-                withAnimation {
-                    showConfetti = true
+                // Show success feedback
+                await MainActor.run {
+                    successFeedback.celebrate(
+                        message: LocalizedString.premiumUnlocked.localized,
+                        icon: "crown.fill",
+                        toastManager: toastManager
+                    )
                 }
             } catch {
                 print("[Premium] Failed to show rewarded ad: \(error)")
@@ -119,9 +124,11 @@ struct ContentView: View {
         // For now, grant permanent premium for testing
         #if DEBUG
         appStateService.grantPremium()
-        withAnimation {
-            showConfetti = true
-        }
+        successFeedback.celebrate(
+            message: LocalizedString.premiumUnlocked.localized,
+            icon: "crown.fill",
+            toastManager: toastManager
+        )
         #endif
     }
 
