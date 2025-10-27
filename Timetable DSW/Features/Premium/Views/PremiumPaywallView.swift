@@ -41,7 +41,7 @@ struct PremiumPaywallView: View {
 
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
-    @Environment(\.storeKitManager) private var storeKitManager
+    @Environment(\.storeKitManager) private var storeKitManager: StoreKitManager?
     @EnvironmentObject var appStateService: DefaultAppStateService
 
     // MARK: - Body
@@ -163,7 +163,7 @@ struct PremiumPaywallView: View {
             .buttonStyle(ScaleButtonStyle())
 
             // Purchase button
-            Button(action: {
+            Button {
                 guard let manager = storeKitManager else { return }
                 Task {
                     let result = await manager.purchase(.premium)
@@ -179,7 +179,7 @@ struct PremiumPaywallView: View {
                         break
                     }
                 }
-            }) {
+            } label: {
                 HStack {
                     Image(systemName: "cart.fill")
                     if let product = storeKitManager?.products[.premium] {
