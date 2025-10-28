@@ -13,6 +13,7 @@ class SuccessFeedbackSystem: ObservableObject {
     @Published var showBorderEffect = false
 
     private let hapticService: HapticFeedbackService
+    private var borderEffectTask: Task<Void, Never>?
 
     init(hapticService: HapticFeedbackService = DefaultHapticFeedbackService()) {
         self.hapticService = hapticService
@@ -23,20 +24,27 @@ class SuccessFeedbackSystem: ObservableObject {
         icon: String = "checkmark.circle.fill",
         toastManager: ToastManager
     ) {
+        // Cancel previous border effect task if still running
+        borderEffectTask?.cancel()
+
         // 1. Haptic feedback
         hapticService.impact(style: .medium)
 
         // 2. Show border effect
         showBorderEffect = true
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            // 3. Show toast
+        // 3. Show toast after short delay
+        Task {
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
             toastManager.show(message: message, icon: icon)
         }
 
         // Reset border effect after animation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.showBorderEffect = false
+        borderEffectTask = Task {
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2s
+            if !Task.isCancelled {
+                self.showBorderEffect = false
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ struct SiriStyleBorderEffect: ViewModifier {
             .overlay(
                 ZStack {
                     if isActive {
-                        // Rotating gradient border
+                        // Rotating gradient border - optimized
                         RoundedRectangle(cornerRadius: 0)
                             .strokeBorder(
                                 AngularGradient(
@@ -28,10 +28,11 @@ struct SiriStyleBorderEffect: ViewModifier {
                                     startAngle: .degrees(rotation),
                                     endAngle: .degrees(rotation + 360)
                                 ),
-                                lineWidth: 8
+                                lineWidth: 8  // Reduce?
                             )
-                            .blur(radius: 16)
+                            .blur(radius: 12)  // Reduce?
                             .opacity(opacity)
+                            .drawingGroup()  // - major performance gain
                     }
                 }
                 .allowsHitTesting(false)

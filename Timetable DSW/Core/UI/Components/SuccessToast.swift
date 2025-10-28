@@ -89,28 +89,3 @@ class ToastManager: ObservableObject {
         }
     }
 }
-
-// MARK: - Toast Modifier
-
-struct ToastModifier: ViewModifier {
-    @StateObject private var manager = ToastManager()
-
-    func body(content: Content) -> some View {
-        content
-            .overlay(alignment: .top) {
-                if manager.isShowing {
-                    SuccessToast(message: manager.message, icon: manager.icon)
-                        .padding(.top, 60)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .zIndex(999)
-                }
-            }
-            .environmentObject(manager)
-    }
-}
-
-extension View {
-    func toastManager() -> some View {
-        modifier(ToastModifier())
-    }
-}
