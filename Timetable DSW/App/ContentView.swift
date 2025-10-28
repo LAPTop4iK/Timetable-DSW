@@ -52,6 +52,7 @@ struct ContentView: View {
         .task {
             await appViewModel.loadGroupsIfNeeded()
         }
+        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
     }
 
     // MARK: - Subviews
@@ -93,7 +94,6 @@ struct ContentView: View {
                     dampingFraction: Configuration.constants.springDamping),
             value: selectedTab
         )
-        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
     }
 
     // MARK: - Actions
