@@ -22,6 +22,7 @@ struct AppGroupManager {
         static let selectedThemeId = "widget_selected_theme_id"
         static let appearanceMode = "widget_appearance_mode"
         static let lastUpdated = "widget_last_updated"
+        static let widgetAccessAllowed = "widget_access_allowed"
     }
 
     // MARK: - Save Methods
@@ -42,6 +43,10 @@ struct AppGroupManager {
 
     static func saveLastUpdated(_ date: Date) {
         sharedDefaults?.set(date, forKey: Keys.lastUpdated)
+    }
+
+    static func saveWidgetAccessAllowed(_ allowed: Bool) {
+        sharedDefaults?.set(allowed, forKey: Keys.widgetAccessAllowed)
     }
 
     // MARK: - Load Methods
@@ -71,5 +76,9 @@ struct AppGroupManager {
 
     static func loadLastUpdated() -> Date? {
         sharedDefaults?.object(forKey: Keys.lastUpdated) as? Date
+    }
+
+    static func loadWidgetAccessAllowed() -> Bool {
+        sharedDefaults?.bool(forKey: Keys.widgetAccessAllowed) ?? true
     }
 }

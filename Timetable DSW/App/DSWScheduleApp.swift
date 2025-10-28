@@ -21,6 +21,9 @@ struct DSWScheduleApp: App {
     @StateObject private var parametersService: FeatureFlagParametersService
     @StateObject private var bottomInsetService: DefaultBottomInsetService
     @StateObject private var themeManager = ThemeManager.shared
+    @StateObject private var toastManager = ToastManager()
+    @StateObject private var successFeedback = SuccessFeedbackSystem()
+    @StateObject private var storeKitManager: StoreKitManager
 
     // AdCoordinator - не ObservableObject, поэтому @State
     @State private var adCoordinator: AdMobCoordinator
@@ -60,6 +63,10 @@ struct DSWScheduleApp: App {
         _parametersService = StateObject(wrappedValue: parameters)
         _bottomInsetService = StateObject(wrappedValue: bottomInset)
 
+        // StoreKit Manager
+        let storeKit = StoreKitManager(appStateService: appState)
+        _storeKitManager = StateObject(wrappedValue: storeKit)
+
         // 5️⃣ Создаем AdCoordinator используя уже созданные сервисы
         // ✅ Правильно: используем те же экземпляры, что и в StateObject
         let coordinator = AdMobCoordinator.makeForProduction(
@@ -85,11 +92,26 @@ struct DSWScheduleApp: App {
                 .environmentObject(parametersService)
                 .environmentObject(bottomInsetService)
                 .environmentObject(themeManager)
+                .environmentObject(toastManager)
+                .environmentObject(successFeedback)
                 .environment(\.featureFlagParameters, parametersService)
                 .environment(\.bottomInsetService, bottomInsetService)
                 .environment(\.themeManager, themeManager)
+                .environment(\.storeKitManager, storeKitManager)
                 .adCoordinator(adCoordinator)
+                .overlay(alignment: .top) {
+                    if toastManager.isShowing {
+                        SuccessToast(message: toastManager.message, icon: toastManager.icon)
+                            .padding(.top, 60)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .zIndex(999)
+                    }
+                }
                 .onChange(of: scenePhase) { _, phase in
+                    WidgetAccessSync.sync(
+                        appStateService: appStateService,
+                        adCoordinator: adCoordinator
+                    )
                     guard phase == .active else { return }
                     guard !didAskATTThisSession else {
                         Task { @MainActor in

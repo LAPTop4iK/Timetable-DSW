@@ -15,10 +15,17 @@ final class InterstitialCooldownManager {
         let cooldownInterval: TimeInterval
         let actionsBeforeShow: Int
 
-        static let weekSwitch = Configuration(
-            cooldownInterval: 300, // 5 minutes
-            actionsBeforeShow: 3   // Show after every 3 week switches
-        )
+        static func weekSwitch(parametersService: FeatureFlagParametersService?) -> Configuration {
+            let cooldownInterval = TimeInterval(
+                parametersService?.getInt(.weekSwitchCooldownInterval) ?? 300
+            )
+            let actionsBeforeShow = parametersService?.getInt(.weekSwitchActionsBeforeShow) ?? 3
+
+            return Configuration(
+                cooldownInterval: cooldownInterval,
+                actionsBeforeShow: actionsBeforeShow
+            )
+        }
     }
 
     // MARK: - Properties

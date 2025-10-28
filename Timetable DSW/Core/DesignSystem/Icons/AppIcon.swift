@@ -62,6 +62,8 @@ enum AppIcon {
     case envelope
     case lockOpen
     case paintpaletteFill
+    case giftFill
+    case crownFill
 
     // MARK: - Themes / Appearance (NEW)
     case sunMaxFill
@@ -130,8 +132,10 @@ enum AppIcon {
 
         // Misc
         case .envelope: return "envelope"
-        case .lockOpen: return "lock.open"
+        case .lockOpen: return "lock.open.fill"
         case .paintpaletteFill: return "paintpalette.fill"
+        case .giftFill: return "gift.fill"
+        case .crownFill: return "crown.fill"
 
         // Themes / Appearance
         case .sunMaxFill: return "sun.max.fill"

@@ -38,32 +38,70 @@ struct PremiumContentModifier: ViewModifier {
                 onPurchase: onPurchase
             )
             .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.hidden)
         }
     }
 
     @ViewBuilder
     private var premiumOverlay: some View {
         ZStack {
-            // Semi-transparent background
-            Color.black.opacity(0.3)
+            // Liquid Glass background
+            Color.clear
+                .background(.ultraThinMaterial)
                 .ignoresSafeArea()
 
-            // Lock icon and text
-            VStack(spacing: AppSpacing.large.value) {
+            // Gradient overlay for depth
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(0.1),
+                    Color.black.opacity(0.3),
+                    Color.black.opacity(0.1)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            // Premium card
+            VStack(spacing: AppSpacing.xl.value) {
+                // Lock icon with glow effect
                 ZStack {
+                    // Outer glow
                     Circle()
                         .fill(
-                            LinearGradient(
-                                colors: gradientColors.map { $0.opacity(0.2) },
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                            RadialGradient(
+                                colors: [
+                                    gradientColors[0].opacity(0.4),
+                                    gradientColors[1].opacity(0.2),
+                                    Color.clear
+                                ],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 60
                             )
                         )
-                        .frame(width: 80, height: 80)
-                        .blur(radius: 20)
+                        .frame(width: 120, height: 120)
 
+                    // Glass circle
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 80, height: 80)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: gradientColors.map { $0.opacity(0.5) },
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 2
+                                )
+                        )
+                        .shadow(color: gradientColors[0].opacity(0.3), radius: 20, x: 0, y: 10)
+
+                    // Lock icon
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 40))
+                        .font(.system(size: 36, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: gradientColors,
@@ -73,15 +111,53 @@ struct PremiumContentModifier: ViewModifier {
                         )
                 }
 
-                Text(LocalizedString.premiumFeatureTitle.localized)
-                    .font(AppTypography.title3.font)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                VStack(spacing: AppSpacing.medium.value) {
+                    Text(LocalizedString.premiumFeatureTitle.localized)
+                        .font(AppTypography.title2.font)
+                        .fontWeight(.bold)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.white, .white.opacity(0.8)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
 
-                Text(LocalizedString.premiumTapToUnlock.localized)
-                    .font(AppTypography.body.font)
-                    .foregroundColor(.white.opacity(0.8))
+                    Text(LocalizedString.premiumTapToUnlock.localized)
+                        .font(AppTypography.body.font)
+                        .foregroundColor(.white.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                }
+
+                // Shimmer effect
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(
+                        LinearGradient(
+                            colors: gradientColors.map { $0.opacity(0.6) },
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 4)
+                    .frame(width: 100)
             }
+            .padding(AppSpacing.xxxl.value)
+            .background {
+                RoundedRectangle(cornerRadius: AppCornerRadius.xxl.value)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppCornerRadius.xxl.value)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [.white.opacity(0.2), .white.opacity(0.05)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
+                    )
+            }
+            .shadow(color: .black.opacity(0.3), radius: 30, x: 0, y: 15)
         }
     }
 

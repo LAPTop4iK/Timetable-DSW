@@ -15,6 +15,7 @@ struct TimetableWidgetEntry: TimelineEntry {
     let selectedThemeId: String
     let appearanceMode: String
     let configuration: (any WidgetConfigurationIntent)?
+    let hasAccess: Bool
 
     var shouldShowOnline: Bool {
         (configuration as? ConfigurationAppIntent)?.showOnlineStatus ?? true

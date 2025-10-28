@@ -30,7 +30,10 @@ final class ScheduleViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
     weak var appViewModel: AppViewModel?
-    let interstitialCooldown = InterstitialCooldownManager(configuration: .weekSwitch)
+    weak var parametersService: FeatureFlagParametersService?
+    lazy var interstitialCooldown: InterstitialCooldownManager = {
+        InterstitialCooldownManager(configuration: .weekSwitch(parametersService: parametersService))
+    }()
 
     // MARK: - Computed Properties
     

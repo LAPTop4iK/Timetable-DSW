@@ -954,6 +954,171 @@ private struct DaySectionView: View {
     }
 }
 
+// MARK: - Premium Placeholder Widgets
+
+/// Placeholder shown when user doesn't have premium access
+struct PremiumPlaceholderWidget: View {
+    let size: WidgetSize
+    let entry: TimetableWidgetEntry
+
+    enum WidgetSize {
+        case small, medium, large
+    }
+
+    @Environment(\.colorScheme) var colorScheme
+    private var theme: any Theme {
+        ThemeFactory.theme(withId: entry.selectedThemeId, for: colorScheme)
+    }
+
+    var body: some View {
+        VStack(spacing: spacing) {
+            Spacer()
+
+            // Crown icon with gradient
+            ZStack {
+                // Glow effect
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                gradientColors[0].opacity(0.3),
+                                gradientColors[1].opacity(0.15),
+                                Color.clear
+                            ],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: iconGlowRadius
+                        )
+                    )
+                    .frame(width: iconGlowRadius * 2, height: iconGlowRadius * 2)
+
+                // Icon
+                Image(systemName: "crown.fill")
+                    .font(.system(size: iconSize, weight: .semibold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: gradientColors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+
+            VStack(spacing: textSpacing) {
+                Text(LocalizedString.premiumOnlyTitle.localized)
+                    .font(.system(size: titleSize, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: gradientColors,
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .multilineTextAlignment(.center)
+                    .lineLimit(size == .small ? 2 : 3)
+                    .minimumScaleFactor(0.8)
+
+                if size != .small {
+                    Text(LocalizedString.premiumWidgetDescription.localized)
+                        .font(.system(size: descriptionSize, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(size == .large ? 4 : 2)
+                        .minimumScaleFactor(0.85)
+                }
+            }
+
+            Spacer()
+
+            // Shimmer bar at bottom
+            RoundedRectangle(cornerRadius: 3)
+                .fill(
+                    LinearGradient(
+                        colors: gradientColors.map { $0.opacity(0.6) },
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 3)
+                .frame(width: shimmerWidth)
+        }
+        .padding(padding)
+    }
+
+    // MARK: - Size-dependent properties
+
+    private var spacing: CGFloat {
+        switch size {
+        case .small: return 8
+        case .medium: return 12
+        case .large: return 16
+        }
+    }
+
+    private var iconSize: CGFloat {
+        switch size {
+        case .small: return 28
+        case .medium: return 36
+        case .large: return 44
+        }
+    }
+
+    private var iconGlowRadius: CGFloat {
+        switch size {
+        case .small: return 24
+        case .medium: return 30
+        case .large: return 36
+        }
+    }
+
+    private var titleSize: CGFloat {
+        switch size {
+        case .small: return 13
+        case .medium: return 15
+        case .large: return 18
+        }
+    }
+
+    private var descriptionSize: CGFloat {
+        switch size {
+        case .small: return 10
+        case .medium: return 11.5
+        case .large: return 13
+        }
+    }
+
+    private var textSpacing: CGFloat {
+        switch size {
+        case .small: return 4
+        case .medium: return 6
+        case .large: return 8
+        }
+    }
+
+    private var shimmerWidth: CGFloat {
+        switch size {
+        case .small: return 60
+        case .medium: return 80
+        case .large: return 100
+        }
+    }
+
+    private var padding: EdgeInsets {
+        switch size {
+        case .small:
+            return EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)
+        case .medium:
+            return EdgeInsets(top: 14, leading: 14, bottom: 14, trailing: 14)
+        case .large:
+            return EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+        }
+    }
+
+    private var gradientColors: [Color] {
+        [theme.primary, theme.secondary]
+    }
+}
+
 
 //// MARK: - Превью (Large, 3×5 и 3×6)
 //
