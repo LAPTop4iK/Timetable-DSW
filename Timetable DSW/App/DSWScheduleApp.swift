@@ -99,7 +99,14 @@ struct DSWScheduleApp: App {
                 .environment(\.themeManager, themeManager)
                 .environment(\.storeKitManager, storeKitManager)
                 .adCoordinator(adCoordinator)
-                .toastManager()
+                .overlay(alignment: .top) {
+                    if toastManager.isShowing {
+                        SuccessToast(message: toastManager.message, icon: toastManager.icon)
+                            .padding(.top, 60)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .zIndex(999)
+                    }
+                }
                 .onChange(of: scenePhase) { _, phase in
                     WidgetAccessSync.sync(
                         appStateService: appStateService,
