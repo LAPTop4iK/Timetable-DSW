@@ -72,8 +72,8 @@ class ThemeManager: ObservableObject {
 
     private init() {
         self.selectedThemeId = UserDefaults.standard.string(forKey: Keys.selectedTheme) ?? "default"
-        let modeString = UserDefaults.standard.string(forKey: Keys.appearanceMode) ?? "system"
-        self.appearanceMode = AppearanceMode(rawValue: modeString) ?? .system
+        let modeString = UserDefaults.standard.string(forKey: Keys.appearanceMode)
+        self.appearanceMode = AppearanceMode(rawValue: modeString ?? "system") ?? .system
         applyAppearanceMode()
     }
 
@@ -113,6 +113,20 @@ class ThemeManager: ObservableObject {
 
     func setAppearanceMode(_ mode: AppearanceMode) {
         appearanceMode = mode
+    }
+
+    /// Configures the default theme if user hasn't manually selected one
+    /// For users with ads and no premium, sets light theme as default
+    func configureInitialThemeIfNeeded(isPremium: Bool, hasAds: Bool) {
+        // Check if user has already set appearance mode manually
+        guard UserDefaults.standard.string(forKey: Keys.appearanceMode) == nil else {
+            return
+        }
+
+        // If user has ads and no premium, set light theme as default
+        if hasAds && !isPremium {
+            appearanceMode = .light
+        }
     }
 }
 

@@ -26,6 +26,7 @@ struct ContentView: View {
     @EnvironmentObject var toastManager: ToastManager
     @StateObject private var successFeedback = SuccessFeedbackSystem()
     @Environment(\.adCoordinator) private var adCoordinator
+    @Environment(\.themeManager) private var themeManager
 
     @State private var selectedTab = 0
 
@@ -51,6 +52,11 @@ struct ContentView: View {
         }
         .task {
             await appViewModel.loadGroupsIfNeeded()
+
+            // Configure default theme for users with ads and no premium
+            let isPremium = premiumAccess.isPremium
+            let hasAds = !(adCoordinator?.isAdDisabled() ?? true)
+            themeManager.configureInitialThemeIfNeeded(isPremium: isPremium, hasAds: hasAds)
         }
     }
 
