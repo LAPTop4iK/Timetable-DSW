@@ -42,8 +42,9 @@ protocol AppStateService: AnyObject {
     func grantPremium()
     func grantTemporaryPremium(duration: TimeInterval?)
     func revokePremium()
+    func resetManualRevocationFlag()
     func recordAdWatched()
-    
+
     // Publisher for reactive updates
     var statePublisher: AnyPublisher<AppState, Never> { get }
 }
@@ -129,19 +130,26 @@ final class MockAppStateService: AppStateService {
     func grantPremium() {
         state.premiumStatus = .premium
         state.premiumPurchaseDate = Date()
+        state.isPremiumManuallyRevoked = false
     }
-    
+
     func grantTemporaryPremium(duration: TimeInterval? = AppStateConfiguration.temporaryPremiumDuration) {
         let duration = duration ?? AppStateConfiguration.temporaryPremiumDuration
         let expiresAt = Date().addingTimeInterval(duration)
         state.premiumStatus = .temporaryPremium(expiresAt: expiresAt)
+        state.isPremiumManuallyRevoked = false
     }
-    
+
     func revokePremium() {
         state.premiumStatus = .free
         state.premiumPurchaseDate = nil
+        state.isPremiumManuallyRevoked = true
     }
-    
+
+    func resetManualRevocationFlag() {
+        state.isPremiumManuallyRevoked = false
+    }
+
     func recordAdWatched() {
         state.lastAdWatchedDate = Date()
         state.totalAdsWatched += 1

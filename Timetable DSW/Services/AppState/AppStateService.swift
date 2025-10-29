@@ -34,12 +34,14 @@ struct AppState: Codable, Sendable, Equatable {
     var premiumPurchaseDate: Date?
     var lastAdWatchedDate: Date?
     var totalAdsWatched: Int
+    var isPremiumManuallyRevoked: Bool
 
     static let `default` = AppState(
         premiumStatus: .free,
         premiumPurchaseDate: nil,
         lastAdWatchedDate: nil,
-        totalAdsWatched: 0
+        totalAdsWatched: 0,
+        isPremiumManuallyRevoked: false
     )
 }
 
@@ -226,6 +228,7 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
     func grantPremium() {
         state.premiumStatus = .premium
         state.premiumPurchaseDate = Date()
+        state.isPremiumManuallyRevoked = false
     }
 
     func grantTemporaryPremium(
@@ -241,11 +244,17 @@ final class DefaultAppStateService: ObservableObject, AppStateService {
 
         let expiresAt = Date().addingTimeInterval(effectiveDuration)
         state.premiumStatus = .temporaryPremium(expiresAt: expiresAt)
+        state.isPremiumManuallyRevoked = false
     }
 
     func revokePremium() {
         state.premiumStatus = .free
         state.premiumPurchaseDate = nil
+        state.isPremiumManuallyRevoked = true
+    }
+
+    func resetManualRevocationFlag() {
+        state.isPremiumManuallyRevoked = false
     }
 
     func recordAdWatched() {

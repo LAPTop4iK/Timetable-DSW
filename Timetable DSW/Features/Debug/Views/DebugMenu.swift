@@ -64,6 +64,7 @@ enum DebugAction {
     case grantPremium
     case grantTemporaryPremium
     case revokePremium
+    case resetManualRevocation
     case toggleFlag(FeatureFlag, Bool)
     case resetFlag(FeatureFlag)
     case resetAllFlags
@@ -146,6 +147,10 @@ final class DebugMenuViewModel: ObservableObject {
         case .revokePremium:
             confirmationAction = action
             showConfirmation = true
+
+        case .resetManualRevocation:
+            appStateService.resetManualRevocationFlag()
+            showSuccessAlert("Manual revocation flag cleared - premium will auto-restore on next check")
 
         case .toggleFlag(let flag, let enabled):
             featureFlagService.setEnabled(flag, enabled: enabled)
@@ -393,9 +398,19 @@ struct DebugMenuScreen: View {
                 } label: {
                     Label(LocalizedString.debugRevokePremiumLabel.localized, systemImage: "xmark.circle.fill")
                 }
+
+                Button {
+                    viewModel.handle(.resetManualRevocation)
+                } label: {
+                    Label("Reset Manual Revocation", systemImage: "arrow.counterclockwise")
+                        .foregroundColor(.orange)
+                }
             }
         } header: {
             Label(LocalizedString.debugPremiumManagement.localized, systemImage: "crown")
+        } footer: {
+            Text("Reset manual revocation to allow StoreKit to auto-restore premium")
+                .font(.caption2)
         }
     }
 

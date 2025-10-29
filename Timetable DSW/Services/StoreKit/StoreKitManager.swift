@@ -230,7 +230,8 @@ final class StoreKitManager: ObservableObject {
         self.purchasedProducts = purchased
 
         // Update app state based on purchases
-        if purchased.contains(.premium) {
+        // Only restore premium automatically if it wasn't manually revoked via debug menu
+        if purchased.contains(.premium) && !appStateService.state.isPremiumManuallyRevoked {
             appStateService.grantPremium()
         }
     }
