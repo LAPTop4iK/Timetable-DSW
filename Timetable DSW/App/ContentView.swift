@@ -23,12 +23,14 @@ struct ContentView: View {
     // MARK: - Properties
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var appStateService: DefaultAppStateService
+    @EnvironmentObject var featureFlagService: DefaultFeatureFlagService
     @EnvironmentObject var toastManager: ToastManager
     @StateObject private var successFeedback = SuccessFeedbackSystem()
     @Environment(\.adCoordinator) private var adCoordinator
     @Environment(\.themeManager) private var themeManager
 
     @State private var selectedTab = 0
+    @State private var hasConfiguredTheme = false
 
     // MARK: - Dependencies
     private let tabs: [TabBarItem] = [
@@ -52,11 +54,14 @@ struct ContentView: View {
         }
         .task {
             await appViewModel.loadGroupsIfNeeded()
-
-            // Configure default theme for users with ads and no premium
-            let isPremium = premiumAccess.isPremium
-            let hasAds = !(adCoordinator?.isAdDisabled() ?? true)
-            themeManager.configureInitialThemeIfNeeded(isPremium: isPremium, hasAds: hasAds)
+        }
+        .onAppear {
+            // Try to configure theme immediately if flags are already loaded
+            configureThemeIfNeeded()
+        }
+        .onReceive(featureFlagService.flagsPublisher) { _ in
+            // Configure theme when flags are updated from backend
+            configureThemeIfNeeded()
         }
     }
 
@@ -100,6 +105,20 @@ struct ContentView: View {
             value: selectedTab
         )
         .siriStyleBorder(isActive: successFeedback.showBorderEffect)
+    }
+
+    // MARK: - Private Methods
+
+    private func configureThemeIfNeeded() {
+        // Only configure once
+        guard !hasConfiguredTheme else { return }
+
+        // Configure default theme for users with ads and no premium
+        let isPremium = premiumAccess.isPremium
+        let hasAds = !(adCoordinator?.isAdDisabled() ?? true)
+        themeManager.configureInitialThemeIfNeeded(isPremium: isPremium, hasAds: hasAds)
+
+        hasConfiguredTheme = true
     }
 
     // MARK: - Actions
