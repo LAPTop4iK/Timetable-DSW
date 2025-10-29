@@ -44,7 +44,7 @@ struct TabBarConfiguration {
     
     static func adaptive(colorScheme: ColorScheme) -> Constants {
         Constants(
-            gradientStyle: colorScheme == .dark ? .primary : .accent,
+            gradientStyle: .primary,
             showLabels: false,
             iconSize: AppDimensions.iconLarge.value + 2,
             backgroundBlur: .ultraThinMaterial,

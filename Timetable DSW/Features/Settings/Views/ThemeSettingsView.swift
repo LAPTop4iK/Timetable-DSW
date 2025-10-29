@@ -140,7 +140,7 @@ struct ThemeSettingsView: View {
     // MARK: - Helpers
     private func primaryGradient(opacity: Double = 1.0) -> LinearGradient {
         LinearGradient(
-            colors: GradientStyle.primary.colors(for: colorScheme).map { $0.opacity(opacity) },
+            colors: GradientStyle.contrastPrimary.colors(for: colorScheme).map { $0.opacity(opacity) },
             startPoint: .topLeading, endPoint: .bottomTrailing
         )
     }

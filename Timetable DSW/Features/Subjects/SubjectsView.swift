@@ -240,7 +240,7 @@ private struct SubjectRow: View {
     }
 
     private var gradientColors: [Color] {
-        GradientStyle.accent.colors(for: colorScheme)
+        GradientStyle.primary.colors(for: colorScheme)
     }
 
     // Сколько занятий осталось у предмета (включая текущее, если оно ещё не закончено)

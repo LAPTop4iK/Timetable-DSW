@@ -131,15 +131,15 @@ struct ScheduleHeaderView: View {
             if let onTodayTap = onTodayTap, !Calendar.current.isDateInToday(selectedDate) {
                 Button(action: onTodayTap) {
                     AppIcon.arrowClockwise.image()
-                        .font(AppTypography.title3.font)
-                        .themedForeground(.header, colorScheme: colorScheme)
+                        .font(AppTypography.title.font)
+                        .themedForeground(.contrastPrimary, colorScheme: colorScheme)
                 }
             }
 
             Button(action: onCalendarTap) {
                 AppIcon.calendar.image()
-                    .font(AppTypography.title3.font)
-                    .themedForeground(.header, colorScheme: colorScheme)
+                    .font(AppTypography.title.font)
+                    .themedForeground(.contrastPrimary, colorScheme: colorScheme)
             }
         }
     }

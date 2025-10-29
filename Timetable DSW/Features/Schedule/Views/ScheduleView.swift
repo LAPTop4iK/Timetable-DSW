@@ -41,6 +41,7 @@ struct ScheduleView: View {
     @EnvironmentObject var appStateService: DefaultAppStateService
     @Environment(\.bottomInsetService) private var bottomInsetService
     @Environment(\.adCoordinator) private var coordinator
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var headerHeight: CGFloat = 0
     @State private var headerHeightMax: CGFloat = 0
     @State private var safeAreaTop: CGFloat = Configuration.constants.defaultSafeAreaTop
@@ -56,14 +57,16 @@ struct ScheduleView: View {
     
     private var headerGradientFill: Color {
         let opacity = colorScheme == .dark ? Configuration.constants.darkFillOpacity : Configuration.constants.lightFillOpacity
-        return (colorScheme == .dark ? AppColor.purple : AppColor.pink).color(for: colorScheme).opacity(opacity)
+        let theme = themeManager.currentTheme(for: colorScheme)
+        return (GradientStyle.header.colors(for: colorScheme, theme: theme).first ?? AppColor.themePrimary.color(for: colorScheme)).opacity(opacity)
     }
-    
+
     private var headerShadowColor: Color {
         let opacity = colorScheme == .dark ? Configuration.constants.darkShadowOpacity : Configuration.constants.lightShadowOpacity
-        return (colorScheme == .dark ? AppColor.purple : AppColor.pink).color(for: colorScheme).opacity(opacity)
+        let theme = themeManager.currentTheme(for: colorScheme)
+        return (GradientStyle.header.colors(for: colorScheme, theme: theme).first ?? AppColor.themePrimary.color(for: colorScheme)).opacity(opacity)
     }
-    
+
     private var detentHeight: CGFloat {
         let screenHeight = UIScreen.main.bounds.height
         return min(Configuration.constants.maxDetentHeight, screenHeight / Configuration.constants.detentHeightDivider)

@@ -10,6 +10,7 @@ import SwiftUI
 
 enum GradientStyle {
     case primary
+    case contrastPrimary
     case secondary
     case accent
     case success
@@ -33,6 +34,12 @@ enum GradientStyle {
                 currentTheme.primary,
                 currentTheme.secondary.opacity(opacity2),
                 currentTheme.tertiary.opacity(0.8)
+            ]
+        case .contrastPrimary:
+            return [
+                currentTheme.primary,
+                currentTheme.secondary,
+                currentTheme.tertiary,
             ]
 
         case .secondary:

@@ -299,7 +299,7 @@ struct SettingsView: View {
             HStack {
                 AppIcon.giftFill.image()
                     .font(AppTypography.title3.font)
-                    .themedForeground(.header, colorScheme: colorScheme)
+                    .themedForeground(.primary, colorScheme: colorScheme)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(LocalizedString.iapTipTitle.localized)
@@ -347,7 +347,7 @@ struct SettingsView: View {
             HStack {
                 AppIcon.lockOpen.image()
                     .font(AppTypography.title3.font)
-                    .themedForeground(.header, colorScheme: colorScheme)
+                    .themedForeground(.primary, colorScheme: colorScheme)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(String(format: LocalizedString.settingsDeveloperAction.localized,
@@ -488,7 +488,7 @@ struct SettingsView: View {
                 HStack {
                     AppIcon.envelope.image()
                         .font(AppTypography.title3.font)
-                        .themedForeground(.header, colorScheme: colorScheme)
+                        .themedForeground(.primary, colorScheme: colorScheme)
 
                     Text(LocalizedString.settingsContactTitle.localized)
                         .foregroundAppColor(.primaryText, colorScheme: colorScheme)
@@ -600,7 +600,7 @@ struct SettingsView: View {
 
     private var gradientColors: [Color] {
         let theme = themeManager.currentTheme(for: colorScheme)
-        return GradientStyle.header.colors(for: colorScheme, theme: theme)
+        return GradientStyle.primary.colors(for: colorScheme, theme: theme)
     }
 
     private var contactComposer: ContactComposer {
@@ -660,7 +660,7 @@ struct SettingsView: View {
     private func rowIcon(_ icon: AppIcon) -> some View {
         icon.image()
             .font(AppTypography.title3.font)
-            .themedForeground(.header, colorScheme: colorScheme)
+            .themedForeground(.primary, colorScheme: colorScheme)
             .frame(width: 24, height: 24, alignment: .center)
     }
 }

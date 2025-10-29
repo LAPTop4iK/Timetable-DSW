@@ -37,12 +37,13 @@ struct TeacherDetailView: View {
     @StateObject var viewModel: TeacherDetailViewModel
     @State private var headerHeight: CGFloat = 0
     @State private var headerHeightMax: CGFloat = 0
-    
+
     // MARK: - Environment
     
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
-    
+    @EnvironmentObject var themeManager: ThemeManager
+
     // MARK: - Computed Properties
     
     private var safeAreaTop: CGFloat {
@@ -53,14 +54,16 @@ struct TeacherDetailView: View {
     
     private var headerGradientFill: Color {
         let opacity = colorScheme == .dark ? Configuration.constants.darkFillOpacity : Configuration.constants.lightFillOpacity
-        return (colorScheme == .dark ? AppColor.purple : AppColor.pink).color(for: colorScheme).opacity(opacity)
+        let theme = themeManager.currentTheme(for: colorScheme)
+        return (GradientStyle.header.colors(for: colorScheme, theme: theme).first ?? AppColor.themePrimary.color(for: colorScheme)).opacity(opacity)
     }
     
     private var headerShadowColor: Color {
         let opacity = colorScheme == .dark ? Configuration.constants.darkShadowOpacity : Configuration.constants.lightShadowOpacity
-        return (colorScheme == .dark ? AppColor.purple : AppColor.pink).color(for: colorScheme).opacity(opacity)
+        let theme = themeManager.currentTheme(for: colorScheme)
+        return (GradientStyle.header.colors(for: colorScheme, theme: theme).first ?? AppColor.themePrimary.color(for: colorScheme)).opacity(opacity)
     }
-    
+
     // MARK: - Body
     
     var body: some View {

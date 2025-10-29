@@ -83,7 +83,7 @@ struct WidgetSettingsView: View {
             Text(LocalizedString.widgetTitle.localized)
                 .font(AppTypography.title2.font)
                 .fontWeight(.semibold)
-                .themedForeground(.primary, colorScheme: colorScheme)
+                .themedForeground(.contrastPrimary, colorScheme: colorScheme)
 
             Text(LocalizedString.widgetSettingsSubtitle.localized)
                 .font(AppTypography.subheadline.font)
@@ -152,7 +152,7 @@ struct WidgetSettingsView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                     }
-                    .themedForeground(.success, colorScheme: colorScheme)
+                    .themedForeground(.contrastPrimary, colorScheme: colorScheme)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)
                     // Только капсула-обводка без фона
@@ -365,7 +365,7 @@ struct WidgetSettingsView: View {
     }
 
     private func gradientStroke(opacity: Double = Configuration.constants.cardStrokeOpacity) -> LinearGradient {
-        let colors = GradientStyle.primary.colors(for: colorScheme).map { $0.opacity(opacity) }
+        let colors = GradientStyle.contrastPrimary.colors(for: colorScheme).map { $0.opacity(opacity) }
         return LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
     }
 
@@ -373,7 +373,7 @@ struct WidgetSettingsView: View {
         Text(text)
             .font(AppTypography.title3.font)
             .fontWeight(.semibold)
-            .themedForeground(.primary, colorScheme: colorScheme)
+            .themedForeground(.contrastPrimary, colorScheme: colorScheme)
             .frame(maxWidth: .infinity, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)
     }

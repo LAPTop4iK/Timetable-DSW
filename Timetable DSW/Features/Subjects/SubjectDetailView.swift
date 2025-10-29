@@ -63,7 +63,7 @@ struct SubjectDetailView: View {
 
     // MARK: Derived
     private var gradientColors: [Color] {
-        GradientStyle.primary.colors(for: colorScheme)
+        GradientStyle.contrastPrimary.colors(for: colorScheme)
     }
     private var accentShadowColor: Color {
         gradientColors.dropFirst().first ?? gradientColors.first ?? Color.accentColor
@@ -127,7 +127,7 @@ struct SubjectDetailView: View {
             .fontWeight(.semibold)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .themedForeground(.primary, colorScheme: colorScheme)
+            .themedForeground(.contrastPrimary, colorScheme: colorScheme)
             .accessibilityLabel(viewModel.subject.name)
     }
 
@@ -139,7 +139,7 @@ struct SubjectDetailView: View {
                 Text("\(LocalizedString.subjectsGradingType.localized): \(grading)")
                     .font(AppTypography.subheadline.font)
                     .fontWeight(.semibold)
-                    .themedForeground(.primary, colorScheme: colorScheme)
+                    .themedForeground(.contrastPrimary, colorScheme: colorScheme)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityLabel("\(LocalizedString.subjectsGradingType.localized): \(grading)")
             }
@@ -270,12 +270,12 @@ struct SubjectDetailView: View {
             Text(Self.dotDateFormatter.string(from: date))
                 .font(AppTypography.subheadline.font)
                 .fontWeight(.semibold)
-                .themedForeground(.primary, colorScheme: colorScheme)
+                .themedForeground(.contrastPrimary, colorScheme: colorScheme)
 
             Text(Self.weekdayShortFormatter.string(from: date))
                 .font(AppTypography.subheadline.font)
                 .fontWeight(.semibold)
-                .themedForeground(.primary, colorScheme: colorScheme)
+                .themedForeground(.contrastPrimary, colorScheme: colorScheme)
         }
         .padding(.vertical, Configuration.constants.dateChipVPad)
         .padding(.horizontal, Configuration.constants.dateChipHPad)

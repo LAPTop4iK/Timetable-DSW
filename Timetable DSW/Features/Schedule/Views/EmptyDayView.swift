@@ -16,7 +16,7 @@ struct EmptyDayView: View {
             let iconSize: CGFloat = AppDimensions.iconXL.value * 2.5
             let spacing: AppSpacing = .large
             let messageSpacing: AppSpacing = .small
-            let circleExtraSize: CGFloat = 40
+            let circleExtraSize: CGFloat = 60
             let backgroundOpacity: Double = 0.1
         }
         

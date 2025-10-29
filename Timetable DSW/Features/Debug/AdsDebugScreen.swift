@@ -74,8 +74,8 @@ struct AdsDebugScreen: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                NativeAdViewSui(style: .card)
-//                NativeAdViewSui(style: .basic)
+//                NativeAdViewSui(style: .card)
+                NativeAdViewSui(style: .basic)
 //                NativeAdViewSui(style: .banner)
 //                NativeAdViewSui(style: .largeBanner)
             }
@@ -87,7 +87,7 @@ struct AdsDebugScreen: View {
             Text(LocalizedString.adsDebugNativeDescription.localized)
                 .font(.caption2)
         }
-//        .withNativeAds()
+        .withNativeAds()
     }
 
     private var interstitialSection: some View {
