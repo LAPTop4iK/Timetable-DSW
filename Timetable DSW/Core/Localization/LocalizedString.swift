@@ -47,6 +47,8 @@ enum LocalizedString {
     case teachersClasses
     case teachersNoData
     case teachersLoadScheduleFirst
+    case teachersFilterCurrent
+    case teachersFilterAll
 
     // MARK: - Subjects (NEW)
     case subjectsTitle
@@ -462,6 +464,8 @@ extension LocalizedString {
         case .teachersClasses: return "teachers.classes"
         case .teachersNoData: return "teachers.noData"
         case .teachersLoadScheduleFirst: return "teachers.loadScheduleFirst"
+        case .teachersFilterCurrent: return "teachers.filter.current"
+        case .teachersFilterAll: return "teachers.filter.all"
 
         // Subjects
         case .subjectsTitle: return "subjects.title"
