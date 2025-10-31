@@ -35,22 +35,29 @@ struct TeachersView: View {
     
     var body: some View {
         NavigationView {
-            contentView
-                .navigationTitle(LocalizedString.teachersTitle.localized)
-                .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: LocalizedString.teachersSearch.localized)
-                .onAppear {
-                    if let scheduleData = appViewModel.scheduleData {
-                        viewModel.updateTeachers(scheduleData.teachers)
-                    }
+            VStack(spacing: 0) {
+                if viewModel.hasFilterOptions {
+                    filterSegmentControl
+                        .padding(.horizontal, AppSpacing.large.value)
+                        .padding(.vertical, AppSpacing.medium.value)
                 }
-                .onChange(of: appViewModel.scheduleData) {
-                    if let newData = appViewModel.scheduleData {
-                        viewModel.updateTeachers(newData.teachers)
-                    }
+                contentView
+            }
+            .navigationTitle(LocalizedString.teachersTitle.localized)
+            .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: LocalizedString.teachersSearch.localized)
+            .onAppear {
+                if let scheduleData = appViewModel.scheduleData {
+                    viewModel.updateTeachers(scheduleData.teachers, currentPeriod: scheduleData.currentPeriodTeachers)
                 }
-                #if DEBUG
-                .measurePerformance(name: "TeachersView", category: .viewAppear)
-                #endif
+            }
+            .onChange(of: appViewModel.scheduleData) {
+                if let newData = appViewModel.scheduleData {
+                    viewModel.updateTeachers(newData.teachers, currentPeriod: newData.currentPeriodTeachers)
+                }
+            }
+            #if DEBUG
+            .measurePerformance(name: "TeachersView", category: .viewAppear)
+            #endif
         }
         .sheet(item: $selectedTeacher) { teacher in
             TeacherDetailView(viewModel: TeacherDetailViewModel(teacher: teacher))
@@ -115,6 +122,16 @@ struct TeachersView: View {
             AppColor.clear.color(for: colorScheme)
                 .frame(height: bottomInsetService?.bottomInset ?? 78)
         }
+    }
+
+    private var filterSegmentControl: some View {
+        Picker("Filter", selection: $viewModel.selectedFilter) {
+            Text(LocalizedString.teachersFilterCurrent.localized)
+                .tag(TeachersViewModel.TeacherFilter.current)
+            Text(LocalizedString.teachersFilterAll.localized)
+                .tag(TeachersViewModel.TeacherFilter.all)
+        }
+        .pickerStyle(.segmented)
     }
 }
 
