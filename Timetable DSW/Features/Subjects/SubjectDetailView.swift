@@ -257,9 +257,8 @@ struct SubjectDetailView: View {
 
     private var filterToggleButton: some View {
         Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                viewModel.showPastEvents.toggle()
-            }
+            // Убираем анимацию для мгновенного обновления без фризов
+            viewModel.showPastEvents.toggle()
         } label: {
             HStack(spacing: 10) {
                 ZStack {
@@ -293,6 +292,7 @@ struct SubjectDetailView: View {
                                 endPoint: .bottomTrailing
                             )
                         )
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.showPastEvents) // Анимируем только иконку
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -302,11 +302,13 @@ struct SubjectDetailView: View {
                         .font(AppTypography.body.font)
                         .fontWeight(.semibold)
                         .themedForeground(.contrastPrimary, colorScheme: colorScheme)
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.showPastEvents) // Анимируем только текст
 
                     if !viewModel.showPastEvents && viewModel.stats.past > 0 {
                         Text(String(format: LocalizedString.subjectsHiddenCount.localized, viewModel.stats.past))
                             .font(AppTypography.caption.font)
                             .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                            .transition(.opacity.combined(with: .scale(scale: 0.95)))
                     }
                 }
 
@@ -316,6 +318,7 @@ struct SubjectDetailView: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                     .rotationEffect(.degrees(viewModel.showPastEvents ? 90 : 0))
+                    .animation(.easeInOut(duration: 0.2), value: viewModel.showPastEvents) // Анимируем только chevron
             }
             .padding(Configuration.constants.toggleButtonPadding.value)
             .background(
@@ -362,8 +365,10 @@ struct SubjectDetailView: View {
                         }
                     }
                 }
+                .id(section.date) // Помогаем SwiftUI идентифицировать секции для эффективного diff
             }
         }
+        .animation(nil, value: viewModel.sections.count) // Отключаем неявную анимацию при изменении количества секций
     }
 
     // MARK: - Date Line

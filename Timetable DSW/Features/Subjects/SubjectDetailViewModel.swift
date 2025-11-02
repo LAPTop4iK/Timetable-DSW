@@ -37,6 +37,10 @@ final class SubjectDetailViewModel: ObservableObject {
     }
 
     private let allSections: [(date: Date, items: [ScheduleEvent])]
+    private var filterTask: Task<Void, Never>?
+
+    // Кеш для отфильтрованных секций
+    private var filteredSectionsCache: [(date: Date, items: [ScheduleEvent])]?
 
     init(
         subject: Subject,
@@ -50,11 +54,48 @@ final class SubjectDetailViewModel: ObservableObject {
         // Initialize cached properties once
         self.stats = Self.computeStats(for: subject, using: eventTypeDetector)
         self.allSections = Self.computeSections(for: subject)
-        self.sections = Self.filterSections(self.allSections, showPast: false)
+
+        // Предварительно вычисляем и кешируем отфильтрованные секции
+        let filtered = Self.filterSections(self.allSections, showPast: false)
+        self.filteredSectionsCache = filtered
+        self.sections = filtered
     }
 
     private func updateFilteredSections() {
-        sections = Self.filterSections(allSections, showPast: showPastEvents)
+        // Отменяем предыдущую задачу если она есть
+        filterTask?.cancel()
+
+        let showPast = showPastEvents
+
+        // Если переключаемся обратно на "скрыть прошлые" и у нас есть кеш - используем его
+        if !showPast, let cached = filteredSectionsCache {
+            sections = cached
+            return
+        }
+
+        // Если показываем все - используем allSections напрямую
+        if showPast {
+            sections = allSections
+            return
+        }
+
+        // Вычисляем фильтрованные секции асинхронно
+        let allSections = self.allSections
+
+        filterTask = Task { @MainActor [weak self] in
+            // Проверяем что задача не отменена
+            guard !Task.isCancelled else { return }
+
+            // Вычисляем новые секции
+            let filtered = Self.filterSections(allSections, showPast: false)
+
+            // Проверяем снова перед обновлением UI
+            guard !Task.isCancelled else { return }
+
+            // Кешируем результат и обновляем sections
+            self?.filteredSectionsCache = filtered
+            self?.sections = filtered
+        }
     }
 
     // MARK: - Private Static Helpers
