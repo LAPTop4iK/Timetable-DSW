@@ -27,20 +27,12 @@ final class SubjectDetailViewModel: ObservableObject {
 
     // Cached computed properties for performance
     @Published private(set) var stats: SubjectStats
-    @Published private(set) var sections: [(date: Date, items: [ScheduleEvent])]
+
+    // Всегда храним все секции - фильтрация на уровне View
+    private(set) var allSections: [(date: Date, items: [ScheduleEvent])]
 
     // Filter state
-    @Published var showPastEvents: Bool = false {
-        didSet {
-            updateFilteredSections()
-        }
-    }
-
-    private let allSections: [(date: Date, items: [ScheduleEvent])]
-    private var filterTask: Task<Void, Never>?
-
-    // Кеш для отфильтрованных секций
-    private var filteredSectionsCache: [(date: Date, items: [ScheduleEvent])]?
+    @Published var showPastEvents: Bool = false
 
     init(
         subject: Subject,
@@ -54,48 +46,21 @@ final class SubjectDetailViewModel: ObservableObject {
         // Initialize cached properties once
         self.stats = Self.computeStats(for: subject, using: eventTypeDetector)
         self.allSections = Self.computeSections(for: subject)
-
-        // Предварительно вычисляем и кешируем отфильтрованные секции
-        let filtered = Self.filterSections(self.allSections, showPast: false)
-        self.filteredSectionsCache = filtered
-        self.sections = filtered
     }
 
-    private func updateFilteredSections() {
-        // Отменяем предыдущую задачу если она есть
-        filterTask?.cancel()
+    // Проверяет, является ли событие прошедшим
+    func isPastEvent(_ event: ScheduleEvent) -> Bool {
+        guard let endDate = event.endDate else { return false }
+        return endDate < Date()
+    }
 
-        let showPast = showPastEvents
-
-        // Если переключаемся обратно на "скрыть прошлые" и у нас есть кеш - используем его
-        if !showPast, let cached = filteredSectionsCache {
-            sections = cached
-            return
+    // Проверяет, нужно ли показывать секцию (есть ли в ней непрошедшие события)
+    func shouldShowSection(_ section: (date: Date, items: [ScheduleEvent])) -> Bool {
+        if showPastEvents {
+            return true
         }
-
-        // Если показываем все - используем allSections напрямую
-        if showPast {
-            sections = allSections
-            return
-        }
-
-        // Вычисляем фильтрованные секции асинхронно
-        let allSections = self.allSections
-
-        filterTask = Task { @MainActor [weak self] in
-            // Проверяем что задача не отменена
-            guard !Task.isCancelled else { return }
-
-            // Вычисляем новые секции
-            let filtered = Self.filterSections(allSections, showPast: false)
-
-            // Проверяем снова перед обновлением UI
-            guard !Task.isCancelled else { return }
-
-            // Кешируем результат и обновляем sections
-            self?.filteredSectionsCache = filtered
-            self?.sections = filtered
-        }
+        // Показываем секцию только если есть хотя бы одно непрошедшее событие
+        return section.items.contains { !isPastEvent($0) }
     }
 
     // MARK: - Private Static Helpers
@@ -137,24 +102,6 @@ final class SubjectDetailViewModel: ObservableObject {
         return mapped.sorted(by: { (lhs: (date: Date, items: [ScheduleEvent]), rhs: (date: Date, items: [ScheduleEvent])) in
             lhs.date < rhs.date
         })
-    }
-
-    private static func filterSections(_ sections: [(date: Date, items: [ScheduleEvent])], showPast: Bool) -> [(date: Date, items: [ScheduleEvent])] {
-        guard !showPast else { return sections }
-
-        let now = Date()
-        return sections.compactMap { section in
-            // Filter out events where all events in the section have ended
-            let futureItems = section.items.filter { event in
-                guard let endDate = event.endDate else { return true }
-                return endDate >= now
-            }
-
-            // If there are future items in this section, keep the section
-            guard !futureItems.isEmpty else { return nil }
-
-            return (date: section.date, items: futureItems)
-        }
     }
 }
 

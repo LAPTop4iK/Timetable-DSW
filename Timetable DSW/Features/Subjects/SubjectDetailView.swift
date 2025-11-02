@@ -350,25 +350,36 @@ struct SubjectDetailView: View {
     // MARK: - Sections
 
     private var sectionsList: some View {
-        VStack(spacing: Configuration.constants.sectionSpacing.value) {
-            ForEach(viewModel.sections, id: \.date) { section in
-                VStack(alignment: .leading, spacing: 8) {
-                    dateLine(for: section.date)
-                    VStack(spacing: Configuration.constants.sectionSpacing.value) {
-                        ForEach(section.items) { ev in
-                            EventCard(
-                                event: ev,
-                                showTeacherName: true,
-                                onTeacherTap: nil,
-                                now: now
-                            )
-                        }
-                    }
+        LazyVStack(spacing: Configuration.constants.sectionSpacing.value, pinnedViews: []) {
+            ForEach(viewModel.allSections, id: \.date) { section in
+                // Условная фильтрация - не меняем массив, а просто не показываем элементы
+                if viewModel.shouldShowSection(section) {
+                    sectionView(for: section)
+                        .id("\(section.date.timeIntervalSince1970)-\(viewModel.showPastEvents)")
                 }
-                .id(section.date) // Помогаем SwiftUI идентифицировать секции для эффективного diff
             }
         }
-        .animation(nil, value: viewModel.sections.count) // Отключаем неявную анимацию при изменении количества секций
+    }
+
+    @ViewBuilder
+    private func sectionView(for section: (date: Date, items: [ScheduleEvent])) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            dateLine(for: section.date)
+            LazyVStack(spacing: Configuration.constants.sectionSpacing.value) {
+                ForEach(section.items) { ev in
+                    // Фильтруем события условно
+                    if viewModel.showPastEvents || !viewModel.isPastEvent(ev) {
+                        EventCard(
+                            event: ev,
+                            showTeacherName: true,
+                            onTeacherTap: nil,
+                            now: now
+                        )
+                        .id(ev.id)
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Date Line
