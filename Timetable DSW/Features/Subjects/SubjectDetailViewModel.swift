@@ -27,7 +27,12 @@ final class SubjectDetailViewModel: ObservableObject {
 
     // Cached computed properties for performance
     @Published private(set) var stats: SubjectStats
-    @Published private(set) var sections: [(date: Date, items: [ScheduleEvent])]
+
+    // Всегда храним все секции - фильтрация на уровне View
+    private(set) var allSections: [(date: Date, items: [ScheduleEvent])]
+
+    // Filter state
+    @Published var showPastEvents: Bool = false
 
     init(
         subject: Subject,
@@ -40,7 +45,22 @@ final class SubjectDetailViewModel: ObservableObject {
 
         // Initialize cached properties once
         self.stats = Self.computeStats(for: subject, using: eventTypeDetector)
-        self.sections = Self.computeSections(for: subject)
+        self.allSections = Self.computeSections(for: subject)
+    }
+
+    // Проверяет, является ли событие прошедшим
+    func isPastEvent(_ event: ScheduleEvent) -> Bool {
+        guard let endDate = event.endDate else { return false }
+        return endDate < Date()
+    }
+
+    // Проверяет, нужно ли показывать секцию (есть ли в ней непрошедшие события)
+    func shouldShowSection(_ section: (date: Date, items: [ScheduleEvent])) -> Bool {
+        if showPastEvents {
+            return true
+        }
+        // Показываем секцию только если есть хотя бы одно непрошедшее событие
+        return section.items.contains { !isPastEvent($0) }
     }
 
     // MARK: - Private Static Helpers

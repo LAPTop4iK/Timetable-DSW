@@ -36,6 +36,13 @@ struct SubjectDetailView: View {
             // Typography
             let pillNumberFont = AppTypography.custom(size: 22, weight: .semibold).font
             let pillLabelFont  = AppTypography.caption2.font
+
+            // Filter toggle button
+            let toggleButtonCornerRadius: AppCornerRadius = .large
+            let toggleButtonPadding: AppSpacing = .medium
+            let toggleButtonStrokeOpacity: Double = 0.28
+            let toggleButtonBgOpacity: Double = 0.08
+            let toggleButtonIconSize: CGFloat = 18
         }
         static let constants = Constants()
     }
@@ -92,6 +99,11 @@ struct SubjectDetailView: View {
                     }
 
                     statsSection
+
+                    // Кнопка-переключатель для показа/скрытия прошедших событий
+                    if didAppear && viewModel.stats.past > 0 {
+                        filterToggleButton
+                    }
 
                     // Отложенная инициализация тяжёлого списка секций
                     if didAppear {
@@ -241,22 +253,129 @@ struct SubjectDetailView: View {
         .frame(maxWidth: .infinity, minHeight: 64)
     }
 
+    // MARK: - Filter Toggle Button
+
+    private var filterToggleButton: some View {
+        Button {
+            // Убираем анимацию для мгновенного обновления без фризов
+            viewModel.showPastEvents.toggle()
+        } label: {
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonBgOpacity * 2) },
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonStrokeOpacity) },
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1
+                                )
+                        )
+
+                    Image(systemName: viewModel.showPastEvents ? "eye.slash.fill" : "eye.fill")
+                        .font(.system(size: Configuration.constants.toggleButtonIconSize, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: gradientColors,
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.showPastEvents) // Анимируем только иконку
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(viewModel.showPastEvents
+                         ? LocalizedString.subjectsHidePast.localized
+                         : LocalizedString.subjectsShowPast.localized)
+                        .font(AppTypography.body.font)
+                        .fontWeight(.semibold)
+                        .themedForeground(.contrastPrimary, colorScheme: colorScheme)
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.showPastEvents) // Анимируем только текст
+
+                    if !viewModel.showPastEvents && viewModel.stats.past > 0 {
+                        Text(String(format: LocalizedString.subjectsHiddenCount.localized, viewModel.stats.past))
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                            .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    .rotationEffect(.degrees(viewModel.showPastEvents ? 90 : 0))
+                    .animation(.easeInOut(duration: 0.2), value: viewModel.showPastEvents) // Анимируем только chevron
+            }
+            .padding(Configuration.constants.toggleButtonPadding.value)
+            .background(
+                RoundedRectangle(cornerRadius: Configuration.constants.toggleButtonCornerRadius.value)
+                    .fill(
+                        LinearGradient(
+                            colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonBgOpacity) },
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Configuration.constants.toggleButtonCornerRadius.value)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonStrokeOpacity) },
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .contentShape(RoundedRectangle(cornerRadius: Configuration.constants.toggleButtonCornerRadius.value))
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - Sections
 
     private var sectionsList: some View {
-        VStack(spacing: Configuration.constants.sectionSpacing.value) {
-            ForEach(viewModel.sections, id: \.date) { section in
-                VStack(alignment: .leading, spacing: 8) {
-                    dateLine(for: section.date)
-                    VStack(spacing: Configuration.constants.sectionSpacing.value) {
-                        ForEach(section.items) { ev in
-                            EventCard(
-                                event: ev,
-                                showTeacherName: true,
-                                onTeacherTap: nil,
-                                now: now
-                            )
-                        }
+        LazyVStack(spacing: Configuration.constants.sectionSpacing.value, pinnedViews: []) {
+            ForEach(viewModel.allSections, id: \.date) { section in
+                // Условная фильтрация - не меняем массив, а просто не показываем элементы
+                if viewModel.shouldShowSection(section) {
+                    sectionView(for: section)
+                        .id("\(section.date.timeIntervalSince1970)-\(viewModel.showPastEvents)")
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func sectionView(for section: (date: Date, items: [ScheduleEvent])) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            dateLine(for: section.date)
+            LazyVStack(spacing: Configuration.constants.sectionSpacing.value) {
+                ForEach(section.items) { ev in
+                    // Фильтруем события условно
+                    if viewModel.showPastEvents || !viewModel.isPastEvent(ev) {
+                        EventCard(
+                            event: ev,
+                            showTeacherName: true,
+                            onTeacherTap: nil,
+                            now: now
+                        )
+                        .id(ev.id)
                     }
                 }
             }
