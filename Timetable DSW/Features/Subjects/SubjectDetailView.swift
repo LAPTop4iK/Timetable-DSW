@@ -36,6 +36,13 @@ struct SubjectDetailView: View {
             // Typography
             let pillNumberFont = AppTypography.custom(size: 22, weight: .semibold).font
             let pillLabelFont  = AppTypography.caption2.font
+
+            // Filter toggle button
+            let toggleButtonCornerRadius: AppCornerRadius = .large
+            let toggleButtonPadding: AppSpacing = .medium
+            let toggleButtonStrokeOpacity: Double = 0.28
+            let toggleButtonBgOpacity: Double = 0.08
+            let toggleButtonIconSize: CGFloat = 18
         }
         static let constants = Constants()
     }
@@ -92,6 +99,11 @@ struct SubjectDetailView: View {
                     }
 
                     statsSection
+
+                    // Кнопка-переключатель для показа/скрытия прошедших событий
+                    if didAppear && viewModel.stats.past > 0 {
+                        filterToggleButton
+                    }
 
                     // Отложенная инициализация тяжёлого списка секций
                     if didAppear {
@@ -239,6 +251,97 @@ struct SubjectDetailView: View {
             .padding(.horizontal, 6)
         )
         .frame(maxWidth: .infinity, minHeight: 64)
+    }
+
+    // MARK: - Filter Toggle Button
+
+    private var filterToggleButton: some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                viewModel.showPastEvents.toggle()
+            }
+        } label: {
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonBgOpacity * 2) },
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 36, height: 36)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonStrokeOpacity) },
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1
+                                )
+                        )
+
+                    Image(systemName: viewModel.showPastEvents ? "eye.slash.fill" : "eye.fill")
+                        .font(.system(size: Configuration.constants.toggleButtonIconSize, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: gradientColors,
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(viewModel.showPastEvents
+                         ? LocalizedString.subjectsHidePast.localized
+                         : LocalizedString.subjectsShowPast.localized)
+                        .font(AppTypography.body.font)
+                        .fontWeight(.semibold)
+                        .themedForeground(.contrastPrimary, colorScheme: colorScheme)
+
+                    if !viewModel.showPastEvents && viewModel.stats.past > 0 {
+                        Text(String(format: LocalizedString.subjectsHiddenCount.localized, viewModel.stats.past))
+                            .font(AppTypography.caption.font)
+                            .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
+                    .rotationEffect(.degrees(viewModel.showPastEvents ? 90 : 0))
+            }
+            .padding(Configuration.constants.toggleButtonPadding.value)
+            .background(
+                RoundedRectangle(cornerRadius: Configuration.constants.toggleButtonCornerRadius.value)
+                    .fill(
+                        LinearGradient(
+                            colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonBgOpacity) },
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Configuration.constants.toggleButtonCornerRadius.value)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: gradientColors.map { $0.opacity(Configuration.constants.toggleButtonStrokeOpacity) },
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .contentShape(RoundedRectangle(cornerRadius: Configuration.constants.toggleButtonCornerRadius.value))
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Sections

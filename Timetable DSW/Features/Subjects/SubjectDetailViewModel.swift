@@ -29,6 +29,15 @@ final class SubjectDetailViewModel: ObservableObject {
     @Published private(set) var stats: SubjectStats
     @Published private(set) var sections: [(date: Date, items: [ScheduleEvent])]
 
+    // Filter state
+    @Published var showPastEvents: Bool = false {
+        didSet {
+            updateFilteredSections()
+        }
+    }
+
+    private let allSections: [(date: Date, items: [ScheduleEvent])]
+
     init(
         subject: Subject,
         dateService: DateService = DefaultDateService.shared,
@@ -40,7 +49,12 @@ final class SubjectDetailViewModel: ObservableObject {
 
         // Initialize cached properties once
         self.stats = Self.computeStats(for: subject, using: eventTypeDetector)
-        self.sections = Self.computeSections(for: subject)
+        self.allSections = Self.computeSections(for: subject)
+        self.sections = Self.filterSections(self.allSections, showPast: false)
+    }
+
+    private func updateFilteredSections() {
+        sections = Self.filterSections(allSections, showPast: showPastEvents)
     }
 
     // MARK: - Private Static Helpers
@@ -82,6 +96,24 @@ final class SubjectDetailViewModel: ObservableObject {
         return mapped.sorted(by: { (lhs: (date: Date, items: [ScheduleEvent]), rhs: (date: Date, items: [ScheduleEvent])) in
             lhs.date < rhs.date
         })
+    }
+
+    private static func filterSections(_ sections: [(date: Date, items: [ScheduleEvent])], showPast: Bool) -> [(date: Date, items: [ScheduleEvent])] {
+        guard !showPast else { return sections }
+
+        let now = Date()
+        return sections.compactMap { section in
+            // Filter out events where all events in the section have ended
+            let futureItems = section.items.filter { event in
+                guard let endDate = event.endDate else { return true }
+                return endDate >= now
+            }
+
+            // If there are future items in this section, keep the section
+            guard !futureItems.isEmpty else { return nil }
+
+            return (date: section.date, items: futureItems)
+        }
     }
 }
 

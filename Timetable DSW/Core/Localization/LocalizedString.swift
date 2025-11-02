@@ -66,6 +66,9 @@ enum LocalizedString {
     case subjectsExercises
     case subjectsLaboratories
     case subjectsGradingType
+    case subjectsShowPast
+    case subjectsHidePast
+    case subjectsHiddenCount
 
     // MARK: - Settings
     case settingsTitle
@@ -483,6 +486,9 @@ extension LocalizedString {
         case .subjectsExercises: return "subjects.exercises"
         case .subjectsLaboratories: return "subjects.laboratories"
         case .subjectsGradingType: return "subjects.gradingType"
+        case .subjectsShowPast: return "subjects.showPast"
+        case .subjectsHidePast: return "subjects.hidePast"
+        case .subjectsHiddenCount: return "subjects.hiddenCount"
 
         // Settings
         case .settingsTitle: return "settings.title"
