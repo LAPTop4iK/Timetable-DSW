@@ -20,11 +20,6 @@ enum UITestTimeout {
 
 extension XCUIElement {
 
-    /// Wait for element to exist
-    func waitForExistence(timeout: TimeInterval = UITestTimeout.normal) -> Bool {
-        return waitForExistence(timeout: timeout)
-    }
-
     /// Wait for element to be hittable
     func waitForHittable(timeout: TimeInterval = UITestTimeout.normal) -> Bool {
         let predicate = NSPredicate(format: "isHittable == true")
