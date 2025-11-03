@@ -55,6 +55,7 @@ struct EmptyDayView: View {
         .frame(maxWidth: .infinity, alignment: .center)   // ← только по ширине
            .multilineTextAlignment(.center)
         .contentShape(Rectangle())
+        .accessibilityIdentifier("schedule_empty_state")
     }
     
     // MARK: - Subviews

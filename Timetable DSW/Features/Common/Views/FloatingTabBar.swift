@@ -312,6 +312,7 @@ struct FloatingTabBar: View {
             tabBar
             bannerAd
         }
+        .accessibilityIdentifier("main_tab_bar")
     }
 
     private var bannerAd: some View {

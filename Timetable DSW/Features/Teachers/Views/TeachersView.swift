@@ -43,6 +43,7 @@ struct TeachersView: View {
                 }
                 contentView
             }
+            .accessibilityIdentifier("teachers_root_view")
             .navigationTitle(LocalizedString.teachersTitle.localized)
             .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: LocalizedString.teachersSearch.localized)
             .onAppear {
@@ -118,6 +119,7 @@ struct TeachersView: View {
             ))
         }
         .listStyle(.plain)
+        .accessibilityIdentifier("teachers_list")
         .safeAreaInset(edge: .bottom) {
             AppColor.clear.color(for: colorScheme)
                 .frame(height: bottomInsetService?.bottomInset ?? 78)
@@ -193,6 +195,7 @@ private struct TeacherRow: View {
             }
             .padding(constants.padding.value)
         }
+        .accessibilityIdentifier("teachers_teacher_cell")
     }
     
     // MARK: - Subviews

@@ -58,6 +58,7 @@ struct GroupSelectionView: View {
     var body: some View {
         NavigationView {
             contentView
+                .accessibilityIdentifier("group_selection_root_view")
                 .navigationTitle(LocalizedString.groupsSelect.localized)
                 .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $viewModel.searchText, prompt: LocalizedString.groupsSearch.localized)
@@ -125,7 +126,7 @@ struct GroupSelectionView: View {
             .listRowInsets(Configuration.constants.listRowInsets)
         }
         .listStyle(.plain)
-        .accessibilityIdentifier("groupsList")
+        .accessibilityIdentifier("group_selection_groups_list")
         .refreshable {
             await viewModel.refresh()
         }

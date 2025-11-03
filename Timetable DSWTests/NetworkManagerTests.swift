@@ -58,7 +58,7 @@ class MockURLProtocol: URLProtocol {
 
 // MARK: - NetworkManager Tests
 
-@Suite("NetworkManager Tests")
+@Suite("NetworkManager Tests", .serialized)
 struct NetworkManagerTests {
 
     let sut: NetworkManager

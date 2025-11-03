@@ -60,6 +60,7 @@ struct SettingsView: View {
                 debugSection
             }
             .navigationTitle(LocalizedString.settingsTitle.localized)
+            .accessibilityIdentifier("settings_root_view")
             .onAppear { viewModel.appViewModel = appViewModel }
             .safeAreaInset(edge: .bottom) {
                 AppColor.clear.color(for: colorScheme)
@@ -145,7 +146,7 @@ struct SettingsView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityIdentifier("themeButton")
+            .accessibilityIdentifier("settings_theme_button")
         } header: {
             Text(LocalizedString.settingsThemeSectionHeader.localized)
         } footer: {
@@ -208,7 +209,7 @@ struct SettingsView: View {
                         .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 }
             }
-            .accessibilityIdentifier("groupSelectionButton")
+            .accessibilityIdentifier("settings_group_selection_button")
         } header: {
             Text(LocalizedString.settingsGroupSettings.localized)
         }

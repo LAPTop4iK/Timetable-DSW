@@ -230,6 +230,7 @@ struct EventCard: View {
         .modifier(StatusDimModifier(isPast: isPast, isCancelled: style.isCancelled))
         .onTapGesture { onCardTap?() }
         .equatable(by: props) // не перестраивать без изменения входных пропсов
+        .accessibilityIdentifier("schedule_event_cell")
     }
 
     // MARK: - Computed Properties
