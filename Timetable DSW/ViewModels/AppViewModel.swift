@@ -51,7 +51,7 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
 
     // MARK: - Properties
 
-    private let repository: ScheduleRepository
+    private let repository: ScheduleRepositoryProtocol
     private let userDefaults: UserDefaults
 
     // MARK: - User Defaults Keys
@@ -74,7 +74,7 @@ final class AppViewModel: ObservableObject, EventsProviderProtocol {
 
     // MARK: - Initialization
 
-    init(repository: ScheduleRepository,
+    init(repository: ScheduleRepositoryProtocol,
          userDefaults: UserDefaults = .standard,
          eventTypeDetector: EventTypeDetector = DefaultEventTypeDetector()) {
         self.repository = repository

@@ -55,7 +55,8 @@ final class GroupSelectionScreen: BaseScreen {
     @discardableResult
     func clearSearch() -> Self {
         uiStep("Clear search") {
-            if let clearButton = searchField.buttons["Clear text"].firstMatch, clearButton.exists {
+            let clearButton = searchField.buttons["Clear text"].firstMatch
+            if clearButton.exists {
                 clearButton.tap()
             } else {
                 searchField.clearAndType("")
@@ -129,3 +130,4 @@ final class GroupSelectionScreen: BaseScreen {
         assertScreenIsOpened(timeout: timeout)
     }
 }
+

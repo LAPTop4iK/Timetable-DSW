@@ -7,6 +7,7 @@
 
 import Testing
 @testable import Timetable_DSW
+import Foundation
 
 // MARK: - Schedule Event Tests
 

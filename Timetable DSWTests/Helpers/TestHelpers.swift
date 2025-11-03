@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // MARK: - Test Timeout Constants
 
@@ -209,7 +210,7 @@ func waitFor(
     description: String = "Condition"
 ) async -> Bool {
     let startTime = Date()
-    while !await condition() {
+    while !(await condition()) {
         if Date().timeIntervalSince(startTime) > timeout {
             print("⚠️ \(description) not satisfied within \(timeout) seconds")
             return false

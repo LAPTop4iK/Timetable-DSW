@@ -9,7 +9,7 @@ import Foundation
 
 /// Protocol for network layer abstraction
 /// Enables dependency injection and testability
-protocol NetworkManagerProtocol: Actor {
+protocol NetworkManagerProtocol {
 
     /// Fetch and decode data from endpoint
     /// - Parameter endpoint: API endpoint path

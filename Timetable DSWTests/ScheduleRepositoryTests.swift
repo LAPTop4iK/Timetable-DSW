@@ -29,7 +29,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get schedule - network success")
     func getScheduleSuccess() async throws {
-        await step("Given mocked schedule response") {
+        try await step("Given mocked schedule response") {
             let mockSchedule = try TestDataFactory.aggregateResponse()
             let endpoint = "/api/groups/1/aggregate?from=2025-11-01&to=2025-11-30&type=3"
             await mockNetworkManager.setMockResponse(mockSchedule, forEndpoint: endpoint)
@@ -51,7 +51,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get schedule - network fails, returns cached data")
     func getScheduleNetworkFailReturnsCached() async throws {
-        await step("Given cached schedule exists") {
+        try await step("Given cached schedule exists") {
             let cachedSchedule = try TestDataFactory.aggregateResponse()
             try await mockCacheManager.save(cachedSchedule, forKey: "schedule_cache")
         }
@@ -88,7 +88,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get cached schedule when cache exists")
     func getCachedScheduleWhenExists() async throws {
-        await step("Given cached schedule exists") {
+       try await step("Given cached schedule exists") {
             let cachedSchedule = try TestDataFactory.aggregateResponse()
             try await mockCacheManager.save(cachedSchedule, forKey: "schedule_cache")
         }
@@ -117,7 +117,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Clear schedule cache successfully")
     func clearScheduleCacheSuccess() async throws {
-        await step("Given cached schedule exists") {
+       try await step("Given cached schedule exists") {
             let cachedSchedule = try TestDataFactory.aggregateResponse()
             try await mockCacheManager.save(cachedSchedule, forKey: "schedule_cache")
         }
@@ -136,7 +136,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get groups - network success")
     func getGroupsSuccess() async throws {
-        await step("Given mocked groups response") {
+       try await step("Given mocked groups response") {
             let mockGroups = [
                 try TestDataFactory.groupInfo().build(),
                 try TestDataFactory.groupInfo().with(groupId: 2).build()
@@ -161,7 +161,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get groups - network fails, returns cached data")
     func getGroupsNetworkFailReturnsCached() async throws {
-        await step("Given cached groups exist") {
+       try await step("Given cached groups exist") {
             let cachedGroups = [try TestDataFactory.groupInfo().build()]
             try await mockCacheManager.save(cachedGroups, forKey: "groups_cache")
         }
@@ -198,7 +198,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get cached groups when cache exists")
     func getCachedGroupsWhenExists() async throws {
-        await step("Given cached groups exist") {
+       try await step("Given cached groups exist") {
             let cachedGroups = [try TestDataFactory.groupInfo().build()]
             try await mockCacheManager.save(cachedGroups, forKey: "groups_cache")
         }
@@ -228,7 +228,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get schedule integrates with cache manager")
     func getScheduleIntegrationWithCache() async throws {
-        await step("Given network response") {
+       try await step("Given network response") {
             let mockSchedule = try TestDataFactory.aggregateResponse(
                 groupSchedule: try TestDataFactory.sampleWeekSchedule()
             )
@@ -252,7 +252,7 @@ struct ScheduleRepositoryTests {
 
     @Test("Get groups integrates with cache manager")
     func getGroupsIntegrationWithCache() async throws {
-        await step("Given multiple groups") {
+       try await step("Given multiple groups") {
             let groups = [
                 try TestDataFactory.groupInfo().with(code: "CS101").build(),
                 try TestDataFactory.groupInfo().with(groupId: 2).with(code: "CS102").build()

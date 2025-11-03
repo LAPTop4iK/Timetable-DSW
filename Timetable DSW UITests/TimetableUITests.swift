@@ -9,6 +9,7 @@ import XCTest
 
 // MARK: - Timetable UI Tests
 
+@MainActor
 final class TimetableUITests: XCTestCase {
 
     // MARK: - Properties
@@ -194,7 +195,7 @@ final class TimetableUITests: XCTestCase {
                 groupSelectionScreen.assertGroupsLoaded()
             } else {
                 // Groups may be loading or network error
-                XCTAssertTrue(app.tables.exists, "Groups list should exist")
+                XCTAssertTrue(app.tables.firstMatch.exists, "Groups list should exist")
             }
         }
     }
@@ -294,7 +295,7 @@ final class TimetableUITests: XCTestCase {
                 .waitForGroups(timeout: UITestTimeout.veryLong)
         }
 
-        uiStep("And selects first group") {
+       try uiStep("And selects first group") {
             let cells = app.tables.cells
             if cells.count > 0 {
                 GroupSelectionScreen(app)
@@ -382,3 +383,4 @@ final class TimetableUITests: XCTestCase {
         }
     }
 }
+

@@ -9,7 +9,7 @@ import Foundation
 
 /// Protocol for cache layer abstraction
 /// Enables dependency injection and testability
-protocol CacheManagerProtocol: Actor {
+protocol CacheManagerProtocol {
 
     /// Save encodable value to cache
     /// - Parameters:

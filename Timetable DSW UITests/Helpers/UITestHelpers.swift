@@ -80,11 +80,19 @@ extension XCTestCase {
     }
 
     /// Step-based UI testing
-    @discardableResult
-    func uiStep<T>(_ description: String, file: StaticString = #file, line: UInt = #line, action: () throws -> T) rethrows -> T {
-        print("📱 UI Step: \(description)")
-        return try action()
-    }
+//    @discardableResult
+//    func uiStep<T>(_ description: String, file: StaticString = #file, line: UInt = #line, action: () throws -> T) rethrows -> T {
+//        print("📱 UI Step: \(description)")
+//        return try action()
+//    }
+}
+
+// MARK: - Global uiStep helper (usable from page objects)
+
+@discardableResult
+func uiStep<T>(_ description: String, file: StaticString = #file, line: UInt = #line, action: () throws -> T) rethrows -> T {
+    print("📱 UI Step: \(description)")
+    return try action()
 }
 
 // MARK: - Accessibility Identifiers
@@ -143,3 +151,4 @@ enum UITestData {
     static let sampleGroupName = "Computer Science"
     static let searchQuery = "CS"
 }
+

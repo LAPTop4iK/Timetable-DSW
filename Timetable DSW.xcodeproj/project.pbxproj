@@ -31,6 +31,20 @@
 			remoteGlobalIDString = EB82BC6F2EAAB6F0005FDC0B;
 			remoteInfo = TimetableWidgetExtension;
 		};
+		EB91D5632EB91EC900DE2E44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EBA0262C2EA1CC140010F32D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EBA026332EA1CC140010F32D;
+			remoteInfo = "Timetable DSW";
+		};
+		EB91D72C2EB92CEC00DE2E44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EBA0262C2EA1CC140010F32D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EBA026332EA1CC140010F32D;
+			remoteInfo = "Timetable DSW";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +69,8 @@
 		EB82BC722EAAB6F0005FDC0B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		EB82BC742EAAB6F0005FDC0B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		EB82BCA32EAABC25005FDC0B /* TimetableWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimetableWidgetExtension.entitlements; sourceTree = "<group>"; };
+		EB91D55F2EB91EC900DE2E44 /* Timetable DSWTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Timetable DSWTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB91D7262EB92CEC00DE2E44 /* Timetable DSW UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Timetable DSW UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBA026342EA1CC140010F32D /* Timetable DSW.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Timetable DSW.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -82,6 +98,20 @@
 			);
 			target = EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */;
 		};
+		EB91D58B2EB91FE200DE2E44 /* Exceptions for "Timetable DSWTests" folder in "Timetable DSWTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EB91D55E2EB91EC900DE2E44 /* Timetable DSWTests */;
+		};
+		EB91D7432EB92D8200DE2E44 /* Exceptions for "Timetable DSW UITests" folder in "Timetable DSW UITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EB91D7252EB92CEC00DE2E44 /* Timetable DSW UITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -91,6 +121,22 @@
 				EB82BC872EAAB6F1005FDC0B /* Exceptions for "TimetableWidget" folder in "TimetableWidgetExtension" target */,
 			);
 			path = TimetableWidget;
+			sourceTree = "<group>";
+		};
+		EB91D5602EB91EC900DE2E44 /* Timetable DSWTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EB91D58B2EB91FE200DE2E44 /* Exceptions for "Timetable DSWTests" folder in "Timetable DSWTests" target */,
+			);
+			path = "Timetable DSWTests";
+			sourceTree = "<group>";
+		};
+		EB91D7272EB92CEC00DE2E44 /* Timetable DSW UITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EB91D7432EB92D8200DE2E44 /* Exceptions for "Timetable DSW UITests" folder in "Timetable DSW UITests" target */,
+			);
+			path = "Timetable DSW UITests";
 			sourceTree = "<group>";
 		};
 		EBA026362EA1CC140010F32D /* Timetable DSW */ = {
@@ -110,6 +156,20 @@
 			files = (
 				EB82BC752EAAB6F0005FDC0B /* SwiftUI.framework in Frameworks */,
 				EB82BC732EAAB6F0005FDC0B /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB91D55C2EB91EC900DE2E44 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB91D7232EB92CEC00DE2E44 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +210,8 @@
 				EB82BCA32EAABC25005FDC0B /* TimetableWidgetExtension.entitlements */,
 				EBA026362EA1CC140010F32D /* Timetable DSW */,
 				EB82BC762EAAB6F0005FDC0B /* TimetableWidget */,
+				EB91D5602EB91EC900DE2E44 /* Timetable DSWTests */,
+				EB91D7272EB92CEC00DE2E44 /* Timetable DSW UITests */,
 				EB82BC712EAAB6F0005FDC0B /* Frameworks */,
 				EBA026352EA1CC140010F32D /* Products */,
 			);
@@ -160,6 +222,8 @@
 			children = (
 				EBA026342EA1CC140010F32D /* Timetable DSW.app */,
 				EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */,
+				EB91D55F2EB91EC900DE2E44 /* Timetable DSWTests.xctest */,
+				EB91D7262EB92CEC00DE2E44 /* Timetable DSW UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -188,6 +252,52 @@
 			productName = TimetableWidgetExtension;
 			productReference = EB82BC702EAAB6F0005FDC0B /* TimetableWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		EB91D55E2EB91EC900DE2E44 /* Timetable DSWTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB91D5652EB91EC900DE2E44 /* Build configuration list for PBXNativeTarget "Timetable DSWTests" */;
+			buildPhases = (
+				EB91D55B2EB91EC900DE2E44 /* Sources */,
+				EB91D55C2EB91EC900DE2E44 /* Frameworks */,
+				EB91D55D2EB91EC900DE2E44 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EB91D5642EB91EC900DE2E44 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EB91D5602EB91EC900DE2E44 /* Timetable DSWTests */,
+			);
+			name = "Timetable DSWTests";
+			packageProductDependencies = (
+			);
+			productName = "Timetable DSWTests";
+			productReference = EB91D55F2EB91EC900DE2E44 /* Timetable DSWTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EB91D7252EB92CEC00DE2E44 /* Timetable DSW UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB91D72E2EB92CEC00DE2E44 /* Build configuration list for PBXNativeTarget "Timetable DSW UITests" */;
+			buildPhases = (
+				EB91D7222EB92CEC00DE2E44 /* Sources */,
+				EB91D7232EB92CEC00DE2E44 /* Frameworks */,
+				EB91D7242EB92CEC00DE2E44 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EB91D72D2EB92CEC00DE2E44 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EB91D7272EB92CEC00DE2E44 /* Timetable DSW UITests */,
+			);
+			name = "Timetable DSW UITests";
+			packageProductDependencies = (
+			);
+			productName = "Timetable DSW UITests";
+			productReference = EB91D7262EB92CEC00DE2E44 /* Timetable DSW UITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		EBA026332EA1CC140010F32D /* Timetable DSW */ = {
 			isa = PBXNativeTarget;
@@ -235,6 +345,14 @@
 					EB82BC6F2EAAB6F0005FDC0B = {
 						CreatedOnToolsVersion = 26.0;
 					};
+					EB91D55E2EB91EC900DE2E44 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = EBA026332EA1CC140010F32D;
+					};
+					EB91D7252EB92CEC00DE2E44 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = EBA026332EA1CC140010F32D;
+					};
 					EBA026332EA1CC140010F32D = {
 						CreatedOnToolsVersion = 26.0;
 						LastSwiftMigration = 2600;
@@ -264,12 +382,28 @@
 			targets = (
 				EBA026332EA1CC140010F32D /* Timetable DSW */,
 				EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */,
+				EB91D55E2EB91EC900DE2E44 /* Timetable DSWTests */,
+				EB91D7252EB92CEC00DE2E44 /* Timetable DSW UITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		EB82BC6E2EAAB6F0005FDC0B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB91D55D2EB91EC900DE2E44 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB91D7242EB92CEC00DE2E44 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -322,6 +456,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EB91D55B2EB91EC900DE2E44 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB91D7222EB92CEC00DE2E44 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EBA026302EA1CC140010F32D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -336,6 +484,16 @@
 			isa = PBXTargetDependency;
 			target = EB82BC6F2EAAB6F0005FDC0B /* TimetableWidgetExtension */;
 			targetProxy = EB82BC842EAAB6F1005FDC0B /* PBXContainerItemProxy */;
+		};
+		EB91D5642EB91EC900DE2E44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EBA026332EA1CC140010F32D /* Timetable DSW */;
+			targetProxy = EB91D5632EB91EC900DE2E44 /* PBXContainerItemProxy */;
+		};
+		EB91D72D2EB92CEC00DE2E44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EBA026332EA1CC140010F32D /* Timetable DSW */;
+			targetProxy = EB91D72C2EB92CEC00DE2E44 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -403,6 +561,92 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EB91D5662EB91EC900DE2E44 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L4UDM2XTU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-rll-DSWTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timetable DSW.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Timetable DSW";
+			};
+			name = Debug;
+		};
+		EB91D5672EB91EC900DE2E44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L4UDM2XTU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-rll-DSWTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timetable DSW.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Timetable DSW";
+			};
+			name = Release;
+		};
+		EB91D72F2EB92CEC00DE2E44 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L4UDM2XTU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-DSW-rll-UITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Timetable DSW";
+			};
+			name = Debug;
+		};
+		EB91D7302EB92CEC00DE2E44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L4UDM2XTU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.laptenok.Timetable-DSW-rll-UITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Timetable DSW";
 			};
 			name = Release;
 		};
@@ -629,6 +873,24 @@
 			buildConfigurations = (
 				EB82BC892EAAB6F1005FDC0B /* Debug */,
 				EB82BC8A2EAAB6F1005FDC0B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EB91D5652EB91EC900DE2E44 /* Build configuration list for PBXNativeTarget "Timetable DSWTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB91D5662EB91EC900DE2E44 /* Debug */,
+				EB91D5672EB91EC900DE2E44 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EB91D72E2EB92CEC00DE2E44 /* Build configuration list for PBXNativeTarget "Timetable DSW UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB91D72F2EB92CEC00DE2E44 /* Debug */,
+				EB91D7302EB92CEC00DE2E44 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

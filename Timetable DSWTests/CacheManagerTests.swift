@@ -7,6 +7,7 @@
 
 import Testing
 @testable import Timetable_DSW
+import Foundation
 
 @Suite("CacheManager Tests")
 struct CacheManagerTests {

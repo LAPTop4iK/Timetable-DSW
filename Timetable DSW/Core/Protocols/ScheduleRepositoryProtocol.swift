@@ -9,7 +9,7 @@ import Foundation
 
 /// Protocol for schedule repository abstraction
 /// Enables dependency injection and testability
-protocol ScheduleRepositoryProtocol: Actor {
+protocol ScheduleRepositoryProtocol {
 
     // MARK: - Schedule Methods
 

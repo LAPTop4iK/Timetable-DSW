@@ -7,6 +7,7 @@
 
 import Testing
 import Combine
+import Foundation
 @testable import Timetable_DSW
 
 @MainActor
@@ -15,6 +16,7 @@ struct AppViewModelTests {
 
     // MARK: - Initialization Tests
 
+    @MainActor
     @Suite("Initialization")
     struct InitializationTests {
 
@@ -67,6 +69,7 @@ struct AppViewModelTests {
 
     // MARK: - Load Groups Tests
 
+    @MainActor
     @Suite("Load Groups")
     struct LoadGroupsTests {
 
@@ -156,6 +159,7 @@ struct AppViewModelTests {
 
     // MARK: - Load Schedule Tests
 
+    @MainActor
     @Suite("Load Schedule")
     struct LoadScheduleTests {
 
@@ -276,6 +280,7 @@ struct AppViewModelTests {
 
     // MARK: - Refresh and Cache Tests
 
+    @MainActor
     @Suite("Refresh and Cache")
     struct RefreshAndCacheTests {
 
@@ -321,6 +326,7 @@ struct AppViewModelTests {
 
     // MARK: - EventsProvider Tests
 
+    @MainActor
     @Suite("EventsProvider Protocol")
     struct EventsProviderTests {
 
@@ -407,7 +413,7 @@ struct AppViewModelTests {
         func eventTypeRegularDay() async throws {
             // Given
             let mockEventTypeDetector = MockEventTypeDetector()
-            mockEventTypeDetector.setIsOnline(false)
+            mockEventTypeDetector.setMockedIsOnline(false)
 
             let mockRepository = MockScheduleRepository()
             let events = try TestDataFactory.sampleWeekSchedule()
@@ -433,7 +439,7 @@ struct AppViewModelTests {
         func eventTypeOnlineDay() async throws {
             // Given
             let mockEventTypeDetector = MockEventTypeDetector()
-            mockEventTypeDetector.setIsOnline(true)
+            mockEventTypeDetector.setMockedIsOnline(true)
 
             let mockRepository = MockScheduleRepository()
             let events = try TestDataFactory.sampleWeekSchedule()
@@ -468,12 +474,13 @@ struct AppViewModelTests {
             let type = sut.eventType(for: Date())
 
             // Then
-            #expect(type == .noEvents)
+            #expect(type == .none)
         }
     }
 
     // MARK: - Selected Group Name Tests
 
+    @MainActor
     @Suite("Selected Group Name")
     struct SelectedGroupNameTests {
 
@@ -519,6 +526,7 @@ struct AppViewModelTests {
 
     // MARK: - Integration Tests
 
+    @MainActor
     @Suite("Integration")
     struct IntegrationTests {
 
@@ -581,3 +589,4 @@ struct AppViewModelTests {
         }
     }
 }
+

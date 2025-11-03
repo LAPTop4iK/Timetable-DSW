@@ -24,7 +24,8 @@ final class TabBarScreen: BaseScreen {
     func switchToScheduleTab() -> ScheduleScreen {
         uiStep("Switch to Schedule tab") {
             // Try multiple ways to find schedule tab
-            if let scheduleTab = tabBar.buttons.element(boundBy: 0).firstMatch, scheduleTab.exists {
+            let scheduleTab = tabBar.buttons.element(boundBy: 0)
+            if scheduleTab.exists {
                 scheduleTab.tap()
             } else {
                 tabBar.buttons.firstMatch.tap()
@@ -36,8 +37,16 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func switchToTeachersTab() -> Self {
         uiStep("Switch to Teachers tab") {
-            if let teachersTab = tabBar.buttons.element(boundBy: 1).firstMatch, teachersTab.exists {
+            let teachersTab = tabBar.buttons.element(boundBy: 1)
+            if teachersTab.exists {
                 teachersTab.tap()
+            } else {
+                // Fallback: try tapping the second button if it exists, otherwise first match
+                if tabBar.buttons.count > 1 {
+                    tabBar.buttons.element(boundBy: 1).tap()
+                } else {
+                    tabBar.buttons.firstMatch.tap()
+                }
             }
         }
         return self
@@ -77,3 +86,4 @@ final class TabBarScreen: BaseScreen {
         assertTabBarVisible()
     }
 }
+
