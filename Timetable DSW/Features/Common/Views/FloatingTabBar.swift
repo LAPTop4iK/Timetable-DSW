@@ -233,7 +233,7 @@ struct TabBarButton: View {
         Button(action: handleTap) {
             VStack(spacing: configuration.buttonSpacing.value) {
                 iconView
-                
+
                 if configuration.showLabels {
                     labelView
                 }
@@ -241,6 +241,7 @@ struct TabBarButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(ScaleButtonStyle())
+        .accessibilityIdentifier(tab.accessibilityIdentifier)
     }
     
     // MARK: - Subviews

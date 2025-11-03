@@ -64,8 +64,9 @@ struct GroupSelectionView: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         cancelButton
+                            .accessibilityIdentifier("groupCancelButton")
                     }
-                    
+
                     ToolbarItem(placement: .navigationBarTrailing) {
                         refreshButton
                     }
@@ -124,6 +125,7 @@ struct GroupSelectionView: View {
             .listRowInsets(Configuration.constants.listRowInsets)
         }
         .listStyle(.plain)
+        .accessibilityIdentifier("groupsList")
         .refreshable {
             await viewModel.refresh()
         }

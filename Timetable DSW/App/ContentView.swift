@@ -31,10 +31,10 @@ struct ContentView: View {
 
     // MARK: - Dependencies
     private let tabs: [TabBarItem] = [
-        TabBarItem(icon: .calendar,    title: .tabsSchedule, tag: 0),
-        TabBarItem(icon: .listBullet,  title: .tabsSubjects, tag: 1),
-        TabBarItem(icon: .people,      title: .tabsTeachers, tag: 2),
-        TabBarItem(icon: .gear,        title: .tabsSettings, tag: 3)
+        TabBarItem(icon: .calendar,    title: .tabsSchedule, tag: 0, accessibilityIdentifier: "tabSchedule"),
+        TabBarItem(icon: .listBullet,  title: .tabsSubjects, tag: 1, accessibilityIdentifier: "tabSubjects"),
+        TabBarItem(icon: .people,      title: .tabsTeachers, tag: 2, accessibilityIdentifier: "tabTeachers"),
+        TabBarItem(icon: .gear,        title: .tabsSettings, tag: 3, accessibilityIdentifier: "tabSettings")
     ]
 
     // MARK: - Computed Properties

@@ -145,6 +145,7 @@ struct SettingsView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("themeButton")
         } header: {
             Text(LocalizedString.settingsThemeSectionHeader.localized)
         } footer: {
@@ -207,6 +208,7 @@ struct SettingsView: View {
                         .foregroundAppColor(.secondaryText, colorScheme: colorScheme)
                 }
             }
+            .accessibilityIdentifier("groupSelectionButton")
         } header: {
             Text(LocalizedString.settingsGroupSettings.localized)
         }

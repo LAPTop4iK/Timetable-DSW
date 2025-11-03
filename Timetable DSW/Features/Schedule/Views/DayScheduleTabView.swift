@@ -132,6 +132,7 @@ struct DayScheduleTabView: View {
         .tabViewStyle(.page(indexDisplayMode: .never))
         .transaction { $0.animation = nil } // без implicit-анимаций при программной синхронизации
         .id(weekIdentifier)
+        .accessibilityIdentifier("scheduleList")
     }
 
     private var arrowOverlays: some View {

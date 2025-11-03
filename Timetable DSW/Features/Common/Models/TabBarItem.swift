@@ -13,4 +13,5 @@ struct TabBarItem: Identifiable {
     let icon: AppIcon
     let title: LocalizedString
     let tag: Int
+    let accessibilityIdentifier: String
 }
