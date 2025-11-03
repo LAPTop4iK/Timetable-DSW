@@ -12,7 +12,8 @@ import Foundation
 
 /// Mock implementation of ScheduleRepository for testing
 /// Provides full control over responses and behavior
-actor MockScheduleRepository: ScheduleRepositoryProtocol {
+@MainActor
+final class MockScheduleRepository: ScheduleRepositoryProtocol {
 
     // MARK: - Call Tracking
 
@@ -39,7 +40,6 @@ actor MockScheduleRepository: ScheduleRepositoryProtocol {
 
     // MARK: - ScheduleRepositoryProtocol Implementation
 
-    @MainActor
     func getSchedule(groupId: Int, from: String, to: String) async throws -> AggregateResponse {
         getScheduleCallCount += 1
 
@@ -54,7 +54,6 @@ actor MockScheduleRepository: ScheduleRepositoryProtocol {
         return schedule
     }
 
-    @MainActor
     func getCachedSchedule() async -> AggregateResponse? {
         getCachedScheduleCallCount += 1
         return mockedCachedSchedule
@@ -65,7 +64,6 @@ actor MockScheduleRepository: ScheduleRepositoryProtocol {
         mockedCachedSchedule = nil
     }
 
-    @MainActor
     func getSemesterSchedule(groupId: Int, from: String, to: String) async throws -> GroupScheduleResponse {
         guard let semesterSchedule = mockedSemesterSchedule else {
             throw NetworkError.invalidResponse
@@ -73,12 +71,10 @@ actor MockScheduleRepository: ScheduleRepositoryProtocol {
         return semesterSchedule
     }
 
-    @MainActor
     func getCachedSemesterSchedule() async -> GroupScheduleResponse? {
         return mockedSemesterSchedule
     }
 
-    @MainActor
     func getScheduleWithRace(
         groupId: Int,
         from: String,
@@ -104,7 +100,6 @@ actor MockScheduleRepository: ScheduleRepositoryProtocol {
         return schedule
     }
 
-    @MainActor
     func getGroups() async throws -> [GroupInfo] {
         getGroupsCallCount += 1
 
@@ -119,7 +114,6 @@ actor MockScheduleRepository: ScheduleRepositoryProtocol {
         return groups
     }
 
-    @MainActor
     func getCachedGroups() async -> [GroupInfo]? {
         return mockedCachedGroups
     }

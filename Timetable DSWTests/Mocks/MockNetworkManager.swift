@@ -12,7 +12,8 @@ import Foundation
 
 /// Mock implementation of NetworkManager for testing
 /// Supports custom responses, delays, and error injection
-actor MockNetworkManager: NetworkManagerProtocol {
+@MainActor
+final class MockNetworkManager: NetworkManagerProtocol {
 
     // MARK: - Configuration
 

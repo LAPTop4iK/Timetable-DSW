@@ -12,7 +12,8 @@ import Foundation
 
 /// Mock implementation of CacheManager for testing
 /// Uses in-memory storage instead of file system
-actor MockCacheManager: CacheManagerProtocol {
+@MainActor
+final class MockCacheManager: CacheManagerProtocol {
 
     // MARK: - Properties
 
