@@ -8,7 +8,7 @@
 
 import Foundation
 
-actor ScheduleRepository {
+actor ScheduleRepository: ScheduleRepositoryProtocol {
     // MARK: - Configuration
     
     struct Configuration {
@@ -32,13 +32,16 @@ actor ScheduleRepository {
     }
     
     // MARK: - Properties
-    
-    private let networkManager: NetworkManager
-    private let cacheManager: CacheManager
-    
+
+    private let networkManager: any NetworkManagerProtocol
+    private let cacheManager: any CacheManagerProtocol
+
     // MARK: - Initialization
-    
-    init(networkManager: NetworkManager, cacheManager: CacheManager) {
+
+    init(
+        networkManager: any NetworkManagerProtocol,
+        cacheManager: any CacheManagerProtocol
+    ) {
         self.networkManager = networkManager
         self.cacheManager = cacheManager
     }

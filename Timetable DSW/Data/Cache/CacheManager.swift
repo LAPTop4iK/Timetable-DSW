@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-actor CacheManager {
+actor CacheManager: CacheManagerProtocol {
     // MARK: - Properties
     
     private let fileManager = FileManager.default

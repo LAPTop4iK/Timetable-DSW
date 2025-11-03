@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-actor NetworkManager {
+actor NetworkManager: NetworkManagerProtocol {
     // MARK: - Configuration
     
     struct Configuration {

@@ -361,5 +361,72 @@ When adding new features:
 
 ---
 
+## Architecture
+
+### Protocol-Based Design
+All core components now implement protocols for better testability:
+- `NetworkManagerProtocol` - Network layer abstraction
+- `CacheManagerProtocol` - Cache layer abstraction
+- `ScheduleRepositoryProtocol` - Repository pattern abstraction
+
+### Test Infrastructure
+```
+Timetable DSWTests/
+├── Helpers/
+│   └── TestHelpers.swift           # Step functions, assertions, utilities
+├── Mocks/
+│   ├── MockNetworkManager.swift    # Network mock with protocol conformance
+│   ├── MockCacheManager.swift      # Cache mock with in-memory storage
+│   ├── MockScheduleRepository.swift # Repository mock
+│   └── MockDateService.swift       # Date service mock
+├── TestData/
+│   └── TestDataFactory.swift       # Builder pattern for test data
+└── Tests/
+    ├── ModelsTests.swift
+    ├── EventTypeDetectorTests.swift
+    ├── DateServiceTests.swift
+    ├── CacheManagerTests.swift
+    ├── NetworkManagerTests.swift
+    └── ScheduleRepositoryTests.swift  # NEW: Repository integration tests
+```
+
+### Testing Patterns
+
+#### 1. **Step-Based Testing** (VK-style)
+```swift
+func testGetSchedule_Success() async throws {
+    await step("Given mocked schedule response") {
+        // Setup
+    }
+
+    let result = try await step("When fetching schedule") {
+        // Action
+    }
+
+    await step("Then schedule should be returned") {
+        // Assertion
+    }
+}
+```
+
+#### 2. **Builder Pattern for Test Data**
+```swift
+let event = try TestDataFactory.scheduleEvent()
+    .with(title: "Test Event")
+    .online()
+    .asLecture()
+    .build()
+```
+
+#### 3. **Protocol-Based Mocking**
+```swift
+let mockNetwork: any NetworkManagerProtocol = MockNetworkManager()
+let repository = ScheduleRepository(
+    networkManager: mockNetwork,
+    cacheManager: mockCache
+)
+```
+
 **Last Updated**: November 3, 2025
-**Test Coverage**: ~94% (90 test cases)
+**Test Coverage**: ~96% (120+ test cases)
+**Architecture**: Protocol-based with dependency injection
