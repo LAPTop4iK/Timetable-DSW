@@ -5,46 +5,30 @@
 //  Created by Claude on 03/11/2025.
 //
 
-import XCTest
+import Testing
 @testable import Timetable_DSW
 
-// MARK: - Schedule Repository Tests
-
 @MainActor
-final class ScheduleRepositoryTests: XCTestCase {
+@Suite("ScheduleRepository Tests")
+struct ScheduleRepositoryTests {
 
-    // MARK: - Properties
+    let sut: ScheduleRepository
+    let mockNetworkManager: MockNetworkManager
+    let mockCacheManager: MockCacheManager
 
-    private var sut: ScheduleRepository!
-    private var mockNetworkManager: MockNetworkManager!
-    private var mockCacheManager: MockCacheManager!
-
-    // MARK: - Setup & Teardown
-
-    override func setUp() async throws {
-        try await super.setUp()
-
-        mockNetworkManager = MockNetworkManager()
-        mockCacheManager = MockCacheManager()
-        sut = ScheduleRepository(
+    init() async {
+        self.mockNetworkManager = MockNetworkManager()
+        self.mockCacheManager = MockCacheManager()
+        self.sut = ScheduleRepository(
             networkManager: mockNetworkManager,
             cacheManager: mockCacheManager
         )
     }
 
-    override func tearDown() async throws {
-        await mockNetworkManager.reset()
-        await mockCacheManager.reset()
-        sut = nil
-        mockNetworkManager = nil
-        mockCacheManager = nil
-
-        try await super.tearDown()
-    }
-
     // MARK: - Get Schedule Tests
 
-    func testGetSchedule_Success() async throws {
+    @Test("Get schedule - network success")
+    func getScheduleSuccess() async throws {
         await step("Given mocked schedule response") {
             let mockSchedule = try TestDataFactory.aggregateResponse()
             let endpoint = "/api/groups/1/aggregate?from=2025-11-01&to=2025-11-30&type=3"
@@ -56,16 +40,17 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("Then schedule should be returned and cached") {
-            XCTAssertNotNil(result, "Schedule should not be nil")
+            #expect(result != nil)
             let networkCallCount = await mockNetworkManager.fetchCallCount
-            XCTAssertEqual(networkCallCount, 1, "Network should be called once")
+            #expect(networkCallCount == 1)
 
             let cacheCallCount = await mockCacheManager.saveCallCount
-            XCTAssertEqual(cacheCallCount, 1, "Cache save should be called once")
+            #expect(cacheCallCount == 1)
         }
     }
 
-    func testGetSchedule_NetworkFail_ReturnsCachedData() async throws {
+    @Test("Get schedule - network fails, returns cached data")
+    func getScheduleNetworkFailReturnsCached() async throws {
         await step("Given cached schedule exists") {
             let cachedSchedule = try TestDataFactory.aggregateResponse()
             try await mockCacheManager.save(cachedSchedule, forKey: "schedule_cache")
@@ -80,36 +65,29 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("Then cached schedule should be returned") {
-            XCTAssertNotNil(result, "Should return cached schedule")
+            #expect(result != nil)
             let loadCallCount = await mockCacheManager.loadCallCount
-            XCTAssertEqual(loadCallCount, 1, "Cache load should be called")
+            #expect(loadCallCount == 1)
         }
     }
 
-    func testGetSchedule_NetworkFail_NoCachedData_ThrowsError() async {
+    @Test("Get schedule - network fails with no cache throws error")
+    func getScheduleNetworkFailNoCacheThrows() async {
         await step("Given network fails") {
             await mockNetworkManager.setShouldFail(true, error: NetworkError.invalidResponse)
         }
 
-        await step("And no cached data exists") {
-            // Cache is empty by default
-        }
-
-        await step("When fetching schedule") { [self] in
-            do {
-                _ = try await sut.getSchedule(groupId: 1, from: "2025-11-01", to: "2025-11-30")
-                XCTFail("Should throw error when network fails and no cache")
-            } catch let error as NetworkError {
-                XCTAssertEqual(error, .invalidResponse, "Should throw network error")
-            } catch {
-                XCTFail("Unexpected error type: \(error)")
+        await step("When fetching schedule") {
+            await #expect(throws: NetworkError.self) {
+                try await sut.getSchedule(groupId: 1, from: "2025-11-01", to: "2025-11-30")
             }
         }
     }
 
     // MARK: - Get Cached Schedule Tests
 
-    func testGetCachedSchedule_WhenCacheExists() async throws {
+    @Test("Get cached schedule when cache exists")
+    func getCachedScheduleWhenExists() async throws {
         await step("Given cached schedule exists") {
             let cachedSchedule = try TestDataFactory.aggregateResponse()
             try await mockCacheManager.save(cachedSchedule, forKey: "schedule_cache")
@@ -120,27 +98,25 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("Then cached schedule should be returned") {
-            XCTAssertNotNil(result, "Should return cached schedule")
+            #expect(result != nil)
         }
     }
 
-    func testGetCachedSchedule_WhenCacheEmpty() async {
-        await step("Given cache is empty") {
-            // Cache is empty by default
-        }
-
+    @Test("Get cached schedule when cache empty returns nil")
+    func getCachedScheduleWhenEmpty() async {
         let result = await step("When getting cached schedule") {
             await sut.getCachedSchedule()
         }
 
         await step("Then nil should be returned") {
-            XCTAssertNil(result, "Should return nil when cache is empty")
+            #expect(result == nil)
         }
     }
 
     // MARK: - Clear Schedule Cache Tests
 
-    func testClearScheduleCache_Success() async throws {
+    @Test("Clear schedule cache successfully")
+    func clearScheduleCacheSuccess() async throws {
         await step("Given cached schedule exists") {
             let cachedSchedule = try TestDataFactory.aggregateResponse()
             try await mockCacheManager.save(cachedSchedule, forKey: "schedule_cache")
@@ -152,13 +128,14 @@ final class ScheduleRepositoryTests: XCTestCase {
 
         await step("Then cache should be cleared") {
             let removeCallCount = await mockCacheManager.removeCallCount
-            XCTAssertEqual(removeCallCount, 1, "Cache remove should be called")
+            #expect(removeCallCount == 1)
         }
     }
 
     // MARK: - Get Groups Tests
 
-    func testGetGroups_Success() async throws {
+    @Test("Get groups - network success")
+    func getGroupsSuccess() async throws {
         await step("Given mocked groups response") {
             let mockGroups = [
                 try TestDataFactory.groupInfo().build(),
@@ -172,17 +149,18 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("Then groups should be returned and cached") {
-            XCTAssertEqual(result.count, 2, "Should return 2 groups")
+            #expect(result.count == 2)
 
             let networkCallCount = await mockNetworkManager.fetchCallCount
-            XCTAssertEqual(networkCallCount, 1, "Network should be called once")
+            #expect(networkCallCount == 1)
 
             let cacheCallCount = await mockCacheManager.saveCallCount
-            XCTAssertEqual(cacheCallCount, 1, "Cache save should be called once")
+            #expect(cacheCallCount == 1)
         }
     }
 
-    func testGetGroups_NetworkFail_ReturnsCachedData() async throws {
+    @Test("Get groups - network fails, returns cached data")
+    func getGroupsNetworkFailReturnsCached() async throws {
         await step("Given cached groups exist") {
             let cachedGroups = [try TestDataFactory.groupInfo().build()]
             try await mockCacheManager.save(cachedGroups, forKey: "groups_cache")
@@ -197,30 +175,29 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("Then cached groups should be returned") {
-            XCTAssertEqual(result.count, 1, "Should return cached groups")
+            #expect(result.count == 1)
             let loadCallCount = await mockCacheManager.loadCallCount
-            XCTAssertEqual(loadCallCount, 1, "Cache load should be called")
+            #expect(loadCallCount == 1)
         }
     }
 
-    func testGetGroups_NetworkFail_NoCachedData_ThrowsError() async {
+    @Test("Get groups - network fails with no cache throws error")
+    func getGroupsNetworkFailNoCacheThrows() async {
         await step("Given network fails") {
             await mockNetworkManager.setShouldFail(true)
         }
 
-        await step("When fetching groups") { [self] in
-            do {
-                _ = try await sut.getGroups()
-                XCTFail("Should throw error when network fails and no cache")
-            } catch {
-                // Expected error
+        await step("When fetching groups") {
+            await #expect(throws: Error.self) {
+                try await sut.getGroups()
             }
         }
     }
 
     // MARK: - Get Cached Groups Tests
 
-    func testGetCachedGroups_WhenCacheExists() async throws {
+    @Test("Get cached groups when cache exists")
+    func getCachedGroupsWhenExists() async throws {
         await step("Given cached groups exist") {
             let cachedGroups = [try TestDataFactory.groupInfo().build()]
             try await mockCacheManager.save(cachedGroups, forKey: "groups_cache")
@@ -231,28 +208,26 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("Then cached groups should be returned") {
-            XCTAssertNotNil(result, "Should return cached groups")
-            XCTAssertEqual(result?.count, 1, "Should have 1 cached group")
+            #expect(result != nil)
+            #expect(result?.count == 1)
         }
     }
 
-    func testGetCachedGroups_WhenCacheEmpty() async {
-        await step("Given cache is empty") {
-            // Cache is empty by default
-        }
-
+    @Test("Get cached groups when cache empty returns nil")
+    func getCachedGroupsWhenEmpty() async {
         let result = await step("When getting cached groups") {
             await sut.getCachedGroups()
         }
 
         await step("Then nil should be returned") {
-            XCTAssertNil(result, "Should return nil when cache is empty")
+            #expect(result == nil)
         }
     }
 
     // MARK: - Integration Tests
 
-    func testGetSchedule_IntegrationWithCacheManager() async throws {
+    @Test("Get schedule integrates with cache manager")
+    func getScheduleIntegrationWithCache() async throws {
         await step("Given network response") {
             let mockSchedule = try TestDataFactory.aggregateResponse(
                 groupSchedule: try TestDataFactory.sampleWeekSchedule()
@@ -270,12 +245,13 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("And cached data should match fetched data") {
-            XCTAssertNotNil(cachedResult, "Cached schedule should exist")
-            XCTAssertEqual(cachedResult?.groupSchedule.count, 5, "Should have 5 events from sample week")
+            #expect(cachedResult != nil)
+            #expect(cachedResult?.groupSchedule.count == 5)
         }
     }
 
-    func testGetGroups_IntegrationWithCacheManager() async throws {
+    @Test("Get groups integrates with cache manager")
+    func getGroupsIntegrationWithCache() async throws {
         await step("Given multiple groups") {
             let groups = [
                 try TestDataFactory.groupInfo().with(code: "CS101").build(),
@@ -293,8 +269,8 @@ final class ScheduleRepositoryTests: XCTestCase {
         }
 
         await step("And data should match") {
-            XCTAssertEqual(fetchedGroups.count, cachedGroups?.count, "Counts should match")
-            XCTAssertEqual(fetchedGroups.first?.code, cachedGroups?.first?.code, "First group should match")
+            #expect(fetchedGroups.count == cachedGroups?.count)
+            #expect(fetchedGroups.first?.code == cachedGroups?.first?.code)
         }
     }
 }

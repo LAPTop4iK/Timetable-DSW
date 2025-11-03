@@ -5,14 +5,16 @@
 //  Created by Claude on 03/11/2025.
 //
 
-import XCTest
+import Testing
 @testable import Timetable_DSW
 
-final class ModelsTests: XCTestCase {
+// MARK: - Schedule Event Tests
 
-    // MARK: - ScheduleEvent Tests
+@Suite("ScheduleEvent Tests")
+struct ScheduleEventTests {
 
-    func testScheduleEvent_Codable() throws {
+    @Test("Decode ScheduleEvent with all fields")
+    func decodingWithAllFields() throws {
         // Given
         let json = """
         {
@@ -36,21 +38,22 @@ final class ModelsTests: XCTestCase {
         let event = try decoder.decode(ScheduleEvent.self, from: json)
 
         // Then
-        XCTAssertEqual(event.title, "Software Engineering")
-        XCTAssertEqual(event.type, "wyk")
-        XCTAssertEqual(event.startISO, "2025-11-03T10:00:00.000Z")
-        XCTAssertEqual(event.endISO, "2025-11-03T11:30:00.000Z")
-        XCTAssertEqual(event.room, "201")
-        XCTAssertEqual(event.grading, "exam")
-        XCTAssertEqual(event.remarks, "Bring your laptop")
-        XCTAssertEqual(event.studyTrack, "Computer Science")
-        XCTAssertEqual(event.groups, "Group A")
-        XCTAssertEqual(event.teacherId, 123)
-        XCTAssertEqual(event.teacherName, "Dr. Smith")
-        XCTAssertEqual(event.teacherEmail, "smith@example.com")
+        #expect(event.title == "Software Engineering")
+        #expect(event.type == "wyk")
+        #expect(event.startISO == "2025-11-03T10:00:00.000Z")
+        #expect(event.endISO == "2025-11-03T11:30:00.000Z")
+        #expect(event.room == "201")
+        #expect(event.grading == "exam")
+        #expect(event.remarks == "Bring your laptop")
+        #expect(event.studyTrack == "Computer Science")
+        #expect(event.groups == "Group A")
+        #expect(event.teacherId == 123)
+        #expect(event.teacherName == "Dr. Smith")
+        #expect(event.teacherEmail == "smith@example.com")
     }
 
-    func testScheduleEvent_CodableWithOptionalFields() throws {
+    @Test("Decode ScheduleEvent with only required fields")
+    func decodingWithOptionalFields() throws {
         // Given
         let json = """
         {
@@ -65,19 +68,20 @@ final class ModelsTests: XCTestCase {
         let event = try decoder.decode(ScheduleEvent.self, from: json)
 
         // Then
-        XCTAssertEqual(event.title, "Software Engineering")
-        XCTAssertNil(event.type)
-        XCTAssertNil(event.room)
-        XCTAssertNil(event.grading)
-        XCTAssertNil(event.remarks)
-        XCTAssertNil(event.studyTrack)
-        XCTAssertNil(event.groups)
-        XCTAssertNil(event.teacherId)
-        XCTAssertNil(event.teacherName)
-        XCTAssertNil(event.teacherEmail)
+        #expect(event.title == "Software Engineering")
+        #expect(event.type == nil)
+        #expect(event.room == nil)
+        #expect(event.grading == nil)
+        #expect(event.remarks == nil)
+        #expect(event.studyTrack == nil)
+        #expect(event.groups == nil)
+        #expect(event.teacherId == nil)
+        #expect(event.teacherName == nil)
+        #expect(event.teacherEmail == nil)
     }
 
-    func testScheduleEvent_EncodeDecode() throws {
+    @Test("Encode and decode ScheduleEvent maintains data integrity")
+    func encodingAndDecoding() throws {
         // Given
         let json = """
         {
@@ -99,22 +103,27 @@ final class ModelsTests: XCTestCase {
         let decodedEvent = try decoder.decode(ScheduleEvent.self, from: encodedData)
 
         // Then
-        XCTAssertEqual(originalEvent.title, decodedEvent.title)
-        XCTAssertEqual(originalEvent.type, decodedEvent.type)
-        XCTAssertEqual(originalEvent.startISO, decodedEvent.startISO)
-        XCTAssertEqual(originalEvent.endISO, decodedEvent.endISO)
-        XCTAssertEqual(originalEvent.room, decodedEvent.room)
-        XCTAssertEqual(originalEvent.teacherId, decodedEvent.teacherId)
+        #expect(originalEvent.title == decodedEvent.title)
+        #expect(originalEvent.type == decodedEvent.type)
+        #expect(originalEvent.startISO == decodedEvent.startISO)
+        #expect(originalEvent.endISO == decodedEvent.endISO)
+        #expect(originalEvent.room == decodedEvent.room)
+        #expect(originalEvent.teacherId == decodedEvent.teacherId)
     }
 
-    func testScheduleEvent_ID() throws {
+    @Test("ScheduleEvent ID generation", arguments: [
+        (123, "2025-11-03T10:00:00.000Z_Software Engineering_123"),
+        (nil, "2025-11-03T10:00:00.000Z_Software Engineering_0")
+    ])
+    func eventIDGeneration(teacherId: Int?, expectedID: String) throws {
         // Given
+        let teacherIdString = teacherId.map { String($0) } ?? ""
+        let teacherJSON = teacherId != nil ? ",\"teacherId\": \(teacherId!)" : ""
         let json = """
         {
             "title": "Software Engineering",
             "startISO": "2025-11-03T10:00:00.000Z",
-            "endISO": "2025-11-03T11:30:00.000Z",
-            "teacherId": 123
+            "endISO": "2025-11-03T11:30:00.000Z"\(teacherJSON)
         }
         """.data(using: .utf8)!
 
@@ -125,16 +134,21 @@ final class ModelsTests: XCTestCase {
         let id = event.id
 
         // Then
-        XCTAssertEqual(id, "2025-11-03T10:00:00.000Z_Software Engineering_123")
+        #expect(id == expectedID)
     }
 
-    func testScheduleEvent_IDWithNilTeacher() throws {
+    @Test("ScheduleEvent displayRoom", arguments: [
+        ("201", "201"),
+        (nil, "")
+    ])
+    func displayRoom(room: String?, expectedDisplay: String) throws {
         // Given
+        let roomJSON = room.map { ",\"room\": \"\($0)\"" } ?? ""
         let json = """
         {
             "title": "Software Engineering",
             "startISO": "2025-11-03T10:00:00.000Z",
-            "endISO": "2025-11-03T11:30:00.000Z"
+            "endISO": "2025-11-03T11:30:00.000Z"\(roomJSON)
         }
         """.data(using: .utf8)!
 
@@ -142,43 +156,14 @@ final class ModelsTests: XCTestCase {
         let event = try decoder.decode(ScheduleEvent.self, from: json)
 
         // When
-        let id = event.id
+        let display = event.displayRoom
 
         // Then
-        XCTAssertEqual(id, "2025-11-03T10:00:00.000Z_Software Engineering_0")
+        #expect(display == expectedDisplay)
     }
 
-    func testScheduleEvent_DisplayRoom() throws {
-        // Given
-        let jsonWithRoom = """
-        {
-            "title": "Software Engineering",
-            "startISO": "2025-11-03T10:00:00.000Z",
-            "endISO": "2025-11-03T11:30:00.000Z",
-            "room": "201"
-        }
-        """.data(using: .utf8)!
-
-        let jsonWithoutRoom = """
-        {
-            "title": "Software Engineering",
-            "startISO": "2025-11-03T10:00:00.000Z",
-            "endISO": "2025-11-03T11:30:00.000Z"
-        }
-        """.data(using: .utf8)!
-
-        let decoder = JSONDecoder()
-
-        // When
-        let eventWithRoom = try decoder.decode(ScheduleEvent.self, from: jsonWithRoom)
-        let eventWithoutRoom = try decoder.decode(ScheduleEvent.self, from: jsonWithoutRoom)
-
-        // Then
-        XCTAssertEqual(eventWithRoom.displayRoom, "201")
-        XCTAssertEqual(eventWithoutRoom.displayRoom, "")
-    }
-
-    func testScheduleEvent_DateParsing() throws {
+    @Test("ScheduleEvent parses dates correctly")
+    func dateParsing() throws {
         // Given
         let json = """
         {
@@ -194,11 +179,12 @@ final class ModelsTests: XCTestCase {
         let event = try decoder.decode(ScheduleEvent.self, from: json)
 
         // Then
-        XCTAssertNotNil(event.startDate, "startDate should be parsed")
-        XCTAssertNotNil(event.endDate, "endDate should be parsed")
+        #expect(event.startDate != nil)
+        #expect(event.endDate != nil)
     }
 
-    func testScheduleEvent_Hashable() throws {
+    @Test("ScheduleEvent is Hashable")
+    func hashableConformance() throws {
         // Given
         let json = """
         {
@@ -217,12 +203,17 @@ final class ModelsTests: XCTestCase {
         let set = Set([event1, event2])
 
         // Then
-        XCTAssertEqual(set.count, 1, "Identical events should be treated as same in Set")
+        #expect(set.count == 1)
     }
+}
 
-    // MARK: - GroupInfo Tests
+// MARK: - GroupInfo Tests
 
-    func testGroupInfo_Codable() throws {
+@Suite("GroupInfo Tests")
+struct GroupInfoTests {
+
+    @Test("Decode GroupInfo with all fields")
+    func decodingWithAllFields() throws {
         // Given
         let json = """
         {
@@ -240,14 +231,15 @@ final class ModelsTests: XCTestCase {
         let group = try decoder.decode(GroupInfo.self, from: json)
 
         // Then
-        XCTAssertEqual(group.groupId, 1)
-        XCTAssertEqual(group.code, "CS101")
-        XCTAssertEqual(group.name, "Computer Science")
-        XCTAssertEqual(group.program, "Bachelor")
-        XCTAssertEqual(group.faculty, "Engineering")
+        #expect(group.groupId == 1)
+        #expect(group.code == "CS101")
+        #expect(group.name == "Computer Science")
+        #expect(group.program == "Bachelor")
+        #expect(group.faculty == "Engineering")
     }
 
-    func testGroupInfo_DisplayName() throws {
+    @Test("GroupInfo displayName format")
+    func displayName() throws {
         // Given
         let json = """
         {
@@ -267,10 +259,11 @@ final class ModelsTests: XCTestCase {
         let displayName = group.displayName
 
         // Then
-        XCTAssertEqual(displayName, "CS101 - Computer Science")
+        #expect(displayName == "CS101 - Computer Science")
     }
 
-    func testGroupInfo_ID() throws {
+    @Test("GroupInfo id matches groupId")
+    func idProperty() throws {
         // Given
         let json = """
         {
@@ -290,10 +283,11 @@ final class ModelsTests: XCTestCase {
         let id = group.id
 
         // Then
-        XCTAssertEqual(id, 123)
+        #expect(id == 123)
     }
 
-    func testGroupInfo_EncodeDecode() throws {
+    @Test("Encode and decode GroupInfo maintains data integrity")
+    func encodingAndDecoding() throws {
         // Given
         let json = """
         {
@@ -315,16 +309,21 @@ final class ModelsTests: XCTestCase {
         let decodedGroup = try decoder.decode(GroupInfo.self, from: encodedData)
 
         // Then
-        XCTAssertEqual(originalGroup.groupId, decodedGroup.groupId)
-        XCTAssertEqual(originalGroup.code, decodedGroup.code)
-        XCTAssertEqual(originalGroup.name, decodedGroup.name)
-        XCTAssertEqual(originalGroup.program, decodedGroup.program)
-        XCTAssertEqual(originalGroup.faculty, decodedGroup.faculty)
+        #expect(originalGroup.groupId == decodedGroup.groupId)
+        #expect(originalGroup.code == decodedGroup.code)
+        #expect(originalGroup.name == decodedGroup.name)
+        #expect(originalGroup.program == decodedGroup.program)
+        #expect(originalGroup.faculty == decodedGroup.faculty)
     }
+}
 
-    // MARK: - Teacher Tests
+// MARK: - Teacher Tests
 
-    func testTeacher_Codable() throws {
+@Suite("Teacher Tests")
+struct TeacherTests {
+
+    @Test("Decode Teacher with all fields")
+    func decodingWithAllFields() throws {
         // Given
         let json = """
         {
@@ -344,16 +343,17 @@ final class ModelsTests: XCTestCase {
         let teacher = try decoder.decode(Teacher.self, from: json)
 
         // Then
-        XCTAssertEqual(teacher.id, 1)
-        XCTAssertEqual(teacher.name, "Dr. Smith")
-        XCTAssertEqual(teacher.title, "Professor")
-        XCTAssertEqual(teacher.department, "Computer Science")
-        XCTAssertEqual(teacher.email, "smith@example.com")
-        XCTAssertEqual(teacher.phone, "+1234567890")
-        XCTAssertEqual(teacher.aboutHTML, "<p>Bio</p>")
+        #expect(teacher.id == 1)
+        #expect(teacher.name == "Dr. Smith")
+        #expect(teacher.title == "Professor")
+        #expect(teacher.department == "Computer Science")
+        #expect(teacher.email == "smith@example.com")
+        #expect(teacher.phone == "+1234567890")
+        #expect(teacher.aboutHTML == "<p>Bio</p>")
     }
 
-    func testTeacher_CodableWithOptionalFields() throws {
+    @Test("Decode Teacher with only required fields")
+    func decodingWithOptionalFields() throws {
         // Given
         let json = """
         {
@@ -367,44 +367,41 @@ final class ModelsTests: XCTestCase {
         let teacher = try decoder.decode(Teacher.self, from: json)
 
         // Then
-        XCTAssertEqual(teacher.id, 1)
-        XCTAssertNil(teacher.name)
-        XCTAssertNil(teacher.title)
-        XCTAssertNil(teacher.department)
-        XCTAssertNil(teacher.email)
-        XCTAssertNil(teacher.phone)
-        XCTAssertNil(teacher.aboutHTML)
+        #expect(teacher.id == 1)
+        #expect(teacher.name == nil)
+        #expect(teacher.title == nil)
+        #expect(teacher.department == nil)
+        #expect(teacher.email == nil)
+        #expect(teacher.phone == nil)
+        #expect(teacher.aboutHTML == nil)
     }
 
-    func testTeacher_DisplayName() throws {
+    @Test("Teacher displayName", arguments: [
+        ("Dr. Smith", "Dr. Smith"),
+        (nil, "Unknown Teacher")
+    ])
+    func displayName(name: String?, expectedDisplay: String) throws {
         // Given
-        let jsonWithName = """
+        let nameJSON = name.map { ",\"name\": \"\($0)\"" } ?? ""
+        let json = """
         {
             "id": 1,
-            "name": "Dr. Smith",
-            "schedule": []
-        }
-        """.data(using: .utf8)!
-
-        let jsonWithoutName = """
-        {
-            "id": 1,
-            "schedule": []
+            "schedule": []\(nameJSON)
         }
         """.data(using: .utf8)!
 
         let decoder = JSONDecoder()
+        let teacher = try decoder.decode(Teacher.self, from: json)
 
         // When
-        let teacherWithName = try decoder.decode(Teacher.self, from: jsonWithName)
-        let teacherWithoutName = try decoder.decode(Teacher.self, from: jsonWithoutName)
+        let displayName = teacher.displayName
 
         // Then
-        XCTAssertEqual(teacherWithName.displayName, "Dr. Smith")
-        XCTAssertEqual(teacherWithoutName.displayName, "Unknown Teacher")
+        #expect(displayName == expectedDisplay)
     }
 
-    func testTeacher_EncodeDecode() throws {
+    @Test("Encode and decode Teacher maintains data integrity")
+    func encodingAndDecoding() throws {
         // Given
         let json = """
         {
@@ -424,8 +421,8 @@ final class ModelsTests: XCTestCase {
         let decodedTeacher = try decoder.decode(Teacher.self, from: encodedData)
 
         // Then
-        XCTAssertEqual(originalTeacher.id, decodedTeacher.id)
-        XCTAssertEqual(originalTeacher.name, decodedTeacher.name)
-        XCTAssertEqual(originalTeacher.email, decodedTeacher.email)
+        #expect(originalTeacher.id == decodedTeacher.id)
+        #expect(originalTeacher.name == decodedTeacher.name)
+        #expect(originalTeacher.email == decodedTeacher.email)
     }
 }

@@ -5,7 +5,8 @@
 //  Created by Claude on 03/11/2025.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import Timetable_DSW
 
 // MARK: - Mock URLProtocol
@@ -55,49 +56,33 @@ class MockURLProtocol: URLProtocol {
     }
 }
 
-// MARK: - NetworkManagerTests
+// MARK: - NetworkManager Tests
 
-final class NetworkManagerTests: XCTestCase {
+@Suite("NetworkManager Tests")
+struct NetworkManagerTests {
 
-    var sut: NetworkManager!
+    let sut: NetworkManager
 
-    override func setUp() async throws {
-        try await super.setUp()
-
+    init() {
         // Configure URLSession with MockURLProtocol
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [MockURLProtocol.self]
 
-        // Note: We can't easily inject URLSession into NetworkManager as it's an actor
-        // So we'll test the real NetworkManager with mocked endpoints
-        sut = NetworkManager(baseURL: "https://api.test.com")
-
+        self.sut = NetworkManager(baseURL: "https://api.test.com")
         MockURLProtocol.reset()
-    }
-
-    override func tearDown() async throws {
-        sut = nil
-        MockURLProtocol.reset()
-        try await super.tearDown()
     }
 
     // MARK: - Success Tests
 
-    func testFetch_SuccessfulResponse() async throws {
+    @Test("Fetch successful single object response")
+    func fetchSuccessfulResponse() async throws {
         // Given
         let endpoint = "/api/test"
         let url = URL(string: "https://api.test.com\(endpoint)")!
 
-        let json = """
-        {
-            "groupId": 1,
-            "code": "CS101",
-            "name": "Computer Science",
-            "tracks": [],
-            "program": "Bachelor",
-            "faculty": "Engineering"
-        }
-        """.data(using: .utf8)!
+        let group = try TestDataFactory.groupInfo().build()
+        let encoder = JSONEncoder()
+        let json = try encoder.encode(group)
 
         MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 200)
 
@@ -105,36 +90,22 @@ final class NetworkManagerTests: XCTestCase {
         let result: GroupInfo = try await sut.fetch(endpoint: endpoint)
 
         // Then
-        XCTAssertEqual(result.groupId, 1)
-        XCTAssertEqual(result.code, "CS101")
-        XCTAssertEqual(result.name, "Computer Science")
+        #expect(result.groupId == group.groupId)
+        #expect(result.code == group.code)
     }
 
-    func testFetch_SuccessfulArrayResponse() async throws {
+    @Test("Fetch successful array response")
+    func fetchSuccessfulArrayResponse() async throws {
         // Given
         let endpoint = "/api/groups"
         let url = URL(string: "https://api.test.com\(endpoint)")!
 
-        let json = """
-        [
-            {
-                "groupId": 1,
-                "code": "CS101",
-                "name": "Computer Science",
-                "tracks": [],
-                "program": "Bachelor",
-                "faculty": "Engineering"
-            },
-            {
-                "groupId": 2,
-                "code": "CS102",
-                "name": "Advanced CS",
-                "tracks": [],
-                "program": "Master",
-                "faculty": "Engineering"
-            }
+        let groups = [
+            try TestDataFactory.groupInfo().with(groupId: 1).build(),
+            try TestDataFactory.groupInfo().with(groupId: 2).build()
         ]
-        """.data(using: .utf8)!
+        let encoder = JSONEncoder()
+        let json = try encoder.encode(groups)
 
         MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 200)
 
@@ -142,131 +113,16 @@ final class NetworkManagerTests: XCTestCase {
         let result: [GroupInfo] = try await sut.fetch(endpoint: endpoint)
 
         // Then
-        XCTAssertEqual(result.count, 2)
-        XCTAssertEqual(result[0].groupId, 1)
-        XCTAssertEqual(result[1].groupId, 2)
+        #expect(result.count == 2)
+        #expect(result[0].groupId == 1)
+        #expect(result[1].groupId == 2)
     }
 
-    // MARK: - Error Tests
-
-    func testFetch_InvalidURL() async {
-        // Given
-        let endpoint = "not a valid endpoint with spaces"
-
-        // When & Then
-        do {
-            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
-            XCTFail("Should throw invalidURL error")
-        } catch let error as NetworkError {
-            switch error {
-            case .invalidURL:
-                // Expected
-                break
-            default:
-                XCTFail("Expected invalidURL error, got \(error)")
-            }
-        } catch {
-            XCTFail("Expected NetworkError, got \(error)")
-        }
-    }
-
-    func testFetch_HTTPError404() async throws {
-        // Given
-        let endpoint = "/api/not-found"
-        let url = URL(string: "https://api.test.com\(endpoint)")!
-
-        let json = """
-        {"error": "Not found"}
-        """.data(using: .utf8)!
-
-        MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 404)
-
-        // When & Then
-        do {
-            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
-            XCTFail("Should throw HTTP error")
-        } catch let error as NetworkError {
-            switch error {
-            case .httpError(let statusCode):
-                XCTAssertEqual(statusCode, 404)
-            default:
-                XCTFail("Expected httpError, got \(error)")
-            }
-        } catch {
-            XCTFail("Expected NetworkError, got \(error)")
-        }
-    }
-
-    func testFetch_HTTPError500() async throws {
-        // Given
-        let endpoint = "/api/error"
-        let url = URL(string: "https://api.test.com\(endpoint)")!
-
-        let json = """
-        {"error": "Internal server error"}
-        """.data(using: .utf8)!
-
-        MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 500)
-
-        // When & Then
-        do {
-            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
-            XCTFail("Should throw HTTP error")
-        } catch let error as NetworkError {
-            switch error {
-            case .httpError(let statusCode):
-                XCTAssertEqual(statusCode, 500)
-            default:
-                XCTFail("Expected httpError, got \(error)")
-            }
-        } catch {
-            XCTFail("Expected NetworkError, got \(error)")
-        }
-    }
-
-    func testFetch_InvalidJSON() async throws {
-        // Given
-        let endpoint = "/api/test"
-        let url = URL(string: "https://api.test.com\(endpoint)")!
-
-        let invalidJSON = "not a valid json".data(using: .utf8)!
-
-        MockURLProtocol.setMockResponse(url: url, data: invalidJSON, statusCode: 200)
-
-        // When & Then
-        do {
-            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
-            XCTFail("Should throw decoding error")
-        } catch {
-            // Expected decoding error
-        }
-    }
-
-    // MARK: - Edge Cases
-
-    func testFetch_EmptyResponse() async throws {
-        // Given
-        let endpoint = "/api/test"
-        let url = URL(string: "https://api.test.com\(endpoint)")!
-
-        let emptyJSON = "{}".data(using: .utf8)!
-
-        MockURLProtocol.setMockResponse(url: url, data: emptyJSON, statusCode: 200)
-
-        // When & Then
-        do {
-            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
-            XCTFail("Should throw decoding error for incomplete data")
-        } catch {
-            // Expected decoding error
-        }
-    }
-
-    func testFetch_EmptyArrayResponse() async throws {
+    @Test("Fetch with empty array response")
+    func fetchEmptyArrayResponse() async throws {
         // Given
         let endpoint = "/api/groups"
         let url = URL(string: "https://api.test.com\(endpoint)")!
-
         let emptyArray = "[]".data(using: .utf8)!
 
         MockURLProtocol.setMockResponse(url: url, data: emptyArray, statusCode: 200)
@@ -275,78 +131,102 @@ final class NetworkManagerTests: XCTestCase {
         let result: [GroupInfo] = try await sut.fetch(endpoint: endpoint)
 
         // Then
-        XCTAssertTrue(result.isEmpty)
+        #expect(result.isEmpty)
+    }
+
+    // MARK: - Error Tests
+
+    @Test("Fetch throws invalidURL error for invalid endpoint")
+    func fetchInvalidURL() async {
+        // Given
+        let endpoint = "not a valid endpoint with spaces"
+
+        // When & Then
+        await #expect(throws: NetworkError.self) {
+            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
+        }
+    }
+
+    @Test("Fetch HTTP errors", arguments: [
+        (404, "Not Found"),
+        (500, "Server Error"),
+        (401, "Unauthorized"),
+        (403, "Forbidden")
+    ])
+    func fetchHTTPError(statusCode: Int, description: String) async throws {
+        // Given
+        let endpoint = "/api/error"
+        let url = URL(string: "https://api.test.com\(endpoint)")!
+        let errorJSON = """
+        {"error": "\(description)"}
+        """.data(using: .utf8)!
+
+        MockURLProtocol.setMockResponse(url: url, data: errorJSON, statusCode: statusCode)
+
+        // When & Then
+        do {
+            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
+            Issue.record("Should throw HTTP error")
+        } catch let error as NetworkError {
+            switch error {
+            case .httpError(let code):
+                #expect(code == statusCode)
+            default:
+                Issue.record("Expected httpError, got \(error)")
+            }
+        }
+    }
+
+    @Test("Fetch throws error for invalid JSON")
+    func fetchInvalidJSON() async throws {
+        // Given
+        let endpoint = "/api/test"
+        let url = URL(string: "https://api.test.com\(endpoint)")!
+        let invalidJSON = "not a valid json".data(using: .utf8)!
+
+        MockURLProtocol.setMockResponse(url: url, data: invalidJSON, statusCode: 200)
+
+        // When & Then
+        await #expect(throws: Error.self) {
+            let _: GroupInfo = try await sut.fetch(endpoint: endpoint)
+        }
     }
 
     // MARK: - Success Status Codes
 
-    func testFetch_StatusCode201() async throws {
+    @Test("Fetch handles 2xx status codes", arguments: [200, 201, 202, 299])
+    func fetchSuccessStatusCodes(statusCode: Int) async throws {
         // Given
         let endpoint = "/api/test"
         let url = URL(string: "https://api.test.com\(endpoint)")!
 
-        let json = """
-        {
-            "groupId": 1,
-            "code": "CS101",
-            "name": "Computer Science",
-            "tracks": [],
-            "program": "Bachelor",
-            "faculty": "Engineering"
-        }
-        """.data(using: .utf8)!
+        let group = try TestDataFactory.groupInfo().build()
+        let encoder = JSONEncoder()
+        let json = try encoder.encode(group)
 
-        MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 201)
+        MockURLProtocol.setMockResponse(url: url, data: json, statusCode: statusCode)
 
         // When
         let result: GroupInfo = try await sut.fetch(endpoint: endpoint)
 
         // Then
-        XCTAssertEqual(result.groupId, 1)
-    }
-
-    func testFetch_StatusCode299() async throws {
-        // Given
-        let endpoint = "/api/test"
-        let url = URL(string: "https://api.test.com\(endpoint)")!
-
-        let json = """
-        {
-            "groupId": 1,
-            "code": "CS101",
-            "name": "Computer Science",
-            "tracks": [],
-            "program": "Bachelor",
-            "faculty": "Engineering"
-        }
-        """.data(using: .utf8)!
-
-        MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 299)
-
-        // When
-        let result: GroupInfo = try await sut.fetch(endpoint: endpoint)
-
-        // Then
-        XCTAssertEqual(result.groupId, 1)
+        #expect(result.groupId == group.groupId)
     }
 
     // MARK: - Endpoint Formatting
 
-    func testFetch_EndpointWithLeadingSlash() async throws {
+    @Test("Fetch with various endpoint formats", arguments: [
+        "/api/test",
+        "/api/test?param=value",
+        "/api/test?param=value&other=123"
+    ])
+    func fetchEndpointFormats(endpoint: String) async throws {
         // Given
-        let endpoint = "/api/test"
         let url = URL(string: "https://api.test.com\(endpoint)")!
 
-        let json = """
-        {
-            "groupId": 1,
-            "code": "CS101",
-            "name": "Computer Science",
-            "tracks": [],
-            "program": "Bachelor",
-            "faculty": "Engineering"
-        }
-        """.data(using: .utf8)!
+        let group = try TestDataFactory.groupInfo().build()
+        let encoder = JSONEncoder()
+        let json = try encoder.encode(group)
 
         MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 200)
 
@@ -354,31 +234,6 @@ final class NetworkManagerTests: XCTestCase {
         let result: GroupInfo = try await sut.fetch(endpoint: endpoint)
 
         // Then
-        XCTAssertEqual(result.groupId, 1)
-    }
-
-    func testFetch_EndpointWithQueryParameters() async throws {
-        // Given
-        let endpoint = "/api/test?param=value&other=123"
-        let url = URL(string: "https://api.test.com\(endpoint)")!
-
-        let json = """
-        {
-            "groupId": 1,
-            "code": "CS101",
-            "name": "Computer Science",
-            "tracks": [],
-            "program": "Bachelor",
-            "faculty": "Engineering"
-        }
-        """.data(using: .utf8)!
-
-        MockURLProtocol.setMockResponse(url: url, data: json, statusCode: 200)
-
-        // When
-        let result: GroupInfo = try await sut.fetch(endpoint: endpoint)
-
-        // Then
-        XCTAssertEqual(result.groupId, 1)
+        #expect(result.groupId == group.groupId)
     }
 }

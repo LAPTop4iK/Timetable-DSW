@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import XCTest
 
 // MARK: - Test Timeout Constants
 
@@ -17,14 +16,15 @@ enum TestTimeout {
     static let veryLong: TimeInterval = 10.0
 }
 
-// MARK: - Test Step Execution
+// MARK: - Test Step Execution (BDD-style)
 
-/// Executes a test step with a descriptive message
+/// Executes a test step with a descriptive message (Given/When/Then style)
 /// - Parameters:
-///   - description: Human-readable description of the step
+///   - description: Human-readable description of the step (e.g., "Given user is logged in")
 ///   - file: Source file (auto-captured)
 ///   - line: Source line (auto-captured)
 ///   - action: The test action to perform
+/// - Returns: The result of the action
 func step<T>(
     _ description: String,
     file: StaticString = #file,
@@ -35,7 +35,13 @@ func step<T>(
     return try action()
 }
 
-/// Async version of step execution
+/// Async version of step execution for async test operations
+/// - Parameters:
+///   - description: Human-readable description of the step
+///   - file: Source file (auto-captured)
+///   - line: Source line (auto-captured)
+///   - action: The async test action to perform
+/// - Returns: The result of the action
 func step<T>(
     _ description: String,
     file: StaticString = #file,
@@ -46,99 +52,36 @@ func step<T>(
     return try await action()
 }
 
-// MARK: - XCTestCase Extensions
-
-extension XCTestCase {
-
-    /// Wait for an async condition to be satisfied
-    func wait(
-        for condition: @escaping () async -> Bool,
-        timeout: TimeInterval = TestTimeout.normal,
-        description: String = "Condition",
-        file: StaticString = #file,
-        line: UInt = #line
-    ) async {
-        let startTime = Date()
-        while !await condition() {
-            if Date().timeIntervalSince(startTime) > timeout {
-                XCTFail("\(description) not satisfied within \(timeout) seconds", file: file, line: line)
-                return
-            }
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-        }
-    }
-
-    /// Assert that an async operation throws a specific error
-    func assertThrowsError<T, E: Error & Equatable>(
-        _ expression: @autoclosure () async throws -> T,
-        expectedError: E,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) async {
-        do {
-            _ = try await expression()
-            XCTFail("Expected error \(expectedError) but no error was thrown", file: file, line: line)
-        } catch let error as E {
-            XCTAssertEqual(error, expectedError, file: file, line: line)
-        } catch {
-            XCTFail("Expected error \(expectedError) but got \(error)", file: file, line: line)
-        }
-    }
-
-    /// Assert that an async operation throws any error
-    func assertThrowsAnyError<T>(
-        _ expression: @autoclosure () async throws -> T,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) async {
-        do {
-            _ = try await expression()
-            XCTFail("Expected an error to be thrown", file: file, line: line)
-        } catch {
-            // Success - error was thrown
-        }
-    }
+/// Version without return value for side-effect steps
+/// - Parameters:
+///   - description: Human-readable description of the step
+///   - file: Source file (auto-captured)
+///   - line: Source line (auto-captured)
+///   - action: The test action to perform
+func step(
+    _ description: String,
+    file: StaticString = #file,
+    line: UInt = #line,
+    action: () throws -> Void
+) rethrows {
+    print("📋 Step: \(description)")
+    try action()
 }
 
-// MARK: - Assertion Helpers
-
-extension XCTestCase {
-
-    /// Assert collection is not empty
-    func assertNotEmpty<T: Collection>(
-        _ collection: T,
-        _ message: String = "Collection should not be empty",
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        XCTAssertFalse(collection.isEmpty, message, file: file, line: line)
-    }
-
-    /// Assert collection has expected count
-    func assertCount<T: Collection>(
-        _ collection: T,
-        equals expected: Int,
-        _ message: String? = nil,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        let actualMessage = message ?? "Expected collection count to be \(expected), got \(collection.count)"
-        XCTAssertEqual(collection.count, expected, actualMessage, file: file, line: line)
-    }
-
-    /// Assert optional value is not nil
-    func assertNotNil<T>(
-        _ value: T?,
-        _ message: String = "Value should not be nil",
-        file: StaticString = #file,
-        line: UInt = #line
-    ) -> T {
-        guard let unwrapped = value else {
-            XCTFail(message, file: file, line: line)
-            fatalError("Assertion failed")
-        }
-        return unwrapped
-    }
+/// Async version without return value
+/// - Parameters:
+///   - description: Human-readable description of the step
+///   - file: Source file (auto-captured)
+///   - line: Source line (auto-captured)
+///   - action: The async test action to perform
+func step(
+    _ description: String,
+    file: StaticString = #file,
+    line: UInt = #line,
+    action: () async throws -> Void
+) async rethrows {
+    print("📋 Step: \(description)")
+    try await action()
 }
 
 // MARK: - Date Helpers
@@ -146,6 +89,15 @@ extension XCTestCase {
 extension Date {
 
     /// Create a date from components for testing
+    /// - Parameters:
+    ///   - year: Year component
+    ///   - month: Month component (1-12)
+    ///   - day: Day component (1-31)
+    ///   - hour: Hour component (0-23), default 0
+    ///   - minute: Minute component (0-59), default 0
+    ///   - second: Second component (0-59), default 0
+    ///   - calendar: Calendar to use, default .current
+    /// - Returns: Date created from components
     static func make(
         year: Int,
         month: Int,
@@ -167,6 +119,10 @@ extension Date {
     }
 
     /// Check if two dates are equal within tolerance
+    /// - Parameters:
+    ///   - other: Date to compare with
+    ///   - tolerance: Tolerance in seconds, default 1.0
+    /// - Returns: true if dates are within tolerance
     func isEqual(to other: Date, withTolerance tolerance: TimeInterval = 1.0) -> Bool {
         abs(timeIntervalSince(other)) < tolerance
     }
@@ -177,6 +133,16 @@ extension Date {
 extension String {
 
     /// Create an ISO8601 string for testing
+    /// - Parameters:
+    ///   - year: Year (e.g., 2025)
+    ///   - month: Month (1-12)
+    ///   - day: Day (1-31)
+    ///   - hour: Hour (0-23)
+    ///   - minute: Minute (0-59)
+    ///   - second: Second (0-59)
+    ///   - milliseconds: Milliseconds (0-999), default 0
+    ///   - timezone: Timezone string (e.g., "Z", "+03:00"), default "Z"
+    /// - Returns: ISO8601 formatted string
     static func makeISO8601(
         year: Int,
         month: Int,
@@ -197,6 +163,11 @@ extension String {
 enum JSONTestHelper {
 
     /// Decode JSON string to model
+    /// - Parameters:
+    ///   - type: The Decodable type to decode to
+    ///   - jsonString: JSON string to decode
+    /// - Returns: Decoded model instance
+    /// - Throws: TestError or DecodingError
     static func decode<T: Decodable>(_ type: T.Type, from jsonString: String) throws -> T {
         guard let data = jsonString.data(using: .utf8) else {
             throw TestError.invalidJSON
@@ -205,6 +176,9 @@ enum JSONTestHelper {
     }
 
     /// Encode model to JSON string
+    /// - Parameter value: The Encodable value to encode
+    /// - Returns: Pretty-printed JSON string
+    /// - Throws: TestError or EncodingError
     static func encode<T: Encodable>(_ value: T) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -219,4 +193,28 @@ enum JSONTestHelper {
         case invalidJSON
         case encodingFailed
     }
+}
+
+// MARK: - Async Wait Helper
+
+/// Wait for an async condition to be satisfied (useful in Swift Testing)
+/// - Parameters:
+///   - condition: Async closure returning Bool
+///   - timeout: Maximum time to wait in seconds, default TestTimeout.normal
+///   - description: Description for debugging, default "Condition"
+/// - Returns: true if condition was satisfied, false if timed out
+func waitFor(
+    condition: @escaping () async -> Bool,
+    timeout: TimeInterval = TestTimeout.normal,
+    description: String = "Condition"
+) async -> Bool {
+    let startTime = Date()
+    while !await condition() {
+        if Date().timeIntervalSince(startTime) > timeout {
+            print("⚠️ \(description) not satisfied within \(timeout) seconds")
+            return false
+        }
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+    }
+    return true
 }

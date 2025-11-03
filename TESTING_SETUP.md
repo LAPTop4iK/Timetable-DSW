@@ -495,3 +495,68 @@ killall Simulator
 ---
 
 **Удачи с тестированием! 🚀**
+
+---
+
+## Swift Testing примеры
+
+### Базовый тест
+
+```swift
+import Testing
+@testable import Timetable_DSW
+
+@Test("Description of what we're testing")
+func testSomething() {
+    // Given
+    let value = 42
+    
+    // When
+    let result = value * 2
+    
+    // Then
+    #expect(result == 84)
+}
+```
+
+### Параметризованные тесты
+
+```swift
+@Test("Event type detection", arguments: [
+    ("lecture", EventType.lecture),
+    ("exercise", EventType.exercise),
+    ("lab", EventType.laboratory)
+])
+func detectEventType(keyword: String, expected: EventType) {
+    let result = detector.detectType(from: keyword)
+    #expect(result == expected)
+}
+```
+
+### Группировка тестов
+
+```swift
+@Suite("DateService Tests")
+struct DateServiceTests {
+    
+    @Suite("ISO8601 Parsing")
+    struct ISO8601ParsingTests {
+        @Test("Parse standard format")
+        func parseStandard() { }
+    }
+}
+```
+
+### Проверка ошибок
+
+```swift
+@Test("Throws error when invalid")
+func throwsError() async {
+    await #expect(throws: NetworkError.self) {
+        try await sut.fetch(endpoint: "invalid")
+    }
+}
+```
+
+**Подробнее:** См. файлы тестов в `Timetable DSWTests/` для примеров реального использования.
+
