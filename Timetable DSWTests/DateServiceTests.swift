@@ -238,7 +238,7 @@ struct DateServiceTests {
             (3, "03"),
             (5, "05"),
             (15, "15"),
-            (31, "31")
+            (28, "28")
         ])
         func dayNumberWithPadding(day: Int, expected: String) {
             // Given

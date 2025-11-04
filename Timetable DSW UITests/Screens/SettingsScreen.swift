@@ -48,13 +48,18 @@ final class SettingsScreen: BaseScreen {
             if groupSelectionButton.waitForExistence(timeout: UITestTimeout.normal) {
                 groupSelectionButton.tap()
             } else {
-                // Fallback: найти кнопку или элемент со словом "Group" или "Группа"
-                let groupButton = app.buttons.containing(NSPredicate(format: "label CONTAINS[c] %@", "Group")).firstMatch
-                if groupButton.exists {
+                // Fallback: find any button or element with "Group" or "Группа" text
+                let groupPredicate = NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS[c] %@", "Group", "Группа")
+                let groupButton = app.buttons.containing(groupPredicate).firstMatch
+
+                if groupButton.waitForExistence(timeout: UITestTimeout.short) {
                     groupButton.tap()
                 } else {
-                    // Последний fallback: тап по первой строке/кнопке в списке
-                    app.tables.cells.firstMatch.tap()
+                    // Try to find in any interactive element
+                    let anyElement = app.descendants(matching: .any).containing(groupPredicate).firstMatch
+                    if anyElement.waitForExistence(timeout: UITestTimeout.short) {
+                        anyElement.tap()
+                    }
                 }
             }
         }
