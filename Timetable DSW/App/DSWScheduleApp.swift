@@ -85,20 +85,23 @@ struct DSWScheduleApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(successFeedback: successFeedback)
                 .environmentObject(appViewModel)
                 .environmentObject(appStateService)
                 .environmentObject(featureFlagService)
                 .environmentObject(parametersService)
                 .environmentObject(bottomInsetService)
                 .environmentObject(themeManager)
-                .environmentObject(toastManager)
-                .environmentObject(successFeedback)
+                // ✅ Pass toast as closure instead of EnvironmentObject
+                .environment(\.showToast) { [toastManager] message, icon in
+                    toastManager.show(message: message, icon: icon)
+                }
                 .environment(\.featureFlagParameters, parametersService)
                 .environment(\.bottomInsetService, bottomInsetService)
                 .environment(\.themeManager, themeManager)
                 .environment(\.storeKitManager, storeKitManager)
                 .adCoordinator(adCoordinator)
+                // ✅ Overlay at top level - no need to pass down
                 .overlay(alignment: .top) {
                     if toastManager.isShowing {
                         SuccessToast(message: toastManager.message, icon: toastManager.icon)
@@ -107,6 +110,8 @@ struct DSWScheduleApp: App {
                             .zIndex(999)
                     }
                 }
+                // ✅ Border effect at top level
+                .siriStyleBorder(isActive: successFeedback.showBorderEffect)
                 .onChange(of: scenePhase) { _, phase in
                     WidgetAccessSync.sync(
                         appStateService: appStateService,

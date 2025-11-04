@@ -30,8 +30,10 @@ struct SettingsView: View {
     @EnvironmentObject var bottomInsetService: DefaultBottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService
     @Environment(\.storeKitManager) private var storeKitManager
-    @EnvironmentObject var toastManager: ToastManager
-    @EnvironmentObject var successFeedback: SuccessFeedbackSystem
+    @Environment(\.showToast) private var showToast
+
+    // ✅ Local successFeedback - only used for border effect in this view
+    @StateObject private var successFeedback = SuccessFeedbackSystem()
 
     @State private var showingContactDialog = false
     @State private var showingMailComposer = false
@@ -68,6 +70,8 @@ struct SettingsView: View {
             #if DEBUG
             .measurePerformance(name: "SettingsView", category: .viewAppear)
             #endif
+            // ✅ Local border effect
+            .siriStyleBorder(isActive: successFeedback.showBorderEffect)
         }
         .sheet(isPresented: $viewModel.showingGroupSelection) { groupSelectionSheet }
         // Модалка: Тема
@@ -111,7 +115,6 @@ struct SettingsView: View {
         } message: {
             Text(LocalizedString.settingsClearCacheMessage.localized)
         }
-        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
         .onAppear {
             updateTimeRemaining()
             startTimer()
@@ -285,7 +288,7 @@ struct SettingsView: View {
                     successFeedback.celebrate(
                         message: LocalizedString.iapPurchaseSuccess.localized,
                         icon: "gift.fill",
-                        toastManager: toastManager
+                        showToast: showToast
                     )
                 case .cancelled:
                     break
@@ -336,7 +339,7 @@ struct SettingsView: View {
                     successFeedback.celebrate(
                         message: LocalizedString.premiumUnlocked.localized,
                         icon: "crown.fill",
-                        toastManager: toastManager
+                        showToast: showToast
                     )
                     updateTimeRemaining()
                 } catch {
@@ -385,7 +388,7 @@ struct SettingsView: View {
                     successFeedback.celebrate(
                         message: LocalizedString.premiumUnlocked.localized,
                         icon: "crown.fill",
-                        toastManager: toastManager
+                        showToast: showToast
                     )
                 case .cancelled:
                     break
@@ -434,7 +437,7 @@ struct SettingsView: View {
                     successFeedback.celebrate(
                         message: LocalizedString.premiumUnlocked.localized,
                         icon: "crown.fill",
-                        toastManager: toastManager
+                        showToast: showToast
                     )
                 } catch {
                     print("Failed to restore purchases: \(error)")

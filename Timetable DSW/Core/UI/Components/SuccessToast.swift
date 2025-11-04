@@ -89,3 +89,17 @@ class ToastManager: ObservableObject {
         }
     }
 }
+
+// MARK: - Environment Key for Toast Closure
+// This allows passing toast functionality without creating EnvironmentObject dependency
+
+struct ShowToastKey: EnvironmentKey {
+    static let defaultValue: (String, String) -> Void = { _, _ in }
+}
+
+extension EnvironmentValues {
+    var showToast: (String, String) -> Void {
+        get { self[ShowToastKey.self] }
+        set { self[ShowToastKey.self] = newValue }
+    }
+}

@@ -23,9 +23,11 @@ struct ContentView: View {
     // MARK: - Properties
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var appStateService: DefaultAppStateService
-    @EnvironmentObject var toastManager: ToastManager
-    @StateObject private var successFeedback = SuccessFeedbackSystem()
+    @Environment(\.showToast) private var showToast
     @Environment(\.adCoordinator) private var adCoordinator
+
+    // ✅ successFeedback passed from parent (DSWScheduleApp)
+    let successFeedback: SuccessFeedbackSystem
 
     @State private var selectedTab = 0
 
@@ -93,7 +95,6 @@ struct ContentView: View {
                     dampingFraction: Configuration.constants.springDamping),
             value: selectedTab
         )
-        .siriStyleBorder(isActive: successFeedback.showBorderEffect)
     }
 
     // MARK: - Actions
@@ -118,7 +119,7 @@ struct ContentView: View {
                     successFeedback.celebrate(
                         message: LocalizedString.premiumUnlocked.localized,
                         icon: "crown.fill",
-                        toastManager: toastManager
+                        showToast: showToast
                     )
                 }
             } catch {
@@ -142,7 +143,7 @@ struct ContentView: View {
         successFeedback.celebrate(
             message: LocalizedString.premiumUnlocked.localized,
             icon: "crown.fill",
-            toastManager: toastManager
+            showToast: showToast
         )
         #endif
     }

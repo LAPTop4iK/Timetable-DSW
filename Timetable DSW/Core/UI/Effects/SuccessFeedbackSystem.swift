@@ -19,10 +19,15 @@ class SuccessFeedbackSystem: ObservableObject {
         self.hapticService = hapticService
     }
 
+    /// Celebrates success with haptic, border effect, and toast
+    /// - Parameters:
+    ///   - message: Toast message
+    ///   - icon: Toast icon (SF Symbol name)
+    ///   - showToast: Closure to show toast (injected via Environment)
     func celebrate(
         message: String,
         icon: String = "checkmark.circle.fill",
-        toastManager: ToastManager
+        showToast: @escaping (String, String) -> Void
     ) {
         // Cancel previous border effect task if still running
         borderEffectTask?.cancel()
@@ -36,7 +41,7 @@ class SuccessFeedbackSystem: ObservableObject {
         // 3. Show toast after short delay
         Task {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-            toastManager.show(message: message, icon: icon)
+            showToast(message, icon)
         }
 
         // Reset border effect after animation
