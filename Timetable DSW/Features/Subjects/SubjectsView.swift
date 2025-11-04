@@ -46,6 +46,7 @@ struct SubjectsView: View {
                 .measurePerformance(name: "SubjectsView", category: .viewAppear)
                 #endif
         }
+        .navigationViewStyle(.stack)
         .sheet(item: $selectedSubject) { subject in
             SubjectDetailView(subject: subject)
         }

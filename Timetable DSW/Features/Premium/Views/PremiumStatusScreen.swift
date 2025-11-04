@@ -70,6 +70,7 @@ struct PremiumStatusScreen: View {
                 stopTimer()
             }
         }
+        .navigationViewStyle(.stack)
     }
 
     // MARK: - Subviews

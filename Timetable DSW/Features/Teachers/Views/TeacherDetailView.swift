@@ -89,6 +89,7 @@ struct TeacherDetailView: View {
             .measurePerformance(name: "TeacherDetailView", category: .viewAppear)
             #endif
         }
+        .navigationViewStyle(.stack)
     }
     
     // MARK: - Subviews

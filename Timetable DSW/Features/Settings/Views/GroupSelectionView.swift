@@ -65,12 +65,13 @@ struct GroupSelectionView: View {
                     ToolbarItem(placement: .navigationBarLeading) {
                         cancelButton
                     }
-                    
+
                     ToolbarItem(placement: .navigationBarTrailing) {
                         refreshButton
                     }
                 }
         }
+        .navigationViewStyle(.stack)
     }
     
     // MARK: - Content Views

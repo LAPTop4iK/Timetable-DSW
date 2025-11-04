@@ -103,6 +103,7 @@ struct DatePickerSheet: View {
                 ToolbarItem(placement: .confirmationAction) { doneButton }
             }
         }
+        .navigationViewStyle(.stack)
         // Важно: выставляем detent здесь, чтобы он динамически подстраивался.
 //        .presentationDetents([.height(preferredDetent), .large])
         .presentationDetents([.medium])

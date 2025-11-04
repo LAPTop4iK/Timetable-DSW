@@ -352,6 +352,7 @@ struct DebugMenuScreen: View {
                 Text(viewModel.confirmationAction?.confirmationMessage ?? "")
             }
         }
+        .navigationViewStyle(.stack)
     }
 
     // MARK: - Premium Section

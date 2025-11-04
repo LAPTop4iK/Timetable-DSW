@@ -70,8 +70,10 @@ struct PerformanceMonitorView: View {
                         }
                     }
                 }
+                .navigationViewStyle(.stack)
             }
         }
+        .navigationViewStyle(.stack)
     }
 
     // MARK: - Sections
