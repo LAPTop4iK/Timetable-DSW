@@ -130,6 +130,7 @@ struct DayScheduleTabView: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
+        .ignoresSafeArea(.all) // Prevent internal UICollectionView layout loop during rotation
         .transaction { $0.animation = nil } // без implicit-анимаций при программной синхронизации
         .id(weekIdentifier)
     }
