@@ -13,11 +13,11 @@ final class DefaultEventTypeDetector: EventTypeDetector {
     
     struct Configuration {
         struct Keywords {
-            static let lecture = ["wyk", "лекц"]
-            static let exercise = ["ćw", "cw", "практ"]
+            static let lecture = ["wyk", "лекц", "lecture"]
+            static let exercise = ["ćw", "cw", "практ", "exercise"]
             static let laboratory = ["lab", "лаб"]
-            static let online = ["online", "онлайн", "teams", "zoom", "distance"]
-            static let cancelled = ["zajęcia odwołane", "odwołane"];
+            static let online = ["online", "онлайн", "teams", "zoom", "distance", "remote", "meet.google.com"]
+            static let cancelled = ["zajęcia odwołane", "odwołane", "cancelled", "canceled", "отменено"]
         }
     }
     

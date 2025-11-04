@@ -15,7 +15,19 @@ final class TabBarScreen: BaseScreen {
     // MARK: - Elements
 
     private var tabBar: XCUIElement {
-        app.tabBars.firstMatch
+        app.otherElements[AccessibilityIdentifier.Common.tabBar].firstMatch
+    }
+
+    private var scheduleTab: XCUIElement {
+        app.buttons[AccessibilityIdentifier.Common.scheduleTab].firstMatch
+    }
+
+    private var teachersTab: XCUIElement {
+        app.buttons[AccessibilityIdentifier.Common.teachersTab].firstMatch
+    }
+
+    private var settingsTab: XCUIElement {
+        app.buttons[AccessibilityIdentifier.Common.settingsTab].firstMatch
     }
 
     // MARK: - Actions
@@ -23,12 +35,11 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func switchToScheduleTab() -> ScheduleScreen {
         uiStep("Switch to Schedule tab") {
-            // Try multiple ways to find schedule tab
-            let scheduleTab = tabBar.buttons.element(boundBy: 0)
-            if scheduleTab.exists {
+            if scheduleTab.waitForExistence(timeout: UITestTimeout.normal) {
                 scheduleTab.tap()
             } else {
-                tabBar.buttons.firstMatch.tap()
+                // Fallback: first tab button
+                app.tabBars.buttons.element(boundBy: 0).tap()
             }
         }
         return ScheduleScreen(app)
@@ -37,16 +48,11 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func switchToTeachersTab() -> Self {
         uiStep("Switch to Teachers tab") {
-            let teachersTab = tabBar.buttons.element(boundBy: 1)
-            if teachersTab.exists {
+            if teachersTab.waitForExistence(timeout: UITestTimeout.normal) {
                 teachersTab.tap()
             } else {
-                // Fallback: try tapping the second button if it exists, otherwise first match
-                if tabBar.buttons.count > 1 {
-                    tabBar.buttons.element(boundBy: 1).tap()
-                } else {
-                    tabBar.buttons.firstMatch.tap()
-                }
+                // Fallback: second tab button
+                app.tabBars.buttons.element(boundBy: 2).tap()
             }
         }
         return self
@@ -55,10 +61,14 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func switchToSettingsTab() -> SettingsScreen {
         uiStep("Switch to Settings tab") {
-            // Settings is usually the last tab
-            let lastIndex = tabBar.buttons.count - 1
-            if lastIndex >= 0 {
-                tabBar.buttons.element(boundBy: lastIndex).tap()
+            if settingsTab.waitForExistence(timeout: UITestTimeout.normal) {
+                settingsTab.tap()
+            } else {
+                // Fallback: last tab button
+                let lastIndex = app.tabBars.buttons.count - 1
+                if lastIndex >= 0 {
+                    app.tabBars.buttons.element(boundBy: lastIndex).tap()
+                }
             }
         }
         return SettingsScreen(app)

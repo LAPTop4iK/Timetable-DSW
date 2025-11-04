@@ -27,14 +27,18 @@ actor NetworkManager: NetworkManagerProtocol {
     private let session: URLSession
     
     // MARK: - Initialization
-    
-    init(baseURL: String = "https://api.dsw.wtf") {
+
+    init(baseURL: String = "https://api.dsw.wtf", session: URLSession? = nil) {
         self.baseURL = baseURL
-        
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = Configuration.constants.requestTimeout
-        config.timeoutIntervalForResource = Configuration.constants.resourceTimeout
-        self.session = URLSession(configuration: config)
+
+        if let session = session {
+            self.session = session
+        } else {
+            let config = URLSessionConfiguration.default
+            config.timeoutIntervalForRequest = Configuration.constants.requestTimeout
+            config.timeoutIntervalForResource = Configuration.constants.resourceTimeout
+            self.session = URLSession(configuration: config)
+        }
     }
     
     // MARK: - Public Methods

@@ -67,8 +67,9 @@ struct NetworkManagerTests {
         // Configure URLSession with MockURLProtocol
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: config)
 
-        self.sut = NetworkManager(baseURL: "https://api.test.com")
+        self.sut = NetworkManager(baseURL: "https://api.test.com", session: session)
         MockURLProtocol.reset()
     }
 

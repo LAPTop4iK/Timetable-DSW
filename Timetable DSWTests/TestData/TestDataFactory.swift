@@ -242,13 +242,31 @@ enum TestDataFactory {
     // MARK: - AggregateResponse Factory
 
     static func aggregateResponse(
+        groupId: Int = 1,
+        from: String = "2025-11-01",
+        to: String = "2025-11-30",
+        intervalType: Int = 0,
         groupSchedule: [ScheduleEvent] = [],
-        teachers: [Teacher] = []
+        teachers: [Teacher] = [],
+        currentPeriodTeachers: [Teacher]? = nil,
+        fetchedAt: String = "2025-11-04T12:00:00.000Z"
     ) throws -> AggregateResponse {
+        let scheduleJSON = try groupSchedule.map { try JSONEncoder().encode($0) }.map { String(data: $0, encoding: .utf8)! }.joined(separator: ",")
+        let teachersJSON = try teachers.map { try JSONEncoder().encode($0) }.map { String(data: $0, encoding: .utf8)! }.joined(separator: ",")
+        let currentPeriodJSON = currentPeriodTeachers.map { teachers in
+            (try? teachers.map { try JSONEncoder().encode($0) }.map { String(data: $0, encoding: .utf8)! }.joined(separator: ",")) ?? ""
+        }
+
         let json = """
         {
-            "groupSchedule": [\(try groupSchedule.map { try JSONEncoder().encode($0) }.map { String(data: $0, encoding: .utf8)! }.joined(separator: ","))],
-            "teachers": [\(try teachers.map { try JSONEncoder().encode($0) }.map { String(data: $0, encoding: .utf8)! }.joined(separator: ","))]
+            "groupId": \(groupId),
+            "from": "\(from)",
+            "to": "\(to)",
+            "intervalType": \(intervalType),
+            "groupSchedule": [\(scheduleJSON)],
+            "teachers": [\(teachersJSON)],
+            "currentPeriodTeachers": \(currentPeriodJSON.map { "[\($0)]" } ?? "null"),
+            "fetchedAt": "\(fetchedAt)"
         }
         """
         return try JSONTestHelper.decode(AggregateResponse.self, from: json)

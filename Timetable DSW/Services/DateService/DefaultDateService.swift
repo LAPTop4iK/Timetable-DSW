@@ -35,25 +35,29 @@ final class DefaultDateService: DateService {
     private lazy var timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
+        formatter.timeZone = calendar.timeZone
         return formatter
     }()
-    
+
     private lazy var weekdayShortFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE"
+        formatter.timeZone = calendar.timeZone
         return formatter
     }()
-    
+
     private lazy var weekdayFullFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE"
         formatter.locale = .current
+        formatter.timeZone = calendar.timeZone
         return formatter
     }()
-    
+
     private lazy var dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd"
+        formatter.timeZone = calendar.timeZone
         return formatter
     }()
     
@@ -188,6 +192,13 @@ final class DefaultDateService: DateService {
             return nil
         }
 
+        // Валидация компонентов даты
+        guard month >= 1 && month <= 12 else { return nil }
+        guard day >= 1 && day <= 31 else { return nil }
+        guard hour >= 0 && hour <= 23 else { return nil }
+        guard minute >= 0 && minute <= 59 else { return nil }
+        guard second >= 0 && second <= 59 else { return nil }
+
         // Создаем DateComponents
         var components = DateComponents()
         components.year = year
@@ -199,7 +210,19 @@ final class DefaultDateService: DateService {
         components.nanosecond = nanosecond
         components.timeZone = TimeZone(secondsFromGMT: timeZoneSeconds)
 
-        return Calendar(identifier: .gregorian).date(from: components)
+        let calendar = Calendar(identifier: .gregorian)
+        guard let date = calendar.date(from: components) else { return nil }
+
+        // Проверяем что компоненты не изменились после создания даты
+        // (например, 31 октября не может быть 31-10, это будет 01-11)
+        let verifyComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        guard verifyComponents.year == year,
+              verifyComponents.month == month,
+              verifyComponents.day == day else {
+            return nil
+        }
+
+        return date
     }
 
     /// Быстрый парсинг целого числа из UTF8 байтов

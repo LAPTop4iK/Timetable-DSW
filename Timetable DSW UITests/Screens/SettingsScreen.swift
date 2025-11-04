@@ -45,13 +45,17 @@ final class SettingsScreen: BaseScreen {
     @discardableResult
     func tapGroupSelection() -> GroupSelectionScreen {
         uiStep("Tap group selection") {
-            // Найти кнопку или элемент со словом "Group" или "Группа"
-            let groupButton = app.buttons.containing(NSPredicate(format: "label CONTAINS[c] %@", "Group")).firstMatch
-            if groupButton.exists {
-                groupButton.tap()
+            if groupSelectionButton.waitForExistence(timeout: UITestTimeout.normal) {
+                groupSelectionButton.tap()
             } else {
-                // Fallback: тап по первой строке/кнопке в списке
-                app.tables.cells.firstMatch.tap()
+                // Fallback: найти кнопку или элемент со словом "Group" или "Группа"
+                let groupButton = app.buttons.containing(NSPredicate(format: "label CONTAINS[c] %@", "Group")).firstMatch
+                if groupButton.exists {
+                    groupButton.tap()
+                } else {
+                    // Последний fallback: тап по первой строке/кнопке в списке
+                    app.tables.cells.firstMatch.tap()
+                }
             }
         }
         return GroupSelectionScreen(app)
