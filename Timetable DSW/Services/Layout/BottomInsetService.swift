@@ -160,7 +160,7 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
 
         // Observe ads feature flag changes
         featureFlagService.flagsPublisher
-            .map { $0[.showAds] ?? true }
+            .map { $0[.showAds] ?? false }
             .removeDuplicates()
             .sink { [weak self] _ in
                 self?.recalculateInset()
