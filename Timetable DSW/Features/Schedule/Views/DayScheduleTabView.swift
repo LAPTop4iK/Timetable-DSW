@@ -117,6 +117,7 @@ struct DayScheduleTabView: View {
                     bottomScrollInset: bottomInset
                 )
                 .tag(index)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .gesture(
                     SimultaneousDragGesture(
                         onChanged: { value in
@@ -130,6 +131,7 @@ struct DayScheduleTabView: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
+        .ignoresSafeArea(.container, edges: .all)
         .transaction { $0.animation = nil } // без implicit-анимаций при программной синхронизации
         .id(weekIdentifier)
     }

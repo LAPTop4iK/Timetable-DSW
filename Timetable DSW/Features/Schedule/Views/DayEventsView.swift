@@ -105,8 +105,12 @@ struct DayEventsView: View {
         }
         .scrollContentBackground(.hidden)
         .contentShape(Rectangle())
-        .contentMargins(.top, topScrollInset, for: .scrollContent)
-        .contentMargins(.bottom, bottomScrollInset, for: .scrollContent)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            Color.clear.frame(height: topScrollInset)
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Color.clear.frame(height: bottomScrollInset)
+        }
         .ignoresSafeArea(.container, edges: .top)
         .background(AppColor.background.color(for: .light))
         .id(scrollIdentity(hasEvents: !todaysEvents.isEmpty)) // сбрасывает положение только при смене дня/пустоты
