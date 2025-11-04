@@ -41,7 +41,7 @@ struct ThemeSettingsView: View {
     // MARK: - Environment
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject var themeManager: ThemeManager
-    @Environment(\.bottomInsetService) private var bottomInsetService
+    @EnvironmentObject var bottomInsetService: DefaultBottomInsetService
 
     // MARK: - Body
     var body: some View {
@@ -61,7 +61,7 @@ struct ThemeSettingsView: View {
         .background(AppColor.background.color(for: colorScheme).ignoresSafeArea()) // (2) фон как у виджетов
         .safeAreaInset(edge: .bottom) {
             AppColor.clear.color(for: colorScheme)
-                .frame(height: bottomInsetService?.bottomInset ?? 78)
+                .frame(height: bottomInsetService.bottomInset)
         }
     }
 

@@ -27,7 +27,7 @@ struct SettingsView: View {
     @EnvironmentObject var featureFlagService: DefaultFeatureFlagService
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.adCoordinator) private var coordinator
-    @Environment(\.bottomInsetService) private var bottomInsetService
+    @EnvironmentObject var bottomInsetService: DefaultBottomInsetService
     @EnvironmentObject var appStateService: DefaultAppStateService
     @Environment(\.storeKitManager) private var storeKitManager
     @EnvironmentObject var toastManager: ToastManager
@@ -63,7 +63,7 @@ struct SettingsView: View {
             .onAppear { viewModel.appViewModel = appViewModel }
             .safeAreaInset(edge: .bottom) {
                 AppColor.clear.color(for: colorScheme)
-                    .frame(height: bottomInsetService?.bottomInset ?? 78)
+                    .frame(height: bottomInsetService.bottomInset)
             }
             #if DEBUG
             .measurePerformance(name: "SettingsView", category: .viewAppear)

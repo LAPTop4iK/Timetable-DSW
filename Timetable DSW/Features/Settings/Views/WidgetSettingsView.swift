@@ -39,7 +39,7 @@ struct WidgetSettingsView: View {
 
     // MARK: - Environment
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.bottomInsetService) private var bottomInsetService
+    @EnvironmentObject var bottomInsetService: DefaultBottomInsetService
 
     // MARK: - State
     @State private var lastUpdated: Date? = AppGroupManager.loadLastUpdated()
@@ -72,7 +72,7 @@ struct WidgetSettingsView: View {
         }
         .safeAreaInset(edge: .bottom) {
             AppColor.clear.color(for: colorScheme)
-                .frame(height: bottomInsetService?.bottomInset ?? 78)
+                .frame(height: bottomInsetService.bottomInset)
         }
         .background(AppColor.background.color(for: colorScheme).ignoresSafeArea())
     }

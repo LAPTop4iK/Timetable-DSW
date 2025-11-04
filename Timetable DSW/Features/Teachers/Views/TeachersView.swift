@@ -29,7 +29,7 @@ struct TeachersView: View {
     // MARK: - Environment
 
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.bottomInsetService) private var bottomInsetService
+    @EnvironmentObject var bottomInsetService: DefaultBottomInsetService
     
     // MARK: - Body
     
@@ -120,7 +120,7 @@ struct TeachersView: View {
         .listStyle(.plain)
         .safeAreaInset(edge: .bottom) {
             AppColor.clear.color(for: colorScheme)
-                .frame(height: bottomInsetService?.bottomInset ?? 78)
+                .frame(height: bottomInsetService.bottomInset)
         }
     }
 

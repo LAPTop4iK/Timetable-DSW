@@ -39,7 +39,7 @@ struct ScheduleView: View {
     @StateObject private var viewModel = ScheduleViewModel()
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var appStateService: DefaultAppStateService
-    @Environment(\.bottomInsetService) private var bottomInsetService
+    @EnvironmentObject var bottomInsetService: DefaultBottomInsetService
     @Environment(\.adCoordinator) private var coordinator
     @EnvironmentObject var themeManager: ThemeManager
     @State private var headerHeight: CGFloat = 0
@@ -214,7 +214,7 @@ struct ScheduleView: View {
             }
         } else if let scheduleData = appViewModel.scheduleData {
             let topInset: CGFloat = headerHeightMax > 0 ? headerHeightMax : AppDimensions.headerMinHeight.value
-            let bottomInset = bottomInsetService?.bottomInset ?? Configuration.constants.bottomInset
+            let bottomInset = bottomInsetService.bottomInset
 
             DayScheduleTabView(
                 events: scheduleData.groupSchedule,

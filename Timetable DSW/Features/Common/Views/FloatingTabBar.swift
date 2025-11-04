@@ -287,7 +287,7 @@ struct FloatingTabBar: View {
     // MARK: - Environment
 
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.bottomInsetService) private var bottomInsetService
+    @EnvironmentObject var bottomInsetService: DefaultBottomInsetService
     @Environment(\.adCoordinator) private var adCoordinator
 
     // MARK: - Namespace
@@ -301,7 +301,7 @@ struct FloatingTabBar: View {
     }
 
     private var dynamicBottomPadding: CGFloat {
-        bottomInsetService?.tabBarBottomPadding ?? configuration.bottomPadding.value
+        bottomInsetService.tabBarBottomPadding
     }
 
     // MARK: - Body
