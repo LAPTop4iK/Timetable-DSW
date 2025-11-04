@@ -15,13 +15,8 @@ final class TabBarScreen: BaseScreen {
     // MARK: - Elements
 
     private var tabBar: XCUIElement {
-        // Try different query types for SwiftUI views
-        let element = app.otherElements[AccessibilityIdentifier.Common.tabBar].firstMatch
-        if element.exists {
-            return element
-        }
-        // Fallback: any container with the identifier
-        return app.descendants(matching: .any)[AccessibilityIdentifier.Common.tabBar].firstMatch
+        // SwiftUI custom tab bar can be various types
+        app.descendants(matching: .any)[AccessibilityIdentifier.Common.tabBar].firstMatch
     }
 
     private var scheduleTab: XCUIElement {
@@ -41,14 +36,9 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func switchToScheduleTab() -> ScheduleScreen {
         uiStep("Switch to Schedule tab") {
-            if scheduleTab.waitForExistence(timeout: UITestTimeout.normal) {
+            // Fast check with short timeout, then tap if exists
+            if scheduleTab.waitForExistence(timeout: UITestTimeout.short) {
                 scheduleTab.tap()
-            } else {
-                // Fallback: find button containing schedule icon/text
-                let fallbackButton = app.buttons.containing(NSPredicate(format: "identifier CONTAINS[c] 'schedule' OR label CONTAINS[c] 'schedule'")).firstMatch
-                if fallbackButton.exists {
-                    fallbackButton.tap()
-                }
             }
         }
         return ScheduleScreen(app)
@@ -57,14 +47,8 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func switchToTeachersTab() -> Self {
         uiStep("Switch to Teachers tab") {
-            if teachersTab.waitForExistence(timeout: UITestTimeout.normal) {
+            if teachersTab.waitForExistence(timeout: UITestTimeout.short) {
                 teachersTab.tap()
-            } else {
-                // Fallback: find button containing teachers icon/text
-                let fallbackButton = app.buttons.containing(NSPredicate(format: "identifier CONTAINS[c] 'teachers' OR label CONTAINS[c] 'teachers'")).firstMatch
-                if fallbackButton.exists {
-                    fallbackButton.tap()
-                }
             }
         }
         return self
@@ -73,14 +57,8 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func switchToSettingsTab() -> SettingsScreen {
         uiStep("Switch to Settings tab") {
-            if settingsTab.waitForExistence(timeout: UITestTimeout.normal) {
+            if settingsTab.waitForExistence(timeout: UITestTimeout.short) {
                 settingsTab.tap()
-            } else {
-                // Fallback: find button containing settings icon/text
-                let fallbackButton = app.buttons.containing(NSPredicate(format: "identifier CONTAINS[c] 'settings' OR label CONTAINS[c] 'settings'")).firstMatch
-                if fallbackButton.exists {
-                    fallbackButton.tap()
-                }
             }
         }
         return SettingsScreen(app)
@@ -91,10 +69,8 @@ final class TabBarScreen: BaseScreen {
     @discardableResult
     func assertTabBarVisible() -> Self {
         uiStep("Assert tab bar is visible") {
-            // Check if any tab button is visible (more reliable for custom tab bars)
-            let tabBarExists = tabBar.waitForExistence(timeout: UITestTimeout.normal) ||
-                              scheduleTab.waitForExistence(timeout: UITestTimeout.normal) ||
-                              settingsTab.waitForExistence(timeout: UITestTimeout.normal)
+            // Fast check: if any tab button exists, tab bar is visible
+            let tabBarExists = scheduleTab.exists || settingsTab.exists || teachersTab.exists
             XCTAssertTrue(tabBarExists, "Tab bar should be visible (at least one tab button should exist)")
         }
         return self

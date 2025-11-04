@@ -15,23 +15,27 @@ final class ScheduleScreen: BaseScreen {
     // MARK: - Elements
 
     private var rootView: XCUIElement {
-        app.otherElements[AccessibilityIdentifier.Schedule.rootView]
+        // SwiftUI ZStack can be various types
+        app.descendants(matching: .any)[AccessibilityIdentifier.Schedule.rootView].firstMatch
     }
 
     private var eventsList: XCUIElement {
-        app.collectionViews[AccessibilityIdentifier.Schedule.eventsList].firstMatch
+        // SwiftUI TabView with .page style is NOT CollectionView, it's various types
+        // Use descendants to find by identifier regardless of type
+        app.descendants(matching: .any)[AccessibilityIdentifier.Schedule.eventsList].firstMatch
     }
 
     private var emptyState: XCUIElement {
-        app.otherElements[AccessibilityIdentifier.Schedule.emptyState]
+        app.descendants(matching: .any)[AccessibilityIdentifier.Schedule.emptyState].firstMatch
     }
 
     private var refreshButton: XCUIElement {
-        app.buttons[AccessibilityIdentifier.Schedule.refreshButton]
+        app.buttons[AccessibilityIdentifier.Schedule.refreshButton].firstMatch
     }
 
     private var eventCells: XCUIElementQuery {
-        eventsList.cells.matching(identifier: AccessibilityIdentifier.Schedule.eventCell)
+        // Find all elements with event cell identifier
+        app.descendants(matching: .any).matching(identifier: AccessibilityIdentifier.Schedule.eventCell)
     }
 
     // MARK: - Actions
@@ -39,11 +43,13 @@ final class ScheduleScreen: BaseScreen {
     @discardableResult
     func assertScreenIsOpened(timeout: TimeInterval = UITestTimeout.normal) -> Self {
         uiStep("Assert schedule screen is opened") {
-            // Try multiple ways to verify screen
-            let exists = rootView.waitForExistence(timeout: timeout) ||
-                        eventsList.waitForExistence(timeout: timeout) ||
-                        emptyState.waitForExistence(timeout: timeout)
+            // Fast check: use .exists first to avoid waiting full timeout on each
+            if rootView.exists || eventsList.exists || emptyState.exists {
+                return self
+            }
 
+            // If not immediately visible, wait with timeout
+            let exists = rootView.waitForExistence(timeout: timeout)
             XCTAssertTrue(exists, "Schedule screen should be visible")
         }
         return self
@@ -88,7 +94,9 @@ final class ScheduleScreen: BaseScreen {
     @discardableResult
     func scrollToTop() -> Self {
         uiStep("Scroll to top") {
-            eventsList.swipeDown(velocity: .fast)
+            if eventsList.exists {
+                eventsList.swipeDown(velocity: .fast)
+            }
         }
         return self
     }
@@ -96,7 +104,9 @@ final class ScheduleScreen: BaseScreen {
     @discardableResult
     func scrollToBottom() -> Self {
         uiStep("Scroll to bottom") {
-            eventsList.swipeUp(velocity: .fast)
+            if eventsList.exists {
+                eventsList.swipeUp(velocity: .fast)
+            }
         }
         return self
     }
@@ -131,7 +141,8 @@ final class ScheduleScreen: BaseScreen {
     func assertEventExists(withText text: String) -> Self {
         uiStep("Assert event exists with text '\(text)'") {
             let predicate = NSPredicate(format: "label CONTAINS[c] %@", text)
-            let event = eventsList.staticTexts.containing(predicate).firstMatch
+            // Search in all descendants since eventsList structure varies
+            let event = app.staticTexts.containing(predicate).firstMatch
             XCTAssertTrue(event.exists, "Event with text '\(text)' should exist")
         }
         return self

@@ -41,8 +41,13 @@ final class SettingsScreen: BaseScreen {
     @discardableResult
     func assertScreenIsOpened(timeout: TimeInterval = UITestTimeout.normal) -> Self {
         uiStep("Assert settings screen is opened") {
-            let exists = rootView.waitForExistence(timeout: timeout) ||
-                        app.navigationBars["Settings"].waitForExistence(timeout: timeout)
+            // Fast check first
+            if rootView.exists || groupSelectionButton.exists {
+                return self
+            }
+
+            // Then wait if needed
+            let exists = rootView.waitForExistence(timeout: timeout)
             XCTAssertTrue(exists, "Settings screen should be visible")
         }
         return self
@@ -51,22 +56,8 @@ final class SettingsScreen: BaseScreen {
     @discardableResult
     func tapGroupSelection() -> GroupSelectionScreen {
         uiStep("Tap group selection") {
-            if groupSelectionButton.waitForExistence(timeout: UITestTimeout.normal) {
+            if groupSelectionButton.waitForExistence(timeout: UITestTimeout.short) {
                 groupSelectionButton.tap()
-            } else {
-                // Fallback: find any button or element with "Group" or "Группа" text
-                let groupPredicate = NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS[c] %@", "Group", "Группа")
-                let groupButton = app.buttons.containing(groupPredicate).firstMatch
-
-                if groupButton.waitForExistence(timeout: UITestTimeout.short) {
-                    groupButton.tap()
-                } else {
-                    // Try to find in any interactive element
-                    let anyElement = app.descendants(matching: .any).containing(groupPredicate).firstMatch
-                    if anyElement.waitForExistence(timeout: UITestTimeout.short) {
-                        anyElement.tap()
-                    }
-                }
             }
         }
         return GroupSelectionScreen(app)

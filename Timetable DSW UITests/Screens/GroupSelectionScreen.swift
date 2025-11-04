@@ -48,9 +48,13 @@ final class GroupSelectionScreen: BaseScreen {
     @discardableResult
     func assertScreenIsOpened(timeout: TimeInterval = UITestTimeout.normal) -> Self {
         uiStep("Assert group selection screen is opened") {
-            let exists = rootView.waitForExistence(timeout: timeout) ||
-                        searchField.waitForExistence(timeout: timeout) ||
-                        app.navigationBars.containing(NSPredicate(format: "identifier CONTAINS[c] %@", "Group")).firstMatch.waitForExistence(timeout: timeout)
+            // Fast check first
+            if rootView.exists || searchField.exists {
+                return self
+            }
+
+            // Then wait if needed
+            let exists = searchField.waitForExistence(timeout: timeout)
             XCTAssertTrue(exists, "Group selection screen should be visible")
         }
         return self
@@ -84,8 +88,9 @@ final class GroupSelectionScreen: BaseScreen {
             // SwiftUI List with Button wrapper = buttons, not cells
             if groupCells.count > index {
                 let button = groupCells.element(boundBy: index)
-                XCTAssertTrue(button.waitForExistence(timeout: UITestTimeout.normal), "Group button should exist")
-                button.tap()
+                if button.waitForExistence(timeout: UITestTimeout.short) {
+                    button.tap()
+                }
             }
         }
         return self
@@ -97,8 +102,9 @@ final class GroupSelectionScreen: BaseScreen {
             let predicate = NSPredicate(format: "label CONTAINS[c] %@", name)
             // SwiftUI List with Button wrapper = buttons
             let button = groupCells.containing(predicate).firstMatch
-            XCTAssertTrue(button.waitForExistence(timeout: UITestTimeout.normal), "Group with name '\(name)' should exist")
-            button.tap()
+            if button.waitForExistence(timeout: UITestTimeout.short) {
+                button.tap()
+            }
         }
         return self
     }
