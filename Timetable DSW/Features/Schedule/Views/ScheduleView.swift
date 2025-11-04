@@ -215,8 +215,6 @@ struct ScheduleView: View {
         } else if let scheduleData = appViewModel.scheduleData {
             let topInset: CGFloat = headerHeightMax > 0 ? headerHeightMax : AppDimensions.headerMinHeight.value
             let bottomInset = bottomInsetService.bottomInset
-            let _ = print("🔷 [ScheduleView] contentView rendering @ \(Date())")
-            let _ = print("   topInset: \(topInset), bottomInset: \(bottomInset)")
 
             DayScheduleTabView(
                 events: scheduleData.groupSchedule,

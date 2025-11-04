@@ -238,21 +238,14 @@ final class DefaultFeatureFlagService: ObservableObject, FeatureFlagService {
     }
 
     func syncFromRemote() async throws {
-        print("🟢 [FeatureFlags] syncFromRemote() starting... @ \(Date())")
         let response = try await syncService.fetchRemoteFlags()
-
-        print("🟢 [FeatureFlags] Received remote flags: \(response.flags)")
-        print("   version: \(response.version)")
 
         state.remoteFlags = response.flags
         state.version = response.version
         state.lastSync = Date()
 
-        print("🟢 [FeatureFlags] Calling updatePublisher() @ \(Date())")
         updatePublisher()
-
         await storage.saveState(state)
-        print("✅ [FeatureFlags] syncFromRemote() completed @ \(Date())")
     }
 
     // MARK: - Internal Methods
@@ -267,29 +260,18 @@ final class DefaultFeatureFlagService: ObservableObject, FeatureFlagService {
         // Load from storage first
         let loadedState = await storage.loadState()
         state = loadedState
-        print("🟡 [FeatureFlags] loadInitialState - loaded from storage @ \(Date())")
-        print("   localOverrides: \(state.localOverrides)")
-        print("   remoteFlags: \(state.remoteFlags)")
-        print("   version: \(state.version ?? "nil")")
-        print("   lastSync: \(String(describing: state.lastSync))")
 
         // Emit initial state to subscribers
         updatePublisher()
-        print("🔵 [FeatureFlags] Initial publisher update sent")
 
         let should = await syncService.shouldSync(lastSyncDate: state.lastSync)
-        print("🟡 shouldSync=\(should) lastSync=\(String(describing: state.lastSync)) @\(Date())")
 
         if should {
-            print("🟢 entering syncFromRemote @\(Date())")
             do {
                 try await syncFromRemote()
-                print("✅ finished syncFromRemote @\(Date())")
             } catch {
-                print("❌ syncFromRemote error: \(error) @\(Date())")
+                print("❌ [FeatureFlags] Failed to sync from remote: \(error)")
             }
-        } else {
-            print("⚪️ skip sync @\(Date())")
         }
     }
 
@@ -298,7 +280,6 @@ final class DefaultFeatureFlagService: ObservableObject, FeatureFlagService {
             localOverrides: state.localOverrides,
             remoteFlags: state.remoteFlags
         )
-        print("🔵 [FeatureFlags] updatePublisher() sending: \(allFlags) @ \(Date())")
         flagsSubject.send(allFlags)
     }
 }

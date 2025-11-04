@@ -105,12 +105,6 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
         let isPremium = appStateService.isPremium
         let showAds = featureFlagService.isEnabled(.showAds)
 
-        print("🔵 [BottomInset] INIT @ \(Date())")
-        print("   isPremium: \(isPremium)")
-        print("   showAds: \(showAds)")
-        print("   bannerHeight: \(configuration.bannerHeight)")
-        print("   tabBarHeight: \(configuration.tabBarHeight)")
-
         // Calculate initial values using local variables to avoid 'self' before init
         let initialPadding = Self.calculateTabBarBottomPadding(
             bannerHeight: configuration.bannerHeight,
@@ -132,9 +126,6 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
             spacing: configuration.spacing
         )
         self.bottomInset = initialBottomInset
-
-        print("   → tabBarBottomPadding: \(initialPadding)")
-        print("   → bottomInset: \(initialBottomInset)")
 
         setupObservers()
     }
@@ -159,31 +150,23 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
     // MARK: - Private Methods
 
     private func setupObservers() {
-        print("🔵 [BottomInset] Setting up observers @ \(Date())")
-
         // Observe premium status changes
         appStateService.statePublisher
             .map(\.premiumStatus.isPremium)
             .removeDuplicates()
             .sink { [weak self] isPremium in
                 guard let self = self else { return }
-                print("🟣 [BottomInset] Premium status changed: \(isPremium) @ \(Date())")
                 self.cachedIsPremium = isPremium
                 self.recalculateInset()
             }
             .store(in: &cancellables)
 
         // Observe ads feature flag changes
-        // FIX: Default should be false, not true! (matching FeatureFlag.showAds.defaultValue)
+        // IMPORTANT: Default should be false to match FeatureFlag.showAds.defaultValue
         featureFlagService.flagsPublisher
-            .map { flags -> Bool in
-                let showAds = flags[.showAds] ?? false
-                print("🟠 [BottomInset] flagsPublisher emitted: showAds=\(showAds), allFlags=\(flags) @ \(Date())")
-                return showAds
-            }
+            .map { $0[.showAds] ?? false }
             .removeDuplicates()
-            .sink { [weak self] showAds in
-                print("🟢 [BottomInset] showAds changed (after removeDuplicates): \(showAds) @ \(Date())")
+            .sink { [weak self] _ in
                 self?.recalculateInset()
             }
             .store(in: &cancellables)
@@ -199,7 +182,6 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
             }
             .compactMap { BannerPosition(rawValue: $0) }
             .sink { [weak self] newPosition in
-                print("🔴 [BottomInset] Banner position changed: \(newPosition) @ \(Date())")
                 self?.bannerPosition = newPosition
                 self?.recalculateInset()
             }
@@ -207,49 +189,24 @@ final class DefaultBottomInsetService: ObservableObject, BottomInsetService {
     }
 
     private func recalculateInset() {
-        let showAds = featureFlagService.isEnabled(.showAds)
-
-        print("🟡 [BottomInset] RECALCULATE @ \(Date())")
-        print("   isPremium: \(cachedIsPremium)")
-        print("   showAds: \(showAds)")
-        print("   bannerHeight: \(currentBannerHeight)")
-        print("   tabBarHeight: \(currentTabBarHeight)")
-        print("   OLD tabBarBottomPadding: \(tabBarBottomPadding)")
-        print("   OLD bottomInset: \(bottomInset)")
-
-        let newTabBarPadding = Self.calculateTabBarBottomPadding(
+        tabBarBottomPadding = Self.calculateTabBarBottomPadding(
             bannerHeight: currentBannerHeight,
             bannerPosition: bannerPosition,
             isPremium: cachedIsPremium,
-            showAds: showAds,
+            showAds: featureFlagService.isEnabled(.showAds),
             spacing: configuration.spacing,
             defaultPadding: currentTabBarBottomInset
         )
 
-        let newBottomInset = Self.calculateBottomInset(
+        bottomInset = Self.calculateBottomInset(
             tabBarHeight: currentTabBarHeight,
-            tabBarBottomPadding: newTabBarPadding,
+            tabBarBottomPadding: tabBarBottomPadding,
             bannerHeight: currentBannerHeight,
             bannerPosition: bannerPosition,
             isPremium: cachedIsPremium,
-            showAds: showAds,
+            showAds: featureFlagService.isEnabled(.showAds),
             spacing: configuration.spacing
         )
-
-        // Only update and log if values actually changed
-        let paddingChanged = abs(tabBarBottomPadding - newTabBarPadding) > 0.01
-        let insetChanged = abs(bottomInset - newBottomInset) > 0.01
-
-        tabBarBottomPadding = newTabBarPadding
-        bottomInset = newBottomInset
-
-        if paddingChanged || insetChanged {
-            print("   ✅ NEW tabBarBottomPadding: \(tabBarBottomPadding)")
-            print("   ✅ NEW bottomInset: \(bottomInset)")
-            print("   🔔 @Published properties updated - SwiftUI should re-render!")
-        } else {
-            print("   ⚪️ No change in values")
-        }
     }
 
     private static func calculateTabBarBottomPadding(
