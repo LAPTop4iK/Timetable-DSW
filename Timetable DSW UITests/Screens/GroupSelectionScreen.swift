@@ -33,13 +33,14 @@ final class GroupSelectionScreen: BaseScreen {
     }
 
     private var groupCells: XCUIElementQuery {
-        // Try cells with specific identifier first
-        let identifiedCells = app.descendants(matching: .any).matching(identifier: AccessibilityIdentifier.GroupSelection.groupCell)
-        if identifiedCells.count > 0 {
-            return identifiedCells
+        // In SwiftUI, List with Button wrapper creates .button elements, NOT .cell
+        // Each row is: List -> Button (with identifier) -> GroupRow (HStack)
+        let identifiedButtons = app.buttons.matching(identifier: AccessibilityIdentifier.GroupSelection.groupCell)
+        if identifiedButtons.count > 0 {
+            return identifiedButtons
         }
-        // Fallback to table cells
-        return app.tables.cells
+        // Fallback: try finding with descendants
+        return app.descendants(matching: .button).matching(identifier: AccessibilityIdentifier.GroupSelection.groupCell)
     }
 
     // MARK: - Actions
@@ -80,23 +81,11 @@ final class GroupSelectionScreen: BaseScreen {
     @discardableResult
     func selectGroup(at index: Int) -> Self {
         uiStep("Select group at index \(index)") {
-            // Try using identified cells first
+            // SwiftUI List with Button wrapper = buttons, not cells
             if groupCells.count > index {
-                let cell = groupCells.element(boundBy: index)
-                XCTAssertTrue(cell.waitForExistence(timeout: UITestTimeout.normal), "Group cell should exist")
-                cell.tap()
-            } else {
-                // Fallback to any table cells or buttons
-                let allCells = app.tables.cells
-                if allCells.count > index {
-                    allCells.element(boundBy: index).tap()
-                } else {
-                    // Try buttons if cells don't work
-                    let buttons = app.buttons.allElementsBoundByIndex
-                    if index < buttons.count {
-                        buttons[index].tap()
-                    }
-                }
+                let button = groupCells.element(boundBy: index)
+                XCTAssertTrue(button.waitForExistence(timeout: UITestTimeout.normal), "Group button should exist")
+                button.tap()
             }
         }
         return self
@@ -106,18 +95,10 @@ final class GroupSelectionScreen: BaseScreen {
     func selectGroup(withName name: String) -> Self {
         uiStep("Select group with name '\(name)'") {
             let predicate = NSPredicate(format: "label CONTAINS[c] %@", name)
-            // Try cells with identifier first
-            var cell = groupCells.containing(predicate).firstMatch
-            if !cell.exists {
-                // Fallback to any table cells
-                cell = app.tables.cells.containing(predicate).firstMatch
-            }
-            if !cell.exists {
-                // Try buttons as last resort
-                cell = app.buttons.containing(predicate).firstMatch
-            }
-            XCTAssertTrue(cell.waitForExistence(timeout: UITestTimeout.normal), "Group with name '\(name)' should exist")
-            cell.tap()
+            // SwiftUI List with Button wrapper = buttons
+            let button = groupCells.containing(predicate).firstMatch
+            XCTAssertTrue(button.waitForExistence(timeout: UITestTimeout.normal), "Group with name '\(name)' should exist")
+            button.tap()
         }
         return self
     }
@@ -125,17 +106,10 @@ final class GroupSelectionScreen: BaseScreen {
     @discardableResult
     func waitForGroups(timeout: TimeInterval = UITestTimeout.long) -> Self {
         uiStep("Wait for groups to load") {
-            // Wait for either identified cells or any table cells
+            // Wait for group buttons to appear
             let predicate = NSPredicate(format: "count > 0")
-            let cellsExpectation = XCTNSPredicateExpectation(predicate: predicate, object: groupCells)
-            let result = XCTWaiter.wait(for: [cellsExpectation], timeout: timeout)
-
-            // If that fails, try waiting for any table cells
-            if result != .completed {
-                let tableCells = app.tables.cells
-                let tableExpectation = XCTNSPredicateExpectation(predicate: predicate, object: tableCells)
-                _ = XCTWaiter.wait(for: [tableExpectation], timeout: UITestTimeout.short)
-            }
+            let buttonsExpectation = XCTNSPredicateExpectation(predicate: predicate, object: groupCells)
+            _ = XCTWaiter.wait(for: [buttonsExpectation], timeout: timeout)
         }
         return self
     }
@@ -145,8 +119,8 @@ final class GroupSelectionScreen: BaseScreen {
     @discardableResult
     func assertGroupsLoaded() -> Self {
         uiStep("Assert groups are loaded") {
-            let hasGroups = groupCells.count > 0 || app.tables.cells.count > 0
-            XCTAssertTrue(hasGroups, "Should have groups")
+            // SwiftUI List with Button wrapper = buttons
+            XCTAssertGreaterThan(groupCells.count, 0, "Should have group buttons")
         }
         return self
     }
@@ -155,13 +129,8 @@ final class GroupSelectionScreen: BaseScreen {
     func assertGroupExists(withName name: String) -> Self {
         uiStep("Assert group exists with name '\(name)'") {
             let predicate = NSPredicate(format: "label CONTAINS[c] %@", name)
-            // Try identified cells first
-            var cell = groupCells.containing(predicate).firstMatch
-            if !cell.exists {
-                // Fallback to any table cells
-                cell = app.tables.cells.containing(predicate).firstMatch
-            }
-            XCTAssertTrue(cell.exists, "Group with name '\(name)' should exist")
+            let button = groupCells.containing(predicate).firstMatch
+            XCTAssertTrue(button.exists, "Group button with name '\(name)' should exist")
         }
         return self
     }

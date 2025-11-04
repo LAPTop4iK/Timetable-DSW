@@ -48,7 +48,6 @@ struct GroupRow: View {
             chevronIcon
         }
         .padding(Configuration.constants.padding.value)
-        .accessibilityIdentifier("group_selection_group_cell")
     }
     
     // MARK: - Subviews

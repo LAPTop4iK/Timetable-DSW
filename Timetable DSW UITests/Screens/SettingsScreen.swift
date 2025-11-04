@@ -15,7 +15,13 @@ final class SettingsScreen: BaseScreen {
     // MARK: - Elements
 
     private var rootView: XCUIElement {
-        app.otherElements[AccessibilityIdentifier.Settings.rootView]
+        // SwiftUI Form maps to UITableView in XCUITest
+        let table = app.tables[AccessibilityIdentifier.Settings.rootView].firstMatch
+        if table.exists {
+            return table
+        }
+        // Fallback to otherElements
+        return app.otherElements[AccessibilityIdentifier.Settings.rootView].firstMatch
     }
 
     private var groupSelectionButton: XCUIElement {

@@ -86,6 +86,7 @@ struct ScheduleView: View {
                 }
                 .zIndex(1)
             }
+            .accessibilityIdentifier("schedule_root_view")
             .ignoresSafeArea()
             .navigationBarHidden(true)
             .navigationBarTitleDisplayMode(.inline)

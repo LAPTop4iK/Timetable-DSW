@@ -123,6 +123,7 @@ struct GroupSelectionView: View {
             }) {
                 GroupRow(group: group)
             }
+            .accessibilityIdentifier("group_selection_group_cell")
             .listRowInsets(Configuration.constants.listRowInsets)
         }
         .listStyle(.plain)

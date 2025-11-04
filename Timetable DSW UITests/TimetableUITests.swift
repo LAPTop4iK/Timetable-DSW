@@ -189,9 +189,9 @@ final class TimetableUITests: XCTestCase {
         }
 
         uiStep("Then groups should be displayed") {
-            // Check if any cells are present
-            let hasCells = app.tables.cells.count > 0
-            if hasCells {
+            // SwiftUI List with Button wrapper = buttons, not cells
+            let hasButtons = app.buttons.matching(identifier: "group_selection_group_cell").count > 0
+            if hasButtons {
                 groupSelectionScreen.assertGroupsLoaded()
             } else {
                 // Groups may be loading or network error
@@ -296,8 +296,9 @@ final class TimetableUITests: XCTestCase {
         }
 
        try uiStep("And selects first group") {
-            let cells = app.tables.cells
-            if cells.count > 0 {
+            // SwiftUI List with Button wrapper = buttons, not cells
+            let groupButtons = app.buttons.matching(identifier: "group_selection_group_cell")
+            if groupButtons.count > 0 {
                 GroupSelectionScreen(app)
                     .selectGroup(at: 0)
             } else {
