@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24127" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina6_12" orientation="portrait" appearance="dark"/>
+    <device id="retina5_9" orientation="portrait" appearance="dark"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -13,27 +13,29 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1nb-X5-eUB">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AppBackgroundEdges" translatesAutoresizingMaskIntoConstraints="NO" id="m35-qF-06L">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AppBackgroundEdges" translatesAutoresizingMaskIntoConstraints="NO" id="m35-qF-06L">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchIcon" translatesAutoresizingMaskIntoConstraints="NO" id="FST-o7-Clv">
-                                <rect key="frame" x="77" y="362" width="239" height="128"/>
+                                <rect key="frame" x="112.66666666666669" y="331" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="LXO-dK-DLR"/>
+                                    <constraint firstAttribute="width" constant="150" id="t8t-UF-ggL"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="sbq-Vp-SDL"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="m35-qF-06L" firstAttribute="leading" secondItem="sbq-Vp-SDL" secondAttribute="leading" id="Bfk-7h-Rtq"/>
-                            <constraint firstItem="m35-qF-06L" firstAttribute="top" secondItem="1nb-X5-eUB" secondAttribute="top" id="JPh-T5-4AS"/>
-                            <constraint firstAttribute="bottom" secondItem="m35-qF-06L" secondAttribute="bottom" id="MAv-mu-zDU"/>
-                            <constraint firstItem="FST-o7-Clv" firstAttribute="top" secondItem="m35-qF-06L" secondAttribute="bottom" constant="-490" id="UdE-Zm-KwJ"/>
-                            <constraint firstItem="m35-qF-06L" firstAttribute="leading" secondItem="FST-o7-Clv" secondAttribute="trailing" constant="-316" id="s2I-p7-TC9"/>
-                            <constraint firstItem="FST-o7-Clv" firstAttribute="centerY" secondItem="m35-qF-06L" secondAttribute="centerY" id="usi-MF-0he"/>
-                            <constraint firstItem="m35-qF-06L" firstAttribute="trailing" secondItem="sbq-Vp-SDL" secondAttribute="trailing" id="xGj-3u-rKC"/>
-                            <constraint firstItem="FST-o7-Clv" firstAttribute="centerX" secondItem="m35-qF-06L" secondAttribute="centerX" id="zid-fk-Qzk"/>
+                            <constraint firstItem="FST-o7-Clv" firstAttribute="centerY" secondItem="1nb-X5-eUB" secondAttribute="centerY" id="E7R-l3-C8G"/>
+                            <constraint firstItem="m35-qF-06L" firstAttribute="leading" secondItem="sbq-Vp-SDL" secondAttribute="leading" id="EBl-dw-PQ2"/>
+                            <constraint firstItem="FST-o7-Clv" firstAttribute="centerX" secondItem="1nb-X5-eUB" secondAttribute="centerX" id="YWh-NG-vxs"/>
+                            <constraint firstItem="m35-qF-06L" firstAttribute="trailing" secondItem="sbq-Vp-SDL" secondAttribute="trailing" id="gLz-HZ-ESi"/>
+                            <constraint firstAttribute="bottom" secondItem="m35-qF-06L" secondAttribute="bottom" id="j8i-LI-UBC"/>
+                            <constraint firstItem="m35-qF-06L" firstAttribute="top" secondItem="1nb-X5-eUB" secondAttribute="top" id="jga-Sc-AYi"/>
                         </constraints>
                     </view>
                 </viewController>

@@ -128,6 +128,7 @@ struct ScheduleView: View {
             .measurePerformance(name: "ScheduleView", category: .viewAppear)
             #endif
         }
+        .navigationViewStyle(.stack)
     }
     
     // MARK: - Subviews

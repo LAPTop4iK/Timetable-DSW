@@ -105,7 +105,7 @@ struct DatePickerSheet: View {
         }
         // Важно: выставляем detent здесь, чтобы он динамически подстраивался.
 //        .presentationDetents([.height(preferredDetent), .large])
-        .presentationDetents([.medium])
+        .presentationDetents([UIDevice.isIPad ? .large : .medium])
 //        .presentationDragIndicator(.visible)
     }
 

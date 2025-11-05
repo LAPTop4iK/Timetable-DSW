@@ -59,6 +59,7 @@ struct TeachersView: View {
             .measurePerformance(name: "TeachersView", category: .viewAppear)
             #endif
         }
+        .navigationViewStyle(.stack)
         .sheet(item: $selectedTeacher) { teacher in
             TeacherDetailView(viewModel: TeacherDetailViewModel(teacher: teacher))
         }

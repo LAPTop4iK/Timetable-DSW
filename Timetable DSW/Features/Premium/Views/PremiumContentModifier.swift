@@ -19,6 +19,7 @@ struct PremiumContentModifier: ViewModifier {
     @State private var showingPaywall = false
 
     func body(content: Content) -> some View {
+        let presentationDetents: Set<PresentationDetent> = UIDevice.isIPad ? [.large] : [.medium, .large]
         ZStack {
             content
                 .blur(radius: premiumAccess.hasAccess(to: feature) ? 0 : 8)
@@ -37,7 +38,7 @@ struct PremiumContentModifier: ViewModifier {
                 onWatchAd: onWatchAd,
                 onPurchase: onPurchase
             )
-            .presentationDetents([.medium, .large])
+            .presentationDetents(presentationDetents)
             .presentationDragIndicator(.hidden)
         }
     }

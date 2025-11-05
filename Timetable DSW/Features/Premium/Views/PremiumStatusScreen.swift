@@ -63,6 +63,7 @@ struct PremiumStatusScreen: View {
                 }
                 .padding(Configuration.constants.padding.value)
             }
+            .contentMargins(.top, UIDevice.isIPad ? -50 : 0, for: .scrollContent)
             .onAppear {
                 startTimer()
             }
@@ -77,17 +78,18 @@ struct PremiumStatusScreen: View {
     private var iconView: some View {
         ZStack {
             // Glow effect
-            Circle()
-                .fill(
-                    LinearGradient(
-                        colors: gradientColors.map { $0.opacity(0.2) },
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+            if UIDevice.isIPhone {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: gradientColors.map { $0.opacity(0.2) },
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
                     )
-                )
-                .frame(width: Configuration.constants.iconSize * 1.5, height: Configuration.constants.iconSize * 1.5)
-                .blur(radius: 40)
-
+                    .frame(width: Configuration.constants.iconSize * 1.5, height: Configuration.constants.iconSize * 1.5)
+                    .blur(radius: 40)
+            }
             // Icon
             if premiumAccess.isPremium {
                 Image(systemName: "crown.fill")
